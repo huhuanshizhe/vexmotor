@@ -1,0 +1,40 @@
+{
+  "name": "lianchuan-demo",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.17.1",
+  "scripts": {
+    "dev": "next dev -p 4000",
+    "build": "next build",
+    "start": "next start -p 4000",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "check": "eslint . && tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:seed": "tsx src/server/db/seed.ts"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^6.1.0",
+    "antd": "6.4.3",
+    "dotenv": "^16.6.1",
+    "drizzle-orm": "^0.44.5",
+    "next-auth": "4.24.14",
+    "postgres": "^3.4.7",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "zod": "^3.24.1",
+    "next": "16.2.6"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.0",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "drizzle-kit": "^0.31.4",
+    "eslint": "^9.34.0",
+    "eslint-config-next": "16.2.6",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2"
+  }
+}

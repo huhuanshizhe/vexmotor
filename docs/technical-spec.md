@@ -7,11 +7,13 @@
 ## 2. 技术栈
 
 - Node.js 22.x
+- pnpm 作为唯一包管理器
 - Next.js 16.x 优先；若兼容性受阻，可下调到相近稳定版本，但需记录原因
 - React 19.x 优先；若兼容性受阻，可下调到相近稳定版本，但需记录原因
 - Ant Design 6.x 优先用于后台界面；若兼容性受阻，可下调到相近稳定版本，但需记录原因
 - NextAuth.js / Auth.js 用于认证
 - Neon Postgres 作为在线 PostgreSQL 数据库
+- Drizzle ORM + drizzle-kit 作为数据库建模、迁移与类型安全访问方案
 - OpenAPI 3.1 作为接口契约规范
 - JSON Schema 2020-12 作为数据结构契约规范
 
@@ -50,6 +52,7 @@
   /features
   /lib
   /server
+    /db
   /types
   /styles
 /public
@@ -63,14 +66,23 @@
 - `src/app/api` 负责 API 路由。
 - `src/features` 按业务域组织逻辑。
 - `src/server` 负责服务端业务、仓储、鉴权和数据库访问。
+- `src/server/db` 负责 Drizzle schema、连接、查询与种子数据回退逻辑。
 
 ## 5. 运行环境
 
 ### 5.1 本地开发
 
 - 开发端口固定为 `4000`
-- 推荐命令：`next dev -p 4000`
+- 推荐安装命令：`pnpm install`
+- 推荐开发命令：`pnpm dev`
+- 推荐校验命令：`pnpm check`
 - 本地环境变量放在 `.env.local`
+
+### 5.1.1 包管理约束
+
+- 项目统一使用 `pnpm`，不使用 `npm install`。
+- 依赖安装、锁文件和脚本执行均以 `pnpm` 为准。
+- 仓库应提交 `pnpm-lock.yaml` 作为唯一锁文件。
 
 ### 5.2 核心环境变量
 
@@ -83,6 +95,20 @@
 ### 5.3 数据库连接
 
 Neon 连接串采用 PostgreSQL 兼容连接方式，首期默认使用 Node Runtime 下的 PostgreSQL 客户端接入，不使用 Edge Runtime 特有数据库访问方式。
+
+### 5.4 推荐数据库命令
+
+- 安装依赖：`pnpm install`
+- 生成迁移：`pnpm db:generate`
+- 推送数据库结构：`pnpm exec drizzle-kit push --force`
+- 初始化样例数据：`pnpm db:seed`
+- 本地结构检查：`pnpm check`
+
+### 5.5 当前已验证的初始化路径
+
+- 环境变量统一从 `.env.local` 读取，数据库命令与运行时代码保持同一加载路径。
+- 当前 Neon 数据库初始化顺序：`pnpm install` -> `pnpm exec drizzle-kit push --force` -> `pnpm db:seed`。
+- 当前样例后台账号：`admin@lianchuan.local / Admin123456`。
 
 ## 6. 认证与授权
 
@@ -125,6 +151,8 @@ Neon 连接串采用 PostgreSQL 兼容连接方式，首期默认使用 Node Run
 - 每个 schema 文件描述一个逻辑表
 - JSON Schema 用于描述：字段、类型、必填、默认值、枚举、状态说明
 - 跨表关系、索引、唯一键组合等补充写入 schema 的 `description` 或本文档相关章节
+- 实际代码实现以 Drizzle ORM schema 为准，并与 `docs/database/*.schema.json` 保持一致
+- 当数据库未初始化或无种子数据时，前台允许使用受控的只读样例数据回退，以保证页面和 API 骨架可运行
 
 ## 9. 关键业务实体
 
