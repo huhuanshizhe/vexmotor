@@ -16,15 +16,26 @@ import {
 } from '@/lib/admin-display';
 import type { AdminCustomerRow } from '@/server/admin/customers';
 
-const initialValues = {
+type CustomerFormValues = {
+  email: string;
+  firstName: string;
+  lastName: string;
+  company: string;
+  phone: string;
+  avatarUrl: string;
+  role: 'customer' | 'staff' | 'admin';
+  status: 'active' | 'disabled' | 'pending';
+};
+
+const initialValues: CustomerFormValues = {
   email: '',
   firstName: '',
   lastName: '',
   company: '',
   phone: '',
   avatarUrl: '',
-  role: 'customer' as const,
-  status: 'pending' as const,
+  role: 'customer',
+  status: 'pending',
 };
 
 export function AdminCustomersClient({ initialRows }: { initialRows: AdminCustomerRow[] }) {
@@ -33,7 +44,7 @@ export function AdminCustomersClient({ initialRows }: { initialRows: AdminCustom
   const [editingId, setEditingId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [isPending, startTransition] = useTransition();
-  const [form] = Form.useForm<typeof initialValues>();
+  const [form] = Form.useForm<CustomerFormValues>();
 
   const metrics = useMemo(() => ({
     active: rows.filter((item) => item.status === 'active').length,
@@ -80,7 +91,7 @@ export function AdminCustomersClient({ initialRows }: { initialRows: AdminCustom
     setOpen(true);
   }
 
-  function handleSubmit(values: typeof initialValues) {
+  function handleSubmit(values: CustomerFormValues) {
     startTransition(async () => {
       const response = await fetch(editingId ? `/api/admin/customers/${editingId}` : '/api/admin/customers', {
         method: editingId ? 'PATCH' : 'POST',

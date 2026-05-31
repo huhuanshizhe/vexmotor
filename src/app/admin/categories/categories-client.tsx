@@ -7,7 +7,19 @@ import { useMemo, useState, useTransition } from 'react';
 import { categoryStatusColors, categoryStatusLabels, categoryStatusOptions, formatAdminDate } from '@/lib/admin-display';
 import type { AdminCategoryRow } from '@/server/admin/categories';
 
-const initialValues = {
+type CategoryFormValues = {
+  parentId: string | null;
+  name: string;
+  slug: string;
+  description: string;
+  imageUrl: string;
+  seoTitle: string;
+  seoDescription: string;
+  status: 'active' | 'inactive';
+  sortOrder: number;
+};
+
+const initialValues: CategoryFormValues = {
   parentId: null as string | null,
   name: '',
   slug: '',
@@ -15,7 +27,7 @@ const initialValues = {
   imageUrl: '',
   seoTitle: '',
   seoDescription: '',
-  status: 'active' as const,
+  status: 'active',
   sortOrder: 0,
 };
 
@@ -25,7 +37,7 @@ export function AdminCategoriesClient({ initialRows }: { initialRows: AdminCateg
   const [editingId, setEditingId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [isPending, startTransition] = useTransition();
-  const [form] = Form.useForm<typeof initialValues>();
+  const [form] = Form.useForm<CategoryFormValues>();
 
   const parentOptions = useMemo(
     () => rows.filter((item) => item.id !== editingId).map((item) => ({ value: item.id, label: item.name })),
@@ -71,7 +83,7 @@ export function AdminCategoriesClient({ initialRows }: { initialRows: AdminCateg
     setOpen(true);
   }
 
-  function handleSubmit(values: typeof initialValues) {
+  function handleSubmit(values: CategoryFormValues) {
     startTransition(async () => {
       const response = await fetch(editingId ? `/api/admin/categories/${editingId}` : '/api/admin/categories', {
         method: editingId ? 'PATCH' : 'POST',

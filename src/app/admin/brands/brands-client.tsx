@@ -7,13 +7,22 @@ import { useState, useTransition } from 'react';
 import { brandStatusColors, brandStatusLabels, brandStatusOptions, formatAdminDate } from '@/lib/admin-display';
 import type { AdminBrandRow } from '@/server/admin/brands';
 
-const initialValues = {
+type BrandFormValues = {
+  name: string;
+  slug: string;
+  description: string;
+  logoUrl: string;
+  websiteUrl: string;
+  status: 'active' | 'inactive';
+};
+
+const initialValues: BrandFormValues = {
   name: '',
   slug: '',
   description: '',
   logoUrl: '',
   websiteUrl: '',
-  status: 'active' as const,
+  status: 'active',
 };
 
 export function AdminBrandsClient({ initialRows }: { initialRows: AdminBrandRow[] }) {
@@ -22,7 +31,7 @@ export function AdminBrandsClient({ initialRows }: { initialRows: AdminBrandRow[
   const [editingId, setEditingId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [isPending, startTransition] = useTransition();
-  const [form] = Form.useForm<typeof initialValues>();
+  const [form] = Form.useForm<BrandFormValues>();
 
   async function reloadRows(nextSearch = search) {
     const params = new URLSearchParams();
@@ -60,7 +69,7 @@ export function AdminBrandsClient({ initialRows }: { initialRows: AdminBrandRow[
     setOpen(true);
   }
 
-  function handleSubmit(values: typeof initialValues) {
+  function handleSubmit(values: BrandFormValues) {
     startTransition(async () => {
       const response = await fetch(editingId ? `/api/admin/brands/${editingId}` : '/api/admin/brands', {
         method: editingId ? 'PATCH' : 'POST',

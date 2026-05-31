@@ -16,24 +16,45 @@ import {
 } from '@/lib/admin-display';
 import type { AdminCmsPageRow, AdminContentBlockRow } from '@/server/admin/content';
 
-const initialBlockValues = {
+type ContentBlockFormValues = {
+  placement: string;
+  blockKey: string;
+  title: string;
+  subtitle: string;
+  contentText: string;
+  status: 'active' | 'inactive';
+  sortOrder: number;
+};
+
+type CmsPageFormValues = {
+  title: string;
+  slug: string;
+  summary: string;
+  content: string;
+  seoTitle: string;
+  seoDescription: string;
+  status: 'draft' | 'published' | 'archived';
+  publishedAt: string;
+};
+
+const initialBlockValues: ContentBlockFormValues = {
   placement: '',
   blockKey: '',
   title: '',
   subtitle: '',
   contentText: '{\n  \n}',
-  status: 'active' as const,
+  status: 'active',
   sortOrder: 0,
 };
 
-const initialPageValues = {
+const initialPageValues: CmsPageFormValues = {
   title: '',
   slug: '',
   summary: '',
   content: '',
   seoTitle: '',
   seoDescription: '',
-  status: 'draft' as const,
+  status: 'draft',
   publishedAt: '',
 };
 
@@ -66,8 +87,8 @@ export function AdminContentClient({
   const [blockSearch, setBlockSearch] = useState('');
   const [pageSearch, setPageSearch] = useState('');
   const [isPending, startTransition] = useTransition();
-  const [blockForm] = Form.useForm<typeof initialBlockValues>();
-  const [pageForm] = Form.useForm<typeof initialPageValues>();
+  const [blockForm] = Form.useForm<ContentBlockFormValues>();
+  const [pageForm] = Form.useForm<CmsPageFormValues>();
 
   async function reloadBlocks(nextSearch = blockSearch) {
     const params = new URLSearchParams();
@@ -144,7 +165,7 @@ export function AdminContentClient({
     setPageOpen(true);
   }
 
-  function submitBlock(values: typeof initialBlockValues) {
+  function submitBlock(values: ContentBlockFormValues) {
     startTransition(async () => {
       let content: Record<string, unknown>;
       try {
@@ -175,7 +196,7 @@ export function AdminContentClient({
     });
   }
 
-  function submitPage(values: typeof initialPageValues) {
+  function submitPage(values: CmsPageFormValues) {
     startTransition(async () => {
       const response = await fetch(editingPageId ? `/api/admin/content/pages/${editingPageId}` : '/api/admin/content/pages', {
         method: editingPageId ? 'PATCH' : 'POST',

@@ -10,6 +10,7 @@ import { blogAuthors, blogIndustries, blogTopics } from '@/lib/blog';
 import {
   defaultEditorialBlogSectionsTemplate,
   type AdminEditorialBlogEntry,
+  type AdminEditorialPressEntry,
   type EditorialEntryStatus,
 } from '@/lib/editorial-content';
 import {
@@ -165,6 +166,18 @@ type BlogEntryFormValues = {
   sectionsJson: string;
 };
 
+type PressEntryFormValues = {
+  title: string;
+  slug: string;
+  summary: string;
+  locale: string;
+  status: EditorialEntryStatus;
+  seoTitle: string;
+  seoDescription: string;
+  publishedAt: string;
+  category: string;
+};
+
 type BlogSeedImportResponse = {
   dryRun: boolean;
   totalSeededCount: number;
@@ -184,7 +197,18 @@ type BlogSeedImportItem = {
   entryId: string | null;
 };
 
-type EditorialBusyAction = 'save-config' | 'save-blog-entry' | 'preview-import' | 'import-seeded' | 'delete-blog';
+type PressSeedImportResponse = BlogSeedImportResponse;
+
+type EditorialBusyAction =
+  | 'save-config'
+  | 'save-blog-entry'
+  | 'save-press-entry'
+  | 'preview-import'
+  | 'import-seeded'
+  | 'delete-blog'
+  | 'preview-press-import'
+  | 'import-press'
+  | 'delete-press';
 
 const entryStatusLabels: Record<EditorialEntryStatus, string> = {
   draft: '草稿',
@@ -241,12 +265,20 @@ function stringifyJson(value: unknown) {
   return JSON.stringify(value, null, 2);
 }
 
-function sortBlogEntries(entries: AdminEditorialBlogEntry[]) {
+function sortEditorialEntries<T extends { publishedAt: string | null; updatedAt: string; title: string }>(entries: T[]) {
   return [...entries].sort((left, right) => {
     const leftTimestamp = Date.parse(left.publishedAt ?? left.updatedAt);
     const rightTimestamp = Date.parse(right.publishedAt ?? right.updatedAt);
     return rightTimestamp - leftTimestamp || left.title.localeCompare(right.title);
   });
+}
+
+function sortBlogEntries(entries: AdminEditorialBlogEntry[]) {
+  return sortEditorialEntries(entries);
+}
+
+function sortPressEntries(entries: AdminEditorialPressEntry[]) {
+  return sortEditorialEntries(entries);
 }
 
 function buildSummary(dashboard: AdminEditorialDashboard) {
@@ -263,28 +295,35 @@ function buildSummary(dashboard: AdminEditorialDashboard) {
 export function AdminEditorialClient({
   initialDashboard,
   initialBlogEntries,
+  initialPressEntries,
 }: {
   initialDashboard: AdminEditorialDashboard;
   initialBlogEntries: AdminEditorialBlogEntry[];
+  initialPressEntries: AdminEditorialPressEntry[];
 }) {
   const [dashboard, setDashboard] = useState(initialDashboard);
   const [blogEntries, setBlogEntries] = useState(sortBlogEntries(initialBlogEntries));
+  const [pressEntries, setPressEntries] = useState(sortPressEntries(initialPressEntries));
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [templateModalOpen, setTemplateModalOpen] = useState(false);
   const [ruleModalOpen, setRuleModalOpen] = useState(false);
   const [briefModalOpen, setBriefModalOpen] = useState(false);
   const [blogEntryModalOpen, setBlogEntryModalOpen] = useState(false);
+  const [pressEntryModalOpen, setPressEntryModalOpen] = useState(false);
   const [editingTemplateId, setEditingTemplateId] = useState<string | null>(null);
   const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
   const [editingBriefId, setEditingBriefId] = useState<string | null>(null);
   const [editingBlogEntryId, setEditingBlogEntryId] = useState<string | null>(null);
+  const [editingPressEntryId, setEditingPressEntryId] = useState<string | null>(null);
   const [busyAction, setBusyAction] = useState<EditorialBusyAction | null>(null);
   const [lastImportResult, setLastImportResult] = useState<BlogSeedImportResponse | null>(null);
+  const [lastPressImportResult, setLastPressImportResult] = useState<PressSeedImportResponse | null>(null);
   const [workflowForm] = Form.useForm<WorkflowSettingsFormValues>();
   const [templateForm] = Form.useForm<TemplateFormValues>();
   const [ruleForm] = Form.useForm<RuleFormValues>();
   const [briefForm] = Form.useForm<BriefFormValues>();
   const [blogEntryForm] = Form.useForm<BlogEntryFormValues>();
+  const [pressEntryForm] = Form.useForm<PressEntryFormValues>();
 
   const summary = useMemo(() => buildSummary(dashboard), [dashboard]);
   const templateOptions = useMemo(
@@ -349,6 +388,20 @@ export function AdminEditorialClient({
     }
 
     setBlogEntries(sortBlogEntries(payload.items));
+  }
+
+  async function refreshPressEntries() {
+    const response = await fetch('/api/admin/editorial/content?contentType=press', { cache: 'no-store' });
+    if (!response.ok) {
+      return;
+    }
+
+    const payload = (await response.json()) as { items?: AdminEditorialPressEntry[] };
+    if (!payload.items) {
+      return;
+    }
+
+    setPressEntries(sortPressEntries(payload.items));
   }
 
   async function runBusyTask(action: EditorialBusyAction, task: () => Promise<void>) {
@@ -461,6 +514,22 @@ export function AdminEditorialClient({
       sectionsJson: entry ? stringifyJson(entry.payload.sections) : defaultBlogSectionsJson,
     });
     setBlogEntryModalOpen(true);
+  }
+
+  function openPressEntryModal(entry?: AdminEditorialPressEntry) {
+    setEditingPressEntryId(entry?.id ?? null);
+    pressEntryForm.setFieldsValue({
+      title: entry?.title ?? '',
+      slug: entry?.slug ?? '',
+      summary: entry?.summary ?? '',
+      locale: entry?.locale ?? 'en-US',
+      status: entry?.status ?? 'draft',
+      seoTitle: entry?.seoTitle ?? '',
+      seoDescription: entry?.seoDescription ?? '',
+      publishedAt: toLocalDateTimeValue(entry?.publishedAt),
+      category: entry?.payload.category ?? '',
+    });
+    setPressEntryModalOpen(true);
   }
 
   function saveTemplate() {
@@ -619,6 +688,51 @@ export function AdminEditorialClient({
     });
   }
 
+  function savePressEntry() {
+    void pressEntryForm.validateFields().then((values) => {
+      void runBusyTask('save-press-entry', async () => {
+        setStatusMessage(null);
+
+        const response = await fetch(editingPressEntryId ? `/api/admin/editorial/content/${editingPressEntryId}?contentType=press` : '/api/admin/editorial/content', {
+          method: editingPressEntryId ? 'PATCH' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contentType: 'press',
+            title: values.title.trim(),
+            slug: values.slug.trim(),
+            summary: values.summary.trim() || null,
+            locale: values.locale.trim(),
+            status: values.status,
+            seoTitle: values.seoTitle.trim() || null,
+            seoDescription: values.seoDescription.trim() || null,
+            publishedAt: values.publishedAt ? new Date(values.publishedAt).toISOString() : null,
+            payload: {
+              category: values.category.trim(),
+            },
+          }),
+        });
+
+        if (!response.ok) {
+          const payload = (await response.json().catch(() => null)) as { message?: string } | null;
+          setStatusMessage(payload?.message ?? 'Press 内容保存失败，请检查 slug 后重试。');
+          return;
+        }
+
+        const saved = (await response.json()) as AdminEditorialPressEntry;
+        setPressEntries((current) => sortPressEntries(
+          editingPressEntryId
+            ? current.map((item) => (item.id === editingPressEntryId ? saved : item))
+            : [saved, ...current],
+        ));
+        setStatusMessage(editingPressEntryId ? 'Press 内容已更新' : 'Press 内容已创建');
+        setPressEntryModalOpen(false);
+        setEditingPressEntryId(null);
+        pressEntryForm.resetFields();
+        await refreshCoverageMetrics();
+      });
+    });
+  }
+
   function persistConfig() {
     void runBusyTask('save-config', async () => {
       setStatusMessage(null);
@@ -657,6 +771,26 @@ export function AdminEditorialClient({
       setBlogEntries((current) => current.filter((item) => item.id !== id));
       setStatusMessage('Blog 内容已删除');
       await refreshBlogEntries();
+      await refreshCoverageMetrics();
+    });
+  }
+
+  function deletePressEntry(id: string) {
+    void runBusyTask('delete-press', async () => {
+      setStatusMessage(null);
+      const response = await fetch(`/api/admin/editorial/content/${id}?contentType=press`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as { message?: string } | null;
+        setStatusMessage(payload?.message ?? 'Press 内容删除失败。');
+        return;
+      }
+
+      setPressEntries((current) => current.filter((item) => item.id !== id));
+      setStatusMessage('Press 内容已删除');
+      await refreshPressEntries();
       await refreshCoverageMetrics();
     });
   }
@@ -714,6 +848,63 @@ export function AdminEditorialClient({
         setStatusMessage(`当前可导入 ${result.candidateCount} 篇种子文章，已有 ${result.skippedCount} 篇已在后台资产中。`);
       } else {
         setStatusMessage('现有 Blog 种子已全部进入后台内容资产，无新增导入候选。');
+      }
+    });
+  }
+
+  function importSeededPressEntries() {
+    void runBusyTask('import-press', async () => {
+      setStatusMessage(null);
+      const response = await fetch('/api/admin/editorial/content/import?contentType=press', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dryRun: false, contentType: 'press' }),
+      });
+
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as { message?: string } | null;
+        setStatusMessage(payload?.message ?? 'Press 种子导入失败。');
+        return;
+      }
+
+      const result = (await response.json()) as PressSeedImportResponse;
+      setLastPressImportResult(result);
+
+      if (result.importedCount > 0) {
+        await refreshPressEntries();
+      }
+
+      if (result.importedCount > 0) {
+        setStatusMessage(`已导入 ${result.importedCount} 条 Press 种子，跳过 ${result.skippedCount} 条已有后台记录。`);
+      } else {
+        setStatusMessage('现有 Press 种子已全部进入后台内容资产，无需重复导入。');
+      }
+
+      await refreshCoverageMetrics();
+    });
+  }
+
+  function previewSeededPressImport() {
+    void runBusyTask('preview-press-import', async () => {
+      setStatusMessage(null);
+      const response = await fetch('/api/admin/editorial/content/import?contentType=press', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dryRun: true, contentType: 'press' }),
+      });
+
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as { message?: string } | null;
+        setStatusMessage(payload?.message ?? 'Press 导入预估失败。');
+        return;
+      }
+
+      const result = (await response.json()) as PressSeedImportResponse;
+      setLastPressImportResult(result);
+      if (result.candidateCount > 0) {
+        setStatusMessage(`当前可导入 ${result.candidateCount} 条 Press 种子，已有 ${result.skippedCount} 条已在后台资产中。`);
+      } else {
+        setStatusMessage('现有 Press 种子已全部进入后台内容资产，无新增导入候选。');
       }
     });
   }
@@ -898,12 +1089,12 @@ export function AdminEditorialClient({
           },
           {
             key: 'content-assets',
-            label: `内容资产 (${blogEntries.length})`,
+            label: `内容资产 (${blogEntries.length + pressEntries.length})`,
             children: (
               <Space orientation="vertical" size="large" style={{ width: '100%' }}>
                 <Card>
                   <Typography.Paragraph type="secondary" style={{ marginBottom: 0 }}>
-                    这一步先把 Blog 文章接入后台可发布内容记录。这里创建并发布的文章会进入 /blog、文章详情、RSS、sitemap，且如果 slug 与代码种子相同，会以前台后台版本优先。
+                    当前已把 Blog 和 Press 接入后台可发布内容记录。已发布 Blog 会进入 /blog、文章详情、RSS、sitemap；已发布 Press 会进入 /company/press，并对同 slug 的代码种子版本优先覆盖。
                   </Typography.Paragraph>
                 </Card>
 
@@ -1013,6 +1204,116 @@ export function AdminEditorialClient({
                           <Space>
                             <Button icon={<EditOutlined />} onClick={() => openBlogEntryModal(row)} />
                             <Popconfirm title="确定删除该文章记录吗？" onConfirm={() => deleteBlogEntry(row.id)}>
+                              <Button danger icon={<DeleteOutlined />} />
+                            </Popconfirm>
+                          </Space>
+                        ),
+                      },
+                    ]}
+                  />
+                </Card>
+
+                <Card
+                  title="Press 内容记录"
+                  extra={
+                    <Space>
+                      <Button onClick={previewSeededPressImport} loading={busyAction === 'preview-press-import'}>
+                        预估导入
+                      </Button>
+                      <Button onClick={importSeededPressEntries} loading={busyAction === 'import-press'}>
+                        导入现有 Press 种子
+                      </Button>
+                      <Button type="primary" icon={<PlusOutlined />} onClick={() => openPressEntryModal()}>
+                        新建新闻稿
+                      </Button>
+                    </Space>
+                  }
+                >
+                  <Typography.Paragraph type="secondary">
+                    Press 资产用于后台管理新闻稿与公司更新。当前可先导入现有前台种子，再在后台维护标题、摘要、发布日期和分类。
+                  </Typography.Paragraph>
+
+                  {lastPressImportResult ? (
+                    <Card
+                      size="small"
+                      title={lastPressImportResult.dryRun ? '最近一次 Press 导入预估' : '最近一次 Press 导入结果'}
+                      style={{ marginBottom: 16 }}
+                    >
+                      <Space orientation="vertical" size="small" style={{ width: '100%' }}>
+                        <Typography.Text type="secondary">
+                          种子总数 {lastPressImportResult.totalSeededCount} / 可导入 {lastPressImportResult.candidateCount} / 跳过 {lastPressImportResult.skippedCount} / 已导入 {lastPressImportResult.importedCount}
+                        </Typography.Text>
+                        <Table
+                          rowKey={(row) => `${row.slug}-${row.status}`}
+                          pagination={{ pageSize: 8, hideOnSinglePage: true }}
+                          scroll={{ x: 960 }}
+                          dataSource={lastPressImportResult.items}
+                          columns={[
+                            { title: '标题', dataIndex: 'title' },
+                            { title: 'Slug', dataIndex: 'slug' },
+                            {
+                              title: '状态',
+                              dataIndex: 'status',
+                              render: (value: BlogSeedImportItem['status']) => <Tag color={importItemStatusColors[value]}>{importItemStatusLabels[value]}</Tag>,
+                            },
+                            {
+                              title: '发布时间',
+                              dataIndex: 'publishedAt',
+                              render: (value: string) => formatAdminDate(value),
+                            },
+                            { title: '说明', dataIndex: 'reason' },
+                          ]}
+                        />
+                      </Space>
+                    </Card>
+                  ) : null}
+
+                  <Table
+                    rowKey="id"
+                    pagination={false}
+                    scroll={{ x: 1120 }}
+                    dataSource={pressEntries}
+                    columns={[
+                      { title: '标题', dataIndex: 'title' },
+                      { title: 'Slug', dataIndex: 'slug' },
+                      {
+                        title: '分类',
+                        key: 'category',
+                        render: (_, row: AdminEditorialPressEntry) => row.payload.category,
+                      },
+                      {
+                        title: '状态',
+                        dataIndex: 'status',
+                        render: (value: EditorialEntryStatus) => <Tag color={entryStatusColors[value]}>{entryStatusLabels[value]}</Tag>,
+                      },
+                      {
+                        title: '发布时间',
+                        dataIndex: 'publishedAt',
+                        render: (value: string | null) => formatAdminDate(value),
+                      },
+                      {
+                        title: '最近更新',
+                        dataIndex: 'updatedAt',
+                        render: (value: string) => formatAdminDate(value),
+                      },
+                      {
+                        title: '前台',
+                        key: 'route',
+                        render: (_, row: AdminEditorialPressEntry) => row.status === 'published'
+                          ? (
+                            <Link href="/company/press" target="_blank">
+                              查看新闻稿页
+                            </Link>
+                          )
+                          : '未发布',
+                      },
+                      {
+                        title: '操作',
+                        key: 'actions',
+                        render: (_, row: AdminEditorialPressEntry) => (
+                          <Space>
+                            <Button icon={<EditOutlined />} onClick={() => openPressEntryModal(row)} />
+                            <Popconfirm title="确定删除该新闻稿记录吗？" onConfirm={() => deletePressEntry(row.id)}>
                               <Button danger icon={<DeleteOutlined />} />
                             </Popconfirm>
                           </Space>
@@ -1358,6 +1659,77 @@ export function AdminEditorialClient({
                 extra="保持 BlogSection[] 结构。可以先用默认模板，再按 paragraph / list / table / code / product block 填写。"
               >
                 <Input.TextArea rows={18} style={{ fontFamily: 'Consolas, Monaco, monospace' }} />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      </Modal>
+
+      <Modal
+        title={editingPressEntryId ? '编辑 Press 新闻稿' : '新建 Press 新闻稿'}
+        open={pressEntryModalOpen}
+        onCancel={() => {
+          setPressEntryModalOpen(false);
+          setEditingPressEntryId(null);
+          pressEntryForm.resetFields();
+        }}
+        onOk={savePressEntry}
+        width={760}
+        okText="保存"
+        confirmLoading={busyAction === 'save-press-entry'}
+      >
+        <Form<PressEntryFormValues>
+          form={pressEntryForm}
+          layout="vertical"
+          initialValues={{
+            locale: 'en-US',
+            status: 'draft',
+          }}
+        >
+          <Row gutter={[16, 0]}>
+            <Col span={12}>
+              <Form.Item label="标题" name="title" rules={[{ required: true, message: '请输入标题' }]}>
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Slug" name="slug" rules={[{ required: true, message: '请输入 slug' }]}>
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item label="摘要" name="summary" rules={[{ required: true, message: '请输入摘要' }]}>
+                <Input.TextArea rows={3} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="分类" name="category" rules={[{ required: true, message: '请输入分类' }]}>
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="语言 / 地区" name="locale" rules={[{ required: true, message: '请输入语言地区' }]}>
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="状态" name="status" rules={[{ required: true, message: '请选择状态' }]}>
+                <Select options={blogEntryStatusOptions} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="发布时间" name="publishedAt">
+                <Input type="datetime-local" />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item label="SEO 标题" name="seoTitle">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item label="SEO 描述" name="seoDescription">
+                <Input.TextArea rows={3} />
               </Form.Item>
             </Col>
           </Row>

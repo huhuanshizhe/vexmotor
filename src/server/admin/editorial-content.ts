@@ -7,10 +7,13 @@ import { z } from 'zod';
 
 import { type BlogPost, blogIndustries, blogPosts, blogTopics } from '@/lib/blog';
 import {
+  type AdminEditorialPressEntry,
   editorialEntryStatuses,
   type AdminEditorialBlogEntry,
   type EditorialBlogEntryPayload,
+  type EditorialPressEntryPayload,
 } from '@/lib/editorial-content';
+import { createPressReleaseSlug, pressReleases, type PressRelease } from '@/lib/press';
 import { db } from '@/server/db';
 import { editorialContentEntries } from '@/server/db/schema';
 
@@ -48,6 +51,10 @@ const blogSectionSchema = z.object({
   blocks: z.array(blogBlockSchema).min(1),
 });
 
+export const editorialPressPayloadSchema = z.object({
+  category: z.string().trim().min(1),
+});
+
 export const editorialBlogPayloadSchema = z.object({
   lead: z.string().min(1),
   topic: z.enum(blogTopics),
@@ -62,6 +69,7 @@ export const editorialBlogPayloadSchema = z.object({
 });
 
 export const adminEditorialBlogEntrySchema = z.object({
+  contentType: z.literal('blog').optional(),
   title: z.string().min(1),
   slug: z.string().min(1),
   summary: z.string().nullable().optional(),
@@ -73,10 +81,26 @@ export const adminEditorialBlogEntrySchema = z.object({
   payload: editorialBlogPayloadSchema,
 });
 
+export const adminEditorialPressEntrySchema = z.object({
+  contentType: z.literal('press').optional(),
+  title: z.string().min(1),
+  slug: z.string().min(1),
+  summary: z.string().nullable().optional(),
+  locale: z.string().min(2).default('en-US'),
+  status: z.enum(editorialEntryStatuses).default('draft'),
+  seoTitle: z.string().nullable().optional(),
+  seoDescription: z.string().nullable().optional(),
+  publishedAt: z.coerce.date().nullable().optional(),
+  payload: editorialPressPayloadSchema,
+});
+
 export const adminEditorialBlogEntryPatchSchema = adminEditorialBlogEntrySchema.partial();
+export const adminEditorialPressEntryPatchSchema = adminEditorialPressEntrySchema.partial();
 
 type BlogEntryCreateInput = z.infer<typeof adminEditorialBlogEntrySchema>;
 type BlogEntryPatchInput = z.infer<typeof adminEditorialBlogEntryPatchSchema>;
+type PressEntryCreateInput = z.infer<typeof adminEditorialPressEntrySchema>;
+type PressEntryPatchInput = z.infer<typeof adminEditorialPressEntryPatchSchema>;
 
 export type BlogSeedImportResult = {
   dryRun: boolean;
@@ -97,8 +121,18 @@ export type BlogSeedImportItem = {
   entryId: string | null;
 };
 
+export type PressSeedImportResult = {
+  dryRun: boolean;
+  totalSeededCount: number;
+  candidateCount: number;
+  skippedCount: number;
+  importedCount: number;
+  items: BlogSeedImportItem[];
+};
+
 declare global {
   var __vexmotorEditorialContentEntriesStore__: AdminEditorialBlogEntry[] | undefined;
+  var __vexmotorEditorialPressEntriesStore__: AdminEditorialPressEntry[] | undefined;
 }
 
 function cloneEntry(entry: AdminEditorialBlogEntry): AdminEditorialBlogEntry {
@@ -108,6 +142,11 @@ function cloneEntry(entry: AdminEditorialBlogEntry): AdminEditorialBlogEntry {
 function getMemoryEntriesStore() {
   globalThis.__vexmotorEditorialContentEntriesStore__ ??= [];
   return globalThis.__vexmotorEditorialContentEntriesStore__;
+}
+
+function getMemoryPressEntriesStore() {
+  globalThis.__vexmotorEditorialPressEntriesStore__ ??= [];
+  return globalThis.__vexmotorEditorialPressEntriesStore__;
 }
 
 function normalizeText(value: string | null | undefined) {
@@ -151,8 +190,14 @@ function parseSeedPublishedAt(value: string) {
   return Number.isNaN(date.getTime()) ? new Date() : date;
 }
 
+function parsePressSeedPublishedAt(value: string) {
+  const date = new Date(`${value} 01 00:00:00 UTC`);
+  return Number.isNaN(date.getTime()) ? new Date() : date;
+}
+
 function createBlogEntryInputFromSeed(post: BlogPost): BlogEntryCreateInput {
   return {
+    contentType: 'blog',
     title: post.title,
     slug: post.slug,
     summary: post.summary,
@@ -193,6 +238,23 @@ function createBlogEntryInputFromSeed(post: BlogPost): BlogEntryCreateInput {
           return { ...block };
         }),
       })),
+    },
+  };
+}
+
+function createPressEntryInputFromSeed(release: PressRelease): PressEntryCreateInput {
+  return {
+    contentType: 'press',
+    title: release.title,
+    slug: release.slug,
+    summary: release.summary,
+    locale: 'en-US',
+    status: 'published',
+    seoTitle: release.title,
+    seoDescription: release.summary,
+    publishedAt: parsePressSeedPublishedAt(release.dateLabel),
+    payload: {
+      category: release.category,
     },
   };
 }
@@ -244,6 +306,12 @@ function normalizeBlogPayload(payload: EditorialBlogEntryPayload): EditorialBlog
   };
 }
 
+function normalizePressPayload(payload: EditorialPressEntryPayload): EditorialPressEntryPayload {
+  return {
+    category: payload.category.trim(),
+  };
+}
+
 function sanitizeBlogEntryInput(input: BlogEntryCreateInput) {
   const normalizedTitle = input.title.trim();
   const normalizedSummary = normalizeText(input.summary);
@@ -261,6 +329,28 @@ function sanitizeBlogEntryInput(input: BlogEntryCreateInput) {
     status: input.status,
     seoTitle: normalizeSeoText(input.seoTitle ?? normalizedTitle, 70),
     seoDescription: normalizeSeoText(input.seoDescription ?? normalizedSummary ?? normalizedPayload.lead, 160),
+    publishedAt: normalizedPublishedAt,
+    payload: normalizedPayload,
+  };
+}
+
+function sanitizePressEntryInput(input: PressEntryCreateInput) {
+  const normalizedTitle = input.title.trim();
+  const normalizedSummary = normalizeText(input.summary);
+  const normalizedPayload = normalizePressPayload(input.payload);
+  const normalizedPublishedAt = input.status === 'published'
+    ? normalizeDateValue(input.publishedAt) ?? new Date().toISOString()
+    : normalizeDateValue(input.publishedAt);
+
+  return {
+    contentType: 'press' as const,
+    title: normalizedTitle,
+    slug: normalizeSlug(input.slug || createPressReleaseSlug(normalizedTitle)),
+    summary: normalizedSummary,
+    locale: normalizeLocale(input.locale),
+    status: input.status,
+    seoTitle: normalizeSeoText(input.seoTitle ?? normalizedTitle, 70),
+    seoDescription: normalizeSeoText(input.seoDescription ?? normalizedSummary ?? normalizedPayload.category, 160),
     publishedAt: normalizedPublishedAt,
     payload: normalizedPayload,
   };
@@ -304,11 +394,48 @@ function normalizeRecord(record: typeof editorialContentEntries.$inferSelect): A
   };
 }
 
+function normalizePressRecord(record: typeof editorialContentEntries.$inferSelect): AdminEditorialPressEntry | null {
+  if (record.contentType !== 'press') {
+    return null;
+  }
+
+  const payload = editorialPressPayloadSchema.safeParse(record.payload);
+  if (!payload.success) {
+    return null;
+  }
+
+  return {
+    id: record.id,
+    contentType: 'press',
+    title: record.title,
+    slug: record.slug,
+    summary: record.summary,
+    locale: record.locale,
+    status: record.status,
+    seoTitle: record.seoTitle,
+    seoDescription: record.seoDescription,
+    publishedAt: record.publishedAt?.toISOString() ?? null,
+    payload: normalizePressPayload(payload.data),
+    createdAt: record.createdAt.toISOString(),
+    updatedAt: record.updatedAt.toISOString(),
+  };
+}
+
 function filterEntries(entries: AdminEditorialBlogEntry[], search?: string) {
   const normalizedSearch = search?.trim().toLowerCase();
 
   const filtered = normalizedSearch
     ? entries.filter((entry) => [entry.title, entry.slug, entry.summary ?? '', entry.seoTitle ?? '', entry.seoDescription ?? '', entry.payload.lead].join(' ').toLowerCase().includes(normalizedSearch))
+    : entries;
+
+  return filtered.sort(sortEntries).map(cloneEntry);
+}
+
+function filterPressEntries(entries: AdminEditorialPressEntry[], search?: string) {
+  const normalizedSearch = search?.trim().toLowerCase();
+
+  const filtered = normalizedSearch
+    ? entries.filter((entry) => [entry.title, entry.slug, entry.summary ?? '', entry.seoTitle ?? '', entry.seoDescription ?? '', entry.payload.category].join(' ').toLowerCase().includes(normalizedSearch))
     : entries;
 
   return filtered.sort(sortEntries).map(cloneEntry);
@@ -561,6 +688,260 @@ export async function importSeededBlogPosts(options?: { dryRun?: boolean }): Pro
     totalSeededCount: blogPosts.length,
     candidateCount: candidates.length,
     skippedCount: blogPosts.length - candidates.length,
+    importedCount: createdEntries.length,
+    items: [...importedReportItems, ...skippedReportItems],
+  };
+}
+
+export async function getAdminEditorialPressEntries(search?: string) {
+  if (!db) {
+    return filterPressEntries(getMemoryPressEntriesStore(), search);
+  }
+
+  try {
+    const rows = await db
+      .select()
+      .from(editorialContentEntries)
+      .where(eq(editorialContentEntries.contentType, 'press'))
+      .orderBy(desc(editorialContentEntries.updatedAt), asc(editorialContentEntries.title));
+
+    return filterPressEntries(rows.map(normalizePressRecord).filter((entry): entry is AdminEditorialPressEntry => Boolean(entry)), search);
+  } catch {
+    return filterPressEntries(getMemoryPressEntriesStore(), search);
+  }
+}
+
+export async function createAdminEditorialPressEntry(input: PressEntryCreateInput) {
+  const next = sanitizePressEntryInput(input);
+  const timestamp = new Date().toISOString();
+
+  if (!db) {
+    const created: AdminEditorialPressEntry = {
+      id: randomUUID(),
+      ...next,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    };
+
+    getMemoryPressEntriesStore().unshift(created);
+    return cloneEntry(created);
+  }
+
+  try {
+    const [created] = await db
+      .insert(editorialContentEntries)
+      .values({
+        contentType: 'press',
+        title: next.title,
+        slug: next.slug,
+        summary: next.summary,
+        locale: next.locale,
+        status: next.status,
+        seoTitle: next.seoTitle,
+        seoDescription: next.seoDescription,
+        publishedAt: next.publishedAt ? new Date(next.publishedAt) : null,
+        payload: next.payload,
+      })
+      .returning();
+
+    return created ? normalizePressRecord(created) : null;
+  } catch {
+    const created: AdminEditorialPressEntry = {
+      id: randomUUID(),
+      ...next,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    };
+
+    getMemoryPressEntriesStore().unshift(created);
+    return cloneEntry(created);
+  }
+}
+
+export async function getAdminEditorialPressEntry(id: string) {
+  const entries = await getAdminEditorialPressEntries();
+  return entries.find((entry) => entry.id === id) ?? null;
+}
+
+export async function findAdminEditorialPressEntryBySlug(slug: string, locale?: string, excludeId?: string) {
+  const normalizedSlug = normalizeSlug(slug);
+  const normalizedLocale = normalizeLocale(locale);
+  const entries = await getAdminEditorialPressEntries();
+
+  return entries.find(
+    (entry) => entry.slug === normalizedSlug && entry.locale === normalizedLocale && entry.id !== excludeId,
+  ) ?? null;
+}
+
+export async function updateAdminEditorialPressEntry(id: string, input: PressEntryPatchInput) {
+  const current = await getAdminEditorialPressEntry(id);
+  if (!current) {
+    return null;
+  }
+
+  const next = sanitizePressEntryInput({
+    contentType: 'press',
+    title: input.title ?? current.title,
+    slug: input.slug ?? current.slug,
+    summary: input.summary === undefined ? current.summary : input.summary,
+    locale: input.locale ?? current.locale,
+    status: input.status ?? current.status,
+    seoTitle: input.seoTitle === undefined ? current.seoTitle : input.seoTitle,
+    seoDescription: input.seoDescription === undefined ? current.seoDescription : input.seoDescription,
+    publishedAt: input.publishedAt === undefined ? (current.publishedAt ? new Date(current.publishedAt) : null) : input.publishedAt,
+    payload: input.payload ?? current.payload,
+  });
+
+  if (!db) {
+    const store = getMemoryPressEntriesStore();
+    const index = store.findIndex((entry) => entry.id === id);
+    if (index < 0) {
+      return null;
+    }
+
+    const updated: AdminEditorialPressEntry = {
+      ...store[index],
+      ...next,
+      updatedAt: new Date().toISOString(),
+    };
+
+    store[index] = updated;
+    return cloneEntry(updated);
+  }
+
+  try {
+    const [updated] = await db
+      .update(editorialContentEntries)
+      .set({
+        title: next.title,
+        slug: next.slug,
+        summary: next.summary,
+        locale: next.locale,
+        status: next.status,
+        seoTitle: next.seoTitle,
+        seoDescription: next.seoDescription,
+        publishedAt: next.publishedAt ? new Date(next.publishedAt) : null,
+        payload: next.payload,
+        updatedAt: new Date(),
+      })
+      .where(eq(editorialContentEntries.id, id))
+      .returning();
+
+    return updated ? normalizePressRecord(updated) : null;
+  } catch {
+    const store = getMemoryPressEntriesStore();
+    const index = store.findIndex((entry) => entry.id === id);
+    if (index < 0) {
+      return null;
+    }
+
+    const updated: AdminEditorialPressEntry = {
+      ...store[index],
+      ...next,
+      updatedAt: new Date().toISOString(),
+    };
+
+    store[index] = updated;
+    return cloneEntry(updated);
+  }
+}
+
+export async function deleteAdminEditorialPressEntry(id: string) {
+  if (!db) {
+    const store = getMemoryPressEntriesStore();
+    const nextStore = store.filter((entry) => entry.id !== id);
+    if (nextStore.length === store.length) {
+      return false;
+    }
+
+    globalThis.__vexmotorEditorialPressEntriesStore__ = nextStore;
+    return true;
+  }
+
+  try {
+    const [deleted] = await db
+      .delete(editorialContentEntries)
+      .where(eq(editorialContentEntries.id, id))
+      .returning({ id: editorialContentEntries.id });
+
+    return Boolean(deleted);
+  } catch {
+    const store = getMemoryPressEntriesStore();
+    const nextStore = store.filter((entry) => entry.id !== id);
+    if (nextStore.length === store.length) {
+      return false;
+    }
+
+    globalThis.__vexmotorEditorialPressEntriesStore__ = nextStore;
+    return true;
+  }
+}
+
+export async function getPublishedAdminEditorialPressEntries(locale = 'en-US') {
+  const normalizedLocale = normalizeLocale(locale);
+  const entries = await getAdminEditorialPressEntries();
+
+  return entries.filter((entry) => entry.status === 'published' && entry.locale === normalizedLocale).sort(sortEntries);
+}
+
+export async function importSeededPressReleases(options?: { dryRun?: boolean }): Promise<PressSeedImportResult> {
+  const dryRun = options?.dryRun === true;
+  const existingEntries = await getAdminEditorialPressEntries();
+  const existingEntriesByKey = new Map(existingEntries.map((entry) => [`${entry.locale}::${entry.slug}`, entry]));
+  const reportItems: BlogSeedImportItem[] = pressReleases.map((release) => {
+    const key = `en-US::${normalizeSlug(release.slug)}`;
+    const existingEntry = existingEntriesByKey.get(key);
+    const publishedAt = parsePressSeedPublishedAt(release.dateLabel).toISOString();
+
+    return {
+      title: release.title,
+      slug: normalizeSlug(release.slug),
+      locale: 'en-US',
+      publishedAt,
+      status: existingEntry ? 'skipped' : 'candidate',
+      reason: existingEntry ? '该 slug 已存在后台 Press 资产，保持后台版本优先。' : '可导入为后台已发布新闻稿。',
+      entryId: existingEntry?.id ?? null,
+    };
+  });
+  const candidates = pressReleases.filter((release) => !existingEntriesByKey.has(`en-US::${normalizeSlug(release.slug)}`));
+
+  if (dryRun) {
+    return {
+      dryRun: true,
+      totalSeededCount: pressReleases.length,
+      candidateCount: candidates.length,
+      skippedCount: pressReleases.length - candidates.length,
+      importedCount: 0,
+      items: reportItems,
+    };
+  }
+
+  const createdEntries: AdminEditorialPressEntry[] = [];
+  const importedReportItems: BlogSeedImportItem[] = [];
+
+  for (const candidate of candidates) {
+    const created = await createAdminEditorialPressEntry(createPressEntryInputFromSeed(candidate));
+    if (created) {
+      createdEntries.push(created);
+      importedReportItems.push({
+        title: created.title,
+        slug: created.slug,
+        locale: created.locale,
+        publishedAt: created.publishedAt ?? created.updatedAt,
+        status: 'imported',
+        reason: '已导入后台 Press 资产并保持已发布状态。',
+        entryId: created.id,
+      });
+    }
+  }
+
+  const skippedReportItems = reportItems.filter((item) => item.status === 'skipped');
+
+  return {
+    dryRun: false,
+    totalSeededCount: pressReleases.length,
+    candidateCount: candidates.length,
+    skippedCount: pressReleases.length - candidates.length,
     importedCount: createdEntries.length,
     items: [...importedReportItems, ...skippedReportItems],
   };

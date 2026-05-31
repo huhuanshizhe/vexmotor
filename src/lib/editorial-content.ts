@@ -1,4 +1,5 @@
 import type { BlogIndustry, BlogPost, BlogSection, BlogTopic } from '@/lib/blog';
+import type { PressRelease } from '@/lib/press';
 import type { EditorialContentType } from '@/lib/editorial-automation';
 
 export const editorialEntryStatuses = ['draft', 'published', 'archived'] as const;
@@ -20,9 +21,13 @@ export type EditorialBlogEntryPayload = {
   sections: BlogSection[];
 };
 
+export type EditorialPressEntryPayload = {
+  category: string;
+};
+
 export type EditorialContentPayloadByType = {
   blog: EditorialBlogEntryPayload;
-  press: EditorialGenericPayload;
+  press: EditorialPressEntryPayload;
   faq: EditorialGenericPayload;
   'tech-faq': EditorialGenericPayload;
   glossary: EditorialGenericPayload;
@@ -48,6 +53,7 @@ export type AdminEditorialContentEntry<TType extends EditorialContentType = Edit
 };
 
 export type AdminEditorialBlogEntry = AdminEditorialContentEntry<'blog'>;
+export type AdminEditorialPressEntry = AdminEditorialContentEntry<'press'>;
 
 export const defaultEditorialBlogSectionsTemplate: BlogSection[] = [
   {
@@ -109,5 +115,20 @@ export function buildBlogPostFromEntry(entry: AdminEditorialBlogEntry): BlogPost
       ...section,
       blocks: section.blocks.map((block) => ({ ...block })),
     })),
+  };
+}
+
+export function buildPressReleaseFromEntry(entry: AdminEditorialPressEntry): PressRelease {
+  const publishedAt = entry.publishedAt ?? entry.updatedAt;
+  const publishedDate = new Date(publishedAt);
+  const safePublishedDate = Number.isNaN(publishedDate.getTime()) ? new Date(entry.updatedAt) : publishedDate;
+
+  return {
+    slug: entry.slug,
+    year: safePublishedDate.getUTCFullYear(),
+    dateLabel: new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(safePublishedDate),
+    title: entry.title,
+    summary: entry.summary ?? entry.seoDescription ?? '',
+    category: entry.payload.category,
   };
 }

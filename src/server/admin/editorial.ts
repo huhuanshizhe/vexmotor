@@ -189,8 +189,10 @@ async function buildCoverageMetrics(): Promise<EditorialCoverageMetric[]> {
       route: '/company/press',
       count: pressCatalog.releases.length,
       schemaType: 'Article',
-      sourceMode: 'code-seeded',
-      note: '公司资讯已上线，适合接 AI 新闻稿和产品更新自动化。',
+      sourceMode: pressCatalog.sourceMode,
+      note: pressCatalog.sourceMode === 'admin-managed'
+        ? 'Press 已支持后台发布记录，前台新闻稿页会优先读取后台已发布内容。'
+        : '公司资讯已上线，适合接 AI 新闻稿和产品更新自动化。',
     },
     {
       key: 'faq',

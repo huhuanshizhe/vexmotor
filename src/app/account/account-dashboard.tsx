@@ -30,7 +30,9 @@ type AccountDashboardProps = {
 
 export function AccountDashboard({ summary, profile, recentOrders, highlightPending = false }: AccountDashboardProps) {
   const pendingQuotes = accountQuoteRecords.filter((quote) => quote.status === 'Submitted' || quote.status === 'Quoted' || quote.status === 'Negotiating');
-  const recommendedProducts = accountRecommendedProductSlugs.map((slug) => getSeedProductBySlug(slug)).filter(Boolean);
+  const recommendedProducts = accountRecommendedProductSlugs
+    .map((slug) => getSeedProductBySlug(slug))
+    .filter((product): product is NonNullable<ReturnType<typeof getSeedProductBySlug>> => product !== null);
 
   return (
     <div className="account-panel-stack">
