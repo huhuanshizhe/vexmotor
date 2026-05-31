@@ -6,8 +6,8 @@ import { deleteAdminContentBlock, getAdminContentBlock, updateAdminContentBlock 
 const patchSchema = z.object({
   placement: z.string().min(1).optional(),
   blockKey: z.string().min(1).optional(),
-  title: z.string().nullable().optional(),
-  subtitle: z.string().nullable().optional(),
+  title: z.string().nullable().optional().transform((value) => value ?? null),
+  subtitle: z.string().nullable().optional().transform((value) => value ?? null),
   content: z.record(z.string(), z.unknown()).optional(),
   status: z.enum(['active', 'inactive']).optional(),
   sortOrder: z.coerce.number().int().min(0).optional(),

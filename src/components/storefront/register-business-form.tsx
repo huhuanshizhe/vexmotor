@@ -125,7 +125,11 @@ export function RegisterBusinessForm({ locale, initialEmail }: RegisterBusinessF
   useEffect(() => {
     const draft = readDraft();
     if (draft) {
-      setForm({ ...EMPTY_FORM, email: normalizedInitialEmail, ...draft });
+      setForm({
+        ...EMPTY_FORM,
+        ...draft,
+        email: normalizedInitialEmail || draft.email,
+      });
     }
   }, [normalizedInitialEmail]);
 

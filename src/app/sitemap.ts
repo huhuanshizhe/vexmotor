@@ -44,7 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...staticRoutes.map((path) => ({
       url: toAbsoluteUrl(path),
-      changeFrequency: path === '/' ? 'daily' : 'weekly',
+      changeFrequency: path === '/' ? ('daily' as const) : ('weekly' as const),
       priority: path === '/' ? 1 : 0.7,
     })),
     ...careerRoles.map((role) => ({

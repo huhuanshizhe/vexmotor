@@ -28,26 +28,36 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const body = await request.json();
   const contentType = resolveContentType(typeof body?.contentType === 'string' ? body.contentType : request.nextUrl.searchParams.get('contentType'));
-  const parsed = contentType === 'press'
-    ? adminEditorialPressEntrySchema.safeParse(body)
-    : adminEditorialBlogEntrySchema.safeParse(body);
+  if (contentType === 'press') {
+    const parsed = adminEditorialPressEntrySchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'Invalid payload', details: parsed.error.flatten() }, { status: 400 });
+    }
 
+    const existing = await findAdminEditorialPressEntryBySlug(parsed.data.slug, parsed.data.locale);
+    if (existing) {
+      return NextResponse.json({ code: 'SLUG_CONFLICT', message: 'Slug already exists for this locale' }, { status: 409 });
+    }
+
+    const created = await createAdminEditorialPressEntry(parsed.data);
+    if (!created) {
+      return NextResponse.json({ code: 'CREATE_FAILED', message: 'Unable to create editorial entry' }, { status: 500 });
+    }
+
+    return NextResponse.json(created, { status: 201 });
+  }
+
+  const parsed = adminEditorialBlogEntrySchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'Invalid payload', details: parsed.error.flatten() }, { status: 400 });
   }
 
-  const existing = contentType === 'press'
-    ? await findAdminEditorialPressEntryBySlug(parsed.data.slug, parsed.data.locale)
-    : await findAdminEditorialBlogEntryBySlug(parsed.data.slug, parsed.data.locale);
-
+  const existing = await findAdminEditorialBlogEntryBySlug(parsed.data.slug, parsed.data.locale);
   if (existing) {
     return NextResponse.json({ code: 'SLUG_CONFLICT', message: 'Slug already exists for this locale' }, { status: 409 });
   }
 
-  const created = contentType === 'press'
-    ? await createAdminEditorialPressEntry(parsed.data)
-    : await createAdminEditorialBlogEntry(parsed.data);
-
+  const created = await createAdminEditorialBlogEntry(parsed.data);
   if (!created) {
     return NextResponse.json({ code: 'CREATE_FAILED', message: 'Unable to create editorial entry' }, { status: 500 });
   }

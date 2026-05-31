@@ -17,7 +17,14 @@ import {
 
 import type { ShippingCountryRateConfig, ShippingMethodConfig, VolumePricingRuleConfig } from '@/lib/commerce-config';
 import type { EditorialContentPayload } from '@/lib/editorial-content';
-import type { EditorialAiTemplate, EditorialAutomationRule, EditorialBrief, EditorialGenerationRun, EditorialWorkflowSettings } from '@/lib/editorial-automation';
+import {
+  defaultEditorialAutomationConfig,
+  type EditorialAiTemplate,
+  type EditorialAutomationRule,
+  type EditorialBrief,
+  type EditorialGenerationRun,
+  type EditorialWorkflowSettings,
+} from '@/lib/editorial-automation';
 
 export const userRoleEnum = pgEnum('user_role', ['customer', 'staff', 'admin']);
 export const userStatusEnum = pgEnum('user_status', ['active', 'disabled', 'pending']);
@@ -193,7 +200,7 @@ export const commerceSettings = pgTable('commerce_settings', {
 
 export const editorialSettings = pgTable('editorial_settings', {
   id: varchar('id', { length: 32 }).primaryKey(),
-  workflowSettings: jsonb('workflow_settings').$type<EditorialWorkflowSettings>().notNull().default({}),
+  workflowSettings: jsonb('workflow_settings').$type<EditorialWorkflowSettings>().notNull().default(defaultEditorialAutomationConfig.workflowSettings),
   templates: jsonb('templates').$type<EditorialAiTemplate[]>().notNull().default([]),
   rules: jsonb('rules').$type<EditorialAutomationRule[]>().notNull().default([]),
   briefs: jsonb('briefs').$type<EditorialBrief[]>().notNull().default([]),

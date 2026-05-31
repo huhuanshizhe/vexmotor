@@ -6,9 +6,9 @@ import { deleteAdminBrand, getAdminBrand, updateAdminBrand } from '@/server/admi
 const patchSchema = z.object({
   name: z.string().min(1).optional(),
   slug: z.string().min(1).optional(),
-  description: z.string().nullable().optional(),
-  logoUrl: z.string().nullable().optional(),
-  websiteUrl: z.string().nullable().optional(),
+  description: z.string().nullable().optional().transform((value) => value ?? null),
+  logoUrl: z.string().nullable().optional().transform((value) => value ?? null),
+  websiteUrl: z.string().nullable().optional().transform((value) => value ?? null),
   status: z.enum(['active', 'inactive']).optional(),
 });
 

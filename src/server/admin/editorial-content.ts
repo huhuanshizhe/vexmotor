@@ -135,8 +135,14 @@ declare global {
   var __vexmotorEditorialPressEntriesStore__: AdminEditorialPressEntry[] | undefined;
 }
 
-function cloneEntry(entry: AdminEditorialBlogEntry): AdminEditorialBlogEntry {
-  return JSON.parse(JSON.stringify(entry)) as AdminEditorialBlogEntry;
+type EditorialSortableEntry = {
+  title: string;
+  publishedAt: string | null;
+  updatedAt: string;
+};
+
+function cloneEntry<T extends AdminEditorialBlogEntry | AdminEditorialPressEntry>(entry: T): T {
+  return JSON.parse(JSON.stringify(entry)) as T;
 }
 
 function getMemoryEntriesStore() {
@@ -356,7 +362,7 @@ function sanitizePressEntryInput(input: PressEntryCreateInput) {
   };
 }
 
-function sortEntries(left: AdminEditorialBlogEntry, right: AdminEditorialBlogEntry) {
+function sortEntries<T extends EditorialSortableEntry>(left: T, right: T) {
   const leftTimestamp = Date.parse(left.publishedAt ?? left.updatedAt);
   const rightTimestamp = Date.parse(right.publishedAt ?? right.updatedAt);
 
@@ -441,7 +447,7 @@ function filterPressEntries(entries: AdminEditorialPressEntry[], search?: string
   return filtered.sort(sortEntries).map(cloneEntry);
 }
 
-export async function getAdminEditorialBlogEntries(search?: string) {
+export async function getAdminEditorialBlogEntries(search?: string): Promise<AdminEditorialBlogEntry[]> {
   if (!db) {
     return filterEntries(getMemoryEntriesStore(), search);
   }
@@ -693,7 +699,7 @@ export async function importSeededBlogPosts(options?: { dryRun?: boolean }): Pro
   };
 }
 
-export async function getAdminEditorialPressEntries(search?: string) {
+export async function getAdminEditorialPressEntries(search?: string): Promise<AdminEditorialPressEntry[]> {
   if (!db) {
     return filterPressEntries(getMemoryPressEntriesStore(), search);
   }

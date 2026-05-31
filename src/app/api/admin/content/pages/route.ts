@@ -6,12 +6,12 @@ import { createAdminCmsPage, getAdminCmsPages } from '@/server/admin/content';
 const cmsPageSchema = z.object({
   title: z.string().min(1),
   slug: z.string().min(1),
-  summary: z.string().nullable().optional(),
-  content: z.string().nullable().optional(),
-  seoTitle: z.string().nullable().optional(),
-  seoDescription: z.string().nullable().optional(),
+  summary: z.string().nullable().optional().transform((value) => value ?? null),
+  content: z.string().nullable().optional().transform((value) => value ?? null),
+  seoTitle: z.string().nullable().optional().transform((value) => value ?? null),
+  seoDescription: z.string().nullable().optional().transform((value) => value ?? null),
   status: z.enum(['draft', 'published', 'archived']).default('draft'),
-  publishedAt: z.coerce.date().nullable().optional(),
+  publishedAt: z.coerce.date().nullable().optional().transform((value) => value ?? null),
 });
 
 export async function GET(request: NextRequest) {

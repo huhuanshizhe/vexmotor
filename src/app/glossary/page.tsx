@@ -25,7 +25,7 @@ function buildKnowledgeProductMap(products: StorefrontProductDetail[]) {
       sku: product.sku,
       purchaseMode: product.purchaseMode,
       priceLabel: product.purchaseMode === 'buy' ? product.price.formatted : 'Request Quote',
-      shortDescription: product.shortDescription,
+      shortDescription: product.shortDescription ?? undefined,
     };
     return accumulator;
   }, {});

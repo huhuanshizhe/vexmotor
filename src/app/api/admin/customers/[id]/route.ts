@@ -7,9 +7,9 @@ const patchSchema = z.object({
   email: z.string().email().optional(),
   firstName: z.string().min(1).optional(),
   lastName: z.string().min(1).optional(),
-  company: z.string().nullable().optional(),
-  phone: z.string().nullable().optional(),
-  avatarUrl: z.string().nullable().optional(),
+  company: z.string().nullable().optional().transform((value) => value ?? null),
+  phone: z.string().nullable().optional().transform((value) => value ?? null),
+  avatarUrl: z.string().nullable().optional().transform((value) => value ?? null),
   role: z.enum(['customer', 'staff', 'admin']).optional(),
   status: z.enum(['active', 'disabled', 'pending']).optional(),
 });

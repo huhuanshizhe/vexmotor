@@ -7,9 +7,9 @@ const customerSchema = z.object({
   email: z.string().email(),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
-  company: z.string().nullable().optional(),
-  phone: z.string().nullable().optional(),
-  avatarUrl: z.string().nullable().optional(),
+  company: z.string().nullable().optional().transform((value) => value ?? null),
+  phone: z.string().nullable().optional().transform((value) => value ?? null),
+  avatarUrl: z.string().nullable().optional().transform((value) => value ?? null),
   role: z.enum(['customer', 'staff', 'admin']).default('customer'),
   status: z.enum(['active', 'disabled', 'pending']).default('pending'),
 });

@@ -8,13 +8,13 @@ import { createOrderFromCart, getOrCreateCart } from '@/server/storefront/cart';
 const addressSnapshotSchema = z.object({
   firstName: z.string().trim().min(1).max(80),
   lastName: z.string().trim().min(1).max(80),
-  company: z.string().trim().max(120).nullable().optional(),
-  phone: z.string().trim().max(60).nullable().optional(),
+  company: z.string().trim().max(120).nullable().optional().transform((value) => value ?? null),
+  phone: z.string().trim().max(60).nullable().optional().transform((value) => value ?? null),
   countryCode: z.string().trim().min(2).max(2),
-  state: z.string().trim().max(80).nullable().optional(),
+  state: z.string().trim().max(80).nullable().optional().transform((value) => value ?? null),
   city: z.string().trim().min(1).max(120),
   addressLine1: z.string().trim().min(1).max(160),
-  addressLine2: z.string().trim().max(160).nullable().optional(),
+  addressLine2: z.string().trim().max(160).nullable().optional().transform((value) => value ?? null),
   postalCode: z.string().trim().min(1).max(32),
 });
 

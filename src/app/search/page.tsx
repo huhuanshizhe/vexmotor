@@ -108,8 +108,8 @@ export default async function SearchPage({
       title: caseStudy.title,
       description: caseStudy.summary,
       href: withLocalePath(`/applications/${caseStudy.slug}`, preferences.locale),
-      meta: `Application · ${caseStudy.industry}`,
-      haystack: `${caseStudy.title} ${caseStudy.summary} ${caseStudy.resultHeadline} ${caseStudy.industry} ${caseStudy.productLine} ${caseStudy.region}`.toLowerCase(),
+      meta: `Application · ${caseStudy.industryTitle}`,
+      haystack: `${caseStudy.title} ${caseStudy.summary} ${caseStudy.resultHeadline} ${caseStudy.industryTitle} ${caseStudy.productLine} ${caseStudy.region}`.toLowerCase(),
     })),
     ...knowledgeCatalog.glossaryTerms.map((term) => ({
       id: `glossary-${term.id}`,

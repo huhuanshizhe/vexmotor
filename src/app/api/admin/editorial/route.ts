@@ -38,7 +38,7 @@ const ruleSchema = z.object({
   autoQueueGeneration: z.boolean().default(false),
   requiresHumanReview: z.boolean().default(true),
   enabled: z.boolean().default(true),
-  nextRunAt: z.string().trim().nullable().optional(),
+  nextRunAt: z.string().trim().nullable().optional().transform((value) => value ?? null),
 });
 
 const briefSchema = z.object({
@@ -51,26 +51,26 @@ const briefSchema = z.object({
   funnelStage: z.string().trim().min(1),
   locale: z.string().trim().min(1),
   targetRoute: z.string().trim().min(1),
-  aiTemplateId: z.string().trim().nullable().optional(),
+  aiTemplateId: z.string().trim().nullable().optional().transform((value) => value ?? null),
   linkedProductSlugs: z.array(z.string().trim().min(1)).default([]),
   outline: z.array(z.string().trim().min(1)).default([]),
   status: z.enum(['idea', 'brief-ready', 'generating', 'review', 'scheduled', 'published']),
-  scheduledAt: z.string().trim().nullable().optional(),
+  scheduledAt: z.string().trim().nullable().optional().transform((value) => value ?? null),
   owner: z.string().trim().min(1),
-  notes: z.string().trim().nullable().optional(),
+  notes: z.string().trim().nullable().optional().transform((value) => value ?? null),
   updatedAt: z.string().trim().min(1),
 });
 
 const runSchema = z.object({
   id: z.string().default(''),
-  briefId: z.string().trim().nullable().optional(),
+  briefId: z.string().trim().nullable().optional().transform((value) => value ?? null),
   contentType: z.enum(['blog', 'press', 'faq', 'tech-faq', 'glossary', 'support']),
   modelName: z.string().trim().min(1),
   status: z.enum(['queued', 'running', 'completed', 'failed', 'reviewed']),
   outputTitle: z.string().trim().min(1),
-  outputSlug: z.string().trim().nullable().optional(),
-  qualityScore: z.coerce.number().min(0).max(100).nullable().optional(),
-  reviewNotes: z.string().trim().nullable().optional(),
+  outputSlug: z.string().trim().nullable().optional().transform((value) => value ?? null),
+  qualityScore: z.coerce.number().min(0).max(100).nullable().optional().transform((value) => value ?? null),
+  reviewNotes: z.string().trim().nullable().optional().transform((value) => value ?? null),
   createdAt: z.string().trim().min(1),
   updatedAt: z.string().trim().min(1),
 });

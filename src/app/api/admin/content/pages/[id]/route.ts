@@ -6,12 +6,12 @@ import { deleteAdminCmsPage, getAdminCmsPage, updateAdminCmsPage } from '@/serve
 const patchSchema = z.object({
   title: z.string().min(1).optional(),
   slug: z.string().min(1).optional(),
-  summary: z.string().nullable().optional(),
-  content: z.string().nullable().optional(),
-  seoTitle: z.string().nullable().optional(),
-  seoDescription: z.string().nullable().optional(),
+  summary: z.string().nullable().optional().transform((value) => value ?? null),
+  content: z.string().nullable().optional().transform((value) => value ?? null),
+  seoTitle: z.string().nullable().optional().transform((value) => value ?? null),
+  seoDescription: z.string().nullable().optional().transform((value) => value ?? null),
   status: z.enum(['draft', 'published', 'archived']).optional(),
-  publishedAt: z.coerce.date().nullable().optional(),
+  publishedAt: z.coerce.date().nullable().optional().transform((value) => value ?? null),
 });
 
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {

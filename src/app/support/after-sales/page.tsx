@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { StorefrontFrame } from '@/components/layout/storefront-frame';
 import { JsonLdScript } from '@/components/seo/json-ld';
-import { withLocalePath } from '@/lib/i18n';
+import { type Locale, withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 import { footerContactBlocks } from '@/server/storefront/site-shell';
@@ -48,7 +48,7 @@ export const metadata = buildMetadata({
   path: '/support/after-sales',
 });
 
-function supportLink(href: string, locale: string, className: string, label: string) {
+function supportLink(href: string, locale: Locale, className: string, label: string) {
   if (href.startsWith('mailto:') || href.startsWith('tel:')) {
     return (
       <a href={href} className={className}>
@@ -98,10 +98,10 @@ export default async function AfterSalesPage() {
 
   const spareParts = ['prod-5', 'prod-6', 'prod-7']
     .map((id) => getSeedProductById(id))
-    .filter((product) => product !== undefined);
+    .filter((product): product is NonNullable<ReturnType<typeof getSeedProductById>> => Boolean(product));
   const softwarePacks = ['prod-4', 'prod-5', 'prod-6']
     .map((id) => getSeedProductById(id))
-    .filter((product) => product !== undefined);
+    .filter((product): product is NonNullable<ReturnType<typeof getSeedProductById>> => Boolean(product));
 
   const breadcrumbJsonLd = buildBreadcrumbJsonLd(
     [

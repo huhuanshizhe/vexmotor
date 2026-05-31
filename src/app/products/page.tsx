@@ -80,7 +80,7 @@ export default async function ProductsPage({
   const filteredCategories = categories
     .filter((category) => {
       const matchesKeyword = !keyword || `${category.name} ${category.description ?? ''}`.toLowerCase().includes(keyword);
-      const matchesIndustry = !activeIndustries.size || industryDefinitions.some((industry) => activeIndustries.has(industry.id) && industry.categories.includes(category.slug));
+      const matchesIndustry = !activeIndustries.size || industryDefinitions.some((industry) => activeIndustries.has(industry.id) && industry.categories.some((slug) => slug === category.slug));
       return matchesKeyword && matchesIndustry;
     })
     .sort((left, right) => {
@@ -165,7 +165,7 @@ export default async function ProductsPage({
 
           <div className="catalog-landing-grid">
             {filteredCategories.map((category) => {
-              const highlightedIndustries = industryDefinitions.filter((industry) => industry.categories.includes(category.slug)).slice(0, 3);
+              const highlightedIndustries = industryDefinitions.filter((industry) => industry.categories.some((slug) => slug === category.slug)).slice(0, 3);
               const relatedCategories = categories.filter((item) => item.slug !== category.slug).slice(0, 3);
               const isHighlighted = !activeIndustries.size || highlightedIndustries.some((industry) => activeIndustries.has(industry.id));
 

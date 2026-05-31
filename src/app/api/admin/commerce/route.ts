@@ -8,7 +8,7 @@ const volumePricingRuleSchema = z.object({
   label: z.string().trim().min(1),
   minQuantity: z.coerce.number().int().min(1),
   priceFactor: z.coerce.number().gt(0).lte(1),
-  note: z.string().trim().nullable().optional(),
+  note: z.string().trim().nullable().optional().transform((value) => value ?? null),
   enabled: z.boolean().default(true),
 });
 
@@ -28,10 +28,10 @@ const shippingCountryRateSchema = z.object({
   countryName: z.string().trim().min(1),
   shippingMethodCode: z.string().trim().min(1),
   rate: z.coerce.number().min(0),
-  freeShippingThreshold: z.coerce.number().min(0).nullable().optional(),
+  freeShippingThreshold: z.coerce.number().min(0).nullable().optional().transform((value) => value ?? null),
   taxRate: z.coerce.number().min(0).max(1),
   enabled: z.boolean().default(true),
-  note: z.string().trim().nullable().optional(),
+  note: z.string().trim().nullable().optional().transform((value) => value ?? null),
 });
 
 const commerceConfigSchema = z.object({

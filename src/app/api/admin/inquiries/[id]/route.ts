@@ -6,7 +6,7 @@ import { getAdminInquiryDetail, updateAdminInquiry } from '@/server/admin/inquir
 
 const patchSchema = z.object({
   status: z.enum(['new', 'contacted', 'quoted', 'closed']).optional(),
-  internalNote: z.string().nullable().optional(),
+  internalNote: z.string().nullable().optional().transform((value) => value ?? null),
 });
 
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {

@@ -60,8 +60,10 @@ export function Button({
     );
   }
 
+  const { disabled, type, ...buttonProps } = rest as NativeButtonProps;
+
   return (
-    <button type="button" className={buttonClassName} aria-busy={loading} disabled={loading || rest.disabled} {...rest}>
+    <button type={type ?? 'button'} className={buttonClassName} aria-busy={loading} disabled={loading || disabled} {...buttonProps}>
       {content}
     </button>
   );

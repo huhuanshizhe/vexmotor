@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 
 import { AddToCartButton } from '@/components/storefront/add-to-cart-button';
 import { JsonLdScript } from '@/components/seo/json-ld';
-import { withLocalePath } from '@/lib/i18n';
+import { type Locale, withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 import { SITE_URL } from '@/lib/site-config';
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
   });
 }
 
-function BlogProductCard({ product, locale, eyebrow, body }: { product: StorefrontProductDetail; locale: string; eyebrow: string; body: string }) {
+function BlogProductCard({ product, locale, eyebrow, body }: { product: StorefrontProductDetail; locale: Locale; eyebrow: string; body: string }) {
   return (
     <article className="blog-product-card">
       <div className="blog-product-copy">

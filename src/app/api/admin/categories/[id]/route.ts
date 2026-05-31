@@ -4,13 +4,13 @@ import { z } from 'zod';
 import { deleteAdminCategory, getAdminCategory, updateAdminCategory } from '@/server/admin/categories';
 
 const patchSchema = z.object({
-  parentId: z.string().uuid().nullable().optional(),
+  parentId: z.string().uuid().nullable().optional().transform((value) => value ?? null),
   name: z.string().min(1).optional(),
   slug: z.string().min(1).optional(),
-  description: z.string().nullable().optional(),
-  imageUrl: z.string().nullable().optional(),
-  seoTitle: z.string().nullable().optional(),
-  seoDescription: z.string().nullable().optional(),
+  description: z.string().nullable().optional().transform((value) => value ?? null),
+  imageUrl: z.string().nullable().optional().transform((value) => value ?? null),
+  seoTitle: z.string().nullable().optional().transform((value) => value ?? null),
+  seoDescription: z.string().nullable().optional().transform((value) => value ?? null),
   status: z.enum(['active', 'inactive']).optional(),
   sortOrder: z.coerce.number().int().min(0).optional(),
 });

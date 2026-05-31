@@ -6,8 +6,8 @@ import { createAdminContentBlock, getAdminContentBlocks } from '@/server/admin/c
 const contentBlockSchema = z.object({
   placement: z.string().min(1),
   blockKey: z.string().min(1),
-  title: z.string().nullable().optional(),
-  subtitle: z.string().nullable().optional(),
+  title: z.string().nullable().optional().transform((value) => value ?? null),
+  subtitle: z.string().nullable().optional().transform((value) => value ?? null),
   content: z.record(z.string(), z.unknown()).default({}),
   status: z.enum(['active', 'inactive']).default('active'),
   sortOrder: z.coerce.number().int().min(0).default(0),

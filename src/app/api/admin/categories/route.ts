@@ -4,13 +4,13 @@ import { z } from 'zod';
 import { createAdminCategory, getAdminCategories } from '@/server/admin/categories';
 
 const categorySchema = z.object({
-  parentId: z.string().uuid().nullable().optional(),
+  parentId: z.string().uuid().nullable().optional().transform((value) => value ?? null),
   name: z.string().min(1),
   slug: z.string().min(1),
-  description: z.string().nullable().optional(),
-  imageUrl: z.string().nullable().optional(),
-  seoTitle: z.string().nullable().optional(),
-  seoDescription: z.string().nullable().optional(),
+  description: z.string().nullable().optional().transform((value) => value ?? null),
+  imageUrl: z.string().nullable().optional().transform((value) => value ?? null),
+  seoTitle: z.string().nullable().optional().transform((value) => value ?? null),
+  seoDescription: z.string().nullable().optional().transform((value) => value ?? null),
   status: z.enum(['active', 'inactive']).default('active'),
   sortOrder: z.coerce.number().int().min(0).default(0),
 });

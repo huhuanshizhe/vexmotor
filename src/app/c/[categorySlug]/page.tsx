@@ -78,6 +78,8 @@ export default async function CategoryPage({
     notFound();
   }
 
+  const category = selectedCategory;
+
   const currentPage = Math.max(1, Number.parseInt(query.page ?? '1', 10) || 1);
   const parsedPageSize = Number.parseInt(query.pageSize ?? '24', 10);
   const pageSize = [24, 48, 96].includes(parsedPageSize) ? parsedPageSize : 24;
@@ -140,11 +142,11 @@ export default async function CategoryPage({
     }
 
     const queryString = search.toString();
-    return queryString ? `${normalizeLocalePath(`/c/${selectedCategory.slug}`, locale)}?${queryString}` : normalizeLocalePath(`/c/${selectedCategory.slug}`, locale);
+    return queryString ? `${normalizeLocalePath(`/c/${category.slug}`, locale)}?${queryString}` : normalizeLocalePath(`/c/${category.slug}`, locale);
   }
 
   const listing = await getProductList({
-    categorySlug: selectedCategory.slug,
+    categorySlug: category.slug,
     keyword: query.keyword,
     purchaseMode: selectedMode,
     page: currentPage,
@@ -160,14 +162,14 @@ export default async function CategoryPage({
 
     return lowest === null ? item.price.amount : Math.min(lowest, item.price.amount);
   }, null);
-  const relatedCategories = categories.filter((item) => item.slug !== selectedCategory.slug).slice(0, 6);
+  const relatedCategories = categories.filter((item) => item.slug !== category.slug).slice(0, 6);
   const faqItems = [
     {
-      question: `How do I narrow ${selectedCategory.name} by stock and purchase mode?`,
+      question: `How do I narrow ${category.name} by stock and purchase mode?`,
       answer: 'Use the toolbar and left-side chips to combine in-stock-only with direct-buy or inquiry models, then share the resulting URL with your team.',
     },
     {
-      question: `Can I compare ${selectedCategory.name} SKUs before ordering?`,
+      question: `Can I compare ${category.name} SKUs before ordering?`,
       answer: 'Yes. Add up to four SKUs to the compare drawer and open the compare page when you are ready for side-by-side review.',
     },
   ];
@@ -175,7 +177,7 @@ export default async function CategoryPage({
     [
       { name: 'Home', path: '/' },
       { name: 'Products', path: '/products' },
-      { name: selectedCategory.name, path: `/c/${selectedCategory.slug}` },
+      { name: category.name, path: `/c/${category.slug}` },
     ],
     locale,
   );

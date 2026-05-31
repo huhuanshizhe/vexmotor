@@ -13,7 +13,7 @@ type SeoInput = {
   description?: string;
   path?: string;
   locale?: Locale;
-  type?: 'website' | 'article' | 'product';
+  type?: 'website' | 'article';
   images?: SeoImage[];
   noIndex?: boolean;
 };

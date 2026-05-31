@@ -6,9 +6,9 @@ import { createAdminBrand, getAdminBrands } from '@/server/admin/brands';
 const brandSchema = z.object({
   name: z.string().min(1),
   slug: z.string().min(1),
-  description: z.string().nullable().optional(),
-  logoUrl: z.string().nullable().optional(),
-  websiteUrl: z.string().nullable().optional(),
+  description: z.string().nullable().optional().transform((value) => value ?? null),
+  logoUrl: z.string().nullable().optional().transform((value) => value ?? null),
+  websiteUrl: z.string().nullable().optional().transform((value) => value ?? null),
   status: z.enum(['active', 'inactive']).default('active'),
 });
 

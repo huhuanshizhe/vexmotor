@@ -6,15 +6,15 @@ import { createAdminProduct, getAdminProducts } from '@/server/admin/products';
 const imageSchema = z.object({
   url: z.string().min(1),
   alt: z.string().min(1),
-  width: z.coerce.number().int().positive().optional().nullable(),
-  height: z.coerce.number().int().positive().optional().nullable(),
+  width: z.coerce.number().int().positive().optional().nullable().transform((value) => value ?? null),
+  height: z.coerce.number().int().positive().optional().nullable().transform((value) => value ?? null),
   isPrimary: z.boolean().default(false),
 });
 
 const featureSchema = z.object({
   featureKey: z.string().min(1),
   featureValue: z.string().min(1),
-  unit: z.string().optional().nullable(),
+  unit: z.string().optional().nullable().transform((value) => value ?? null),
 });
 
 const attachmentSchema = z.object({
@@ -27,19 +27,19 @@ const productSchema = z.object({
   name: z.string().min(1),
   slug: z.string().min(1),
   sku: z.string().min(1),
-  shortDescription: z.string().optional().nullable(),
-  description: z.string().optional().nullable(),
+  shortDescription: z.string().optional().nullable().transform((value) => value ?? null),
+  description: z.string().optional().nullable().transform((value) => value ?? null),
   purchaseMode: z.enum(['buy', 'inquiry']),
   status: z.enum(['draft', 'active', 'inactive', 'archived']).default('draft'),
   price: z.coerce.number().min(0),
-  compareAtPrice: z.coerce.number().min(0).optional().nullable(),
+  compareAtPrice: z.coerce.number().min(0).optional().nullable().transform((value) => value ?? null),
   currencyCode: z.string().length(3).default('USD'),
   stockQuantity: z.coerce.number().int().min(0).default(0),
   featured: z.boolean().default(false),
-  brandId: z.string().uuid().optional().nullable(),
-  defaultCategoryId: z.string().uuid().optional().nullable(),
-  seoTitle: z.string().optional().nullable(),
-  seoDescription: z.string().optional().nullable(),
+  brandId: z.string().uuid().optional().nullable().transform((value) => value ?? null),
+  defaultCategoryId: z.string().uuid().optional().nullable().transform((value) => value ?? null),
+  seoTitle: z.string().optional().nullable().transform((value) => value ?? null),
+  seoDescription: z.string().optional().nullable().transform((value) => value ?? null),
   images: z.array(imageSchema).default([]),
   features: z.array(featureSchema).default([]),
   attachments: z.array(attachmentSchema).default([]),

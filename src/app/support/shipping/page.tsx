@@ -7,13 +7,8 @@ import { getShippingCountryOptions } from '@/lib/commerce-config';
 import { withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
+import { getEstimatedTaxRate } from '@/lib/shipping';
 import { getCommerceConfig } from '@/server/commerce/config';
-
-const overviewStats = [
-  { label: 'Processing window', value: '1-2 business days', note: 'Weekend and holiday orders move to the next working day before carrier handoff.' },
-  { label: 'Free-shipping threshold', value: `$${SHIPPING_FREE_THRESHOLD}+`, note: 'The primary lane becomes free on eligible stocked-order subtotals.' },
-  { label: 'Tracking handoff', value: 'Email + 17TRACK', note: 'Tracking numbers are issued after dispatch and can be reviewed on the carrier side.' },
-] as const;
 
 const shippingLanes = [
   {
