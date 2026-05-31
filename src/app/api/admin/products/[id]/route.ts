@@ -2,9 +2,7 @@ import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { getAdminProductDetail } from '@/server/admin/products';
-import { db } from '@/server/db';
-import { attachments, productFeatures, productImages, products } from '@/server/db/schema';
+import { deleteAdminProduct, getAdminProductDetail, updateAdminProduct } from '@/server/admin/products';
 
 const imageSchema = z.object({
   url: z.string().min(1),
@@ -59,10 +57,6 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
 }
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  if (!db) {
-    return NextResponse.json({ code: 'DB_UNAVAILABLE', message: 'Database is not configured' }, { status: 503 });
-  }
-
   const { id } = await params;
   const body = await request.json();
   const parsed = patchSchema.safeParse(body);
@@ -76,70 +70,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     return NextResponse.json({ code: 'NOT_FOUND', message: 'Product not found' }, { status: 404 });
   }
 
-  const updated = await db.transaction(async (tx) => {
-    const updates = {
-      ...parsed.data,
-      price: parsed.data.price == null ? undefined : parsed.data.price.toFixed(2),
-      compareAtPrice: parsed.data.compareAtPrice == null ? parsed.data.compareAtPrice : parsed.data.compareAtPrice.toFixed(2),
-      currencyCode: parsed.data.currencyCode?.toUpperCase(),
-      updatedAt: new Date(),
-    };
-
-    const [product] = await tx.update(products).set(updates).where(eq(products.id, id)).returning();
-
-    if (!product) {
-      return null;
-    }
-
-    if (parsed.data.images) {
-      await tx.delete(productImages).where(eq(productImages.productId, id));
-      if (parsed.data.images.length) {
-        await tx.insert(productImages).values(
-          parsed.data.images.map((item, index) => ({
-            productId: id,
-            url: item.url,
-            alt: item.alt,
-            width: item.width ?? null,
-            height: item.height ?? null,
-            isPrimary: item.isPrimary,
-            sortOrder: index + 1,
-          })),
-        );
-      }
-    }
-
-    if (parsed.data.features) {
-      await tx.delete(productFeatures).where(eq(productFeatures.productId, id));
-      if (parsed.data.features.length) {
-        await tx.insert(productFeatures).values(
-          parsed.data.features.map((item, index) => ({
-            productId: id,
-            featureKey: item.featureKey,
-            featureValue: item.featureValue,
-            unit: item.unit ?? null,
-            sortOrder: index + 1,
-          })),
-        );
-      }
-    }
-
-    if (parsed.data.attachments) {
-      await tx.delete(attachments).where(eq(attachments.productId, id));
-      if (parsed.data.attachments.length) {
-        await tx.insert(attachments).values(
-          parsed.data.attachments.map((item, index) => ({
-            productId: id,
-            name: item.name,
-            url: item.url,
-            mimeType: item.mimeType,
-            sortOrder: index + 1,
-          })),
-        );
-      }
-    }
-
-    return product;
-  });
+  const updated = await updateAdminProduct(id, parsed.data);
 
   if (!updated) {
     return NextResponse.json({ code: 'NOT_FOUND', message: 'Product not found' }, { status: 404 });
@@ -149,12 +80,8 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 }
 
 export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
-  if (!db) {
-    return NextResponse.json({ code: 'DB_UNAVAILABLE', message: 'Database is not configured' }, { status: 503 });
-  }
-
   const { id } = await params;
-  const [deleted] = await db.delete(products).where(eq(products.id, id)).returning({ id: products.id });
+  const deleted = await deleteAdminProduct(id);
 
   if (!deleted) {
     return NextResponse.json({ code: 'NOT_FOUND', message: 'Product not found' }, { status: 404 });

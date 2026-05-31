@@ -4,9 +4,13 @@ import {
   AppstoreOutlined,
   BarsOutlined,
   DashboardOutlined,
+  FileTextOutlined,
+  GlobalOutlined,
   InboxOutlined,
   OrderedListOutlined,
   ShoppingOutlined,
+  TagsOutlined,
+  TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { Avatar, Button, Layout, Menu, Space, Typography } from 'antd';
@@ -17,28 +21,34 @@ import type { PropsWithChildren } from 'react';
 const { Header, Sider, Content } = Layout;
 
 const items = [
-  { key: '/admin', icon: <DashboardOutlined />, label: <Link href="/admin">Overview</Link> },
-  { key: '/admin/products', icon: <ShoppingOutlined />, label: <Link href="/admin/products">Products</Link> },
-  { key: '/admin/categories', icon: <AppstoreOutlined />, label: <Link href="/admin/categories">Categories</Link> },
-  { key: '/admin/orders', icon: <OrderedListOutlined />, label: <Link href="/admin/orders">Orders</Link> },
-  { key: '/admin/inquiries', icon: <InboxOutlined />, label: <Link href="/admin/inquiries">Inquiries</Link> },
-  { key: '/admin/content', icon: <BarsOutlined />, label: <Link href="/admin/content">Content Blocks</Link> },
-  { key: '/admin/customers', icon: <UserOutlined />, label: <Link href="/admin/customers">Customers</Link> },
+  { key: '/admin', icon: <DashboardOutlined />, label: <Link href="/admin">仪表盘</Link> },
+  { key: '/admin/products', icon: <ShoppingOutlined />, label: <Link href="/admin/products">产品管理</Link> },
+  { key: '/admin/commerce', icon: <GlobalOutlined />, label: <Link href="/admin/commerce">定价与物流</Link> },
+  { key: '/admin/categories', icon: <AppstoreOutlined />, label: <Link href="/admin/categories">分类管理</Link> },
+  { key: '/admin/brands', icon: <TagsOutlined />, label: <Link href="/admin/brands">品牌管理</Link> },
+  { key: '/admin/orders', icon: <OrderedListOutlined />, label: <Link href="/admin/orders">订单管理</Link> },
+  { key: '/admin/inquiries', icon: <InboxOutlined />, label: <Link href="/admin/inquiries">询盘管理</Link> },
+  { key: '/admin/customers', icon: <TeamOutlined />, label: <Link href="/admin/customers">客户管理</Link> },
+  { key: '/admin/content', icon: <BarsOutlined />, label: <Link href="/admin/content">内容管理</Link> },
+  { key: '/admin/editorial', icon: <FileTextOutlined />, label: <Link href="/admin/editorial">内容策略</Link> },
 ];
 
 export function AdminShell({ children }: PropsWithChildren) {
   const pathname = usePathname();
-  const selected = items.find((item) => pathname.startsWith(item.key))?.key ?? '/admin';
+  const selected =
+    [...items]
+      .sort((a, b) => b.key.length - a.key.length)
+      .find((item) => pathname === item.key || pathname.startsWith(`${item.key}/`))?.key ?? '/admin';
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider width={260} theme="light" style={{ borderRight: '1px solid #e5e7eb' }}>
+      <Sider width={240} theme="light" style={{ borderRight: '1px solid #e5e7eb' }}>
         <div style={{ padding: '20px 20px 8px' }}>
           <Typography.Title level={4} style={{ margin: 0 }}>
-            Lianchuan Admin
+            VexMotor 管理后台
           </Typography.Title>
           <Typography.Paragraph type="secondary" style={{ marginBottom: 0 }}>
-            Industrial commerce operations hub
+            工业运动控制电商运营中心
           </Typography.Paragraph>
         </div>
         <Menu mode="inline" selectedKeys={[selected]} items={items} style={{ borderInlineEnd: 0 }} />
@@ -55,15 +65,15 @@ export function AdminShell({ children }: PropsWithChildren) {
           }}
         >
           <div>
-            <Typography.Text strong>Backend management</Typography.Text>
+            <Typography.Text strong>后台管理系统</Typography.Text>
           </div>
           <Space size="middle">
             <Button href="/" type="default">
-              View Storefront
+              查看商城前台
             </Button>
             <Space>
               <Avatar icon={<UserOutlined />} />
-              <Typography.Text>Admin</Typography.Text>
+              <Typography.Text>管理员</Typography.Text>
             </Space>
           </Space>
         </Header>

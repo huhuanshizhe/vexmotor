@@ -1,14 +1,9 @@
-'use client';
+import { getAdminCategories } from '@/server/admin/categories';
 
-import { Card, Typography } from 'antd';
+import { AdminCategoriesClient } from './categories-client';
 
-export default function AdminCategoriesPage() {
-  return (
-    <Card>
-      <Typography.Title level={2}>Categories</Typography.Title>
-      <Typography.Paragraph type="secondary">
-        Category tree management will be implemented next against the documented categories and product_categories schema.
-      </Typography.Paragraph>
-    </Card>
-  );
+export default async function AdminCategoriesPage() {
+  const rows = await getAdminCategories();
+
+  return <AdminCategoriesClient initialRows={rows} />;
 }

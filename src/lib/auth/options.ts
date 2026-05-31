@@ -3,21 +3,35 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { z } from 'zod';
 
 import { compareMd5 } from '@/lib/auth/password';
-import { sql } from '@/lib/db';
+import { getAuthUserByEmail } from '@/server/auth/customer-auth';
 
 const credentialsSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
 });
 
-type UserRow = {
-  id: string;
-  email: string;
-  password_hash: string;
-  first_name: string | null;
-  last_name: string | null;
-  role: string;
+const LOCAL_DEV_ADMIN = {
+  id: '00000000-0000-4000-8000-000000000001',
+  email: 'admin@lianchuan.local',
+  password: 'Admin123456',
+  name: 'Admin User',
 };
+
+function getLocalDevAdmin(credentials: z.infer<typeof credentialsSchema>) {
+  if (process.env.NODE_ENV === 'production') {
+    return null;
+  }
+
+  if (credentials.email !== LOCAL_DEV_ADMIN.email || credentials.password !== LOCAL_DEV_ADMIN.password) {
+    return null;
+  }
+
+  return {
+    id: LOCAL_DEV_ADMIN.id,
+    email: LOCAL_DEV_ADMIN.email,
+    name: LOCAL_DEV_ADMIN.name,
+  };
+}
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -36,26 +50,35 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(rawCredentials) {
         const parsed = credentialsSchema.safeParse(rawCredentials);
-        if (!parsed.success || !sql) {
+        if (!parsed.success) {
           return null;
         }
 
-        const [user] = await sql<UserRow[]>`
-          select id, email, password_hash, first_name, last_name, role
-          from users
-          where email = ${parsed.data.email}
-          limit 1
-        `;
-
-        if (!user || !compareMd5(parsed.data.password, user.password_hash)) {
-          return null;
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: [user.first_name, user.last_name].filter(Boolean).join(' ') || user.email,
+        const normalizedCredentials = {
+          email: parsed.data.email.trim().toLowerCase(),
+          password: parsed.data.password,
         };
+
+        const localAdmin = getLocalDevAdmin(normalizedCredentials);
+        if (localAdmin) {
+          return localAdmin;
+        }
+
+        try {
+          const user = await getAuthUserByEmail(normalizedCredentials.email);
+
+          if (!user || user.status === 'disabled' || !compareMd5(normalizedCredentials.password, user.passwordHash)) {
+            return null;
+          }
+
+          return {
+            id: user.id,
+            email: user.email,
+            name: [user.firstName, user.lastName].filter(Boolean).join(' ') || user.email,
+          };
+        } catch {
+          return localAdmin;
+        }
       },
     }),
   ],

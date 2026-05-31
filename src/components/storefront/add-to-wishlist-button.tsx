@@ -1,7 +1,9 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
+
+import { parseLocaleFromPathname, withLocalePath } from '@/lib/i18n';
 
 type AddToWishlistButtonProps = {
   productId: string;
@@ -9,12 +11,14 @@ type AddToWishlistButtonProps = {
 
 export function AddToWishlistButton({ productId }: AddToWishlistButtonProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   function handleWishlist() {
     startTransition(async () => {
       setMessage(null);
+      const locale = parseLocaleFromPathname(pathname).locale;
       const response = await fetch('/api/front/wishlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -22,7 +26,8 @@ export function AddToWishlistButton({ productId }: AddToWishlistButtonProps) {
       });
 
       if (response.status === 401) {
-        router.push(`/login?callbackUrl=/account/wishlist`);
+        const callbackUrl = withLocalePath('/account/wishlist', locale);
+        router.push(`${withLocalePath('/login', locale)}?callbackUrl=${encodeURIComponent(callbackUrl)}`);
         return;
       }
 
@@ -31,7 +36,7 @@ export function AddToWishlistButton({ productId }: AddToWishlistButtonProps) {
         return;
       }
 
-      router.push('/account/wishlist');
+      router.push(withLocalePath('/account/wishlist', locale));
       router.refresh();
     });
   }

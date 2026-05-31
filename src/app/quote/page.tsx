@@ -1,0 +1,55 @@
+import { cookies } from 'next/headers';
+
+import { StorefrontFrame } from '@/components/layout/storefront-frame';
+import { buildMetadata } from '@/lib/seo';
+import { getServerSitePreferences } from '@/lib/i18n-server';
+import { getCurrentUserId } from '@/server/auth/session';
+import { getProductList } from '@/server/storefront';
+import { getActiveCartDetail } from '@/server/storefront/cart';
+import { getSeedProductById } from '@/server/storefront/seed';
+
+import { QuoteClient } from './quote-client';
+
+export const metadata = buildMetadata({
+  title: 'Request for Quote — STEPMOTECH',
+  description: 'Collect multi-line RFQ demand with project context, attachments, and buyer details in a dedicated quote workflow.',
+  path: '/quote',
+  noIndex: true,
+});
+
+export default async function QuotePage() {
+  const cookieStore = await cookies();
+  const userId = await getCurrentUserId();
+  const { locale } = await getServerSitePreferences();
+  const anonymousToken = cookieStore.get('cart_token')?.value ?? null;
+
+  const [cart, catalog, intakeProduct] = await Promise.all([
+    getActiveCartDetail({ userId, anonymousToken }),
+    getProductList({ pageSize: 96, sort: 'featured' }),
+    Promise.resolve(getSeedProductById('prod-3')),
+  ]);
+
+  if (!intakeProduct) {
+    return null;
+  }
+
+  return (
+    <StorefrontFrame
+      eyebrow="RFQ"
+      title="Request for Quote"
+      description="Capture project context, line items, compliance notes, and buyer details in one RFQ page instead of routing complex demand through general contact."
+    >
+      <section className="section">
+        <div className="section-inner">
+          <QuoteClient
+            locale={locale}
+            intakeProductId={intakeProduct.id}
+            intakeProductName={intakeProduct.name}
+            cart={cart}
+            catalogProducts={catalog.items}
+          />
+        </div>
+      </section>
+    </StorefrontFrame>
+  );
+}

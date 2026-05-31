@@ -4,6 +4,15 @@ import { DeleteOutlined, EditOutlined, MinusCircleOutlined, PlusOutlined } from 
 import { Button, Card, Divider, Form, Input, InputNumber, Modal, Popconfirm, Select, Space, Switch, Table, Tag, Typography } from 'antd';
 import { useState, useTransition } from 'react';
 
+import {
+  formatAdminMoney,
+  productStatusColors,
+  productStatusLabels,
+  productStatusOptions,
+  purchaseModeColors,
+  purchaseModeLabels,
+  purchaseModeOptions,
+} from '@/lib/admin-display';
 import type { AdminProductRow } from '@/server/admin/products';
 
 const initialValues = {
@@ -42,11 +51,17 @@ export function AdminProductsClient({
   const [rows, setRows] = useState<AdminProductRow[]>(initialRows);
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
   const [isPending, startTransition] = useTransition();
   const [form] = Form.useForm<typeof initialValues>();
 
-  async function reloadRows() {
-    const response = await fetch('/api/admin/products', { cache: 'no-store' });
+  async function reloadRows(nextSearch = search) {
+    const params = new URLSearchParams();
+    if (nextSearch.trim()) {
+      params.set('search', nextSearch.trim());
+    }
+
+    const response = await fetch(`/api/admin/products${params.size ? `?${params.toString()}` : ''}`, { cache: 'no-store' });
     const payload = (await response.json()) as { items: AdminProductRow[] };
     setRows(payload.items ?? []);
   }
@@ -126,48 +141,73 @@ export function AdminProductsClient({
   }
 
   return (
-    <Space direction="vertical" size="large" style={{ width: '100%' }}>
+    <Space orientation="vertical" size="large" style={{ width: '100%' }}>
       <Space style={{ width: '100%', justifyContent: 'space-between' }}>
         <div>
-          <Typography.Title level={2}>Products</Typography.Title>
+          <Typography.Title level={2}>产品管理</Typography.Title>
           <Typography.Paragraph type="secondary">
-            The admin product list now reads from the real database API. Use the seed script first to populate catalog records.
+            维护产品基础信息、购买模式、库存、图册、规格特性与资料附件。数据库不可用时会自动回退到内存数据，便于本地联调。
           </Typography.Paragraph>
         </div>
         <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
-          Create Product
+          新建产品
         </Button>
       </Space>
       <Card>
+        <Space style={{ width: '100%', justifyContent: 'space-between', marginBottom: 16 }} wrap>
+          <Input.Search
+            placeholder="搜索产品名称、SKU、Slug"
+            allowClear
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            onSearch={(value) => {
+              setSearch(value);
+              startTransition(async () => {
+                await reloadRows(value);
+              });
+            }}
+            style={{ maxWidth: 360 }}
+          />
+          <Typography.Text type="secondary">共 {rows.length} 个产品</Typography.Text>
+        </Space>
         <Table
           rowKey="id"
           loading={isPending}
           dataSource={rows}
           pagination={false}
+          scroll={{ x: 1100 }}
           columns={[
-            { title: 'Name', dataIndex: 'name' },
+            { title: '产品名称', dataIndex: 'name' },
             { title: 'SKU', dataIndex: 'sku' },
-            { title: 'Brand', dataIndex: 'brandName', render: (value: string | null) => value ?? 'Unassigned' },
-            { title: 'Category', dataIndex: 'categoryName', render: (value: string | null) => value ?? 'Unassigned' },
+            { title: '品牌', dataIndex: 'brandName', render: (value: string | null) => value ?? '未分配' },
+            { title: '默认分类', dataIndex: 'categoryName', render: (value: string | null) => value ?? '未分配' },
             {
-              title: 'Mode',
+              title: '购买模式',
               dataIndex: 'purchaseMode',
-              render: (value: string) => <Tag color={value === 'buy' ? 'green' : 'orange'}>{value}</Tag>,
+              render: (value: keyof typeof purchaseModeLabels) => (
+                <Tag color={purchaseModeColors[value]}>{purchaseModeLabels[value]}</Tag>
+              ),
             },
-            { title: 'Stock', dataIndex: 'stockQuantity' },
-            { title: 'Price', dataIndex: 'price' },
+            { title: '库存', dataIndex: 'stockQuantity' },
             {
-              title: 'Status',
+              title: '单价',
+              dataIndex: 'price',
+              render: (value: string, row: AdminProductRow) => formatAdminMoney(value, row.currencyCode),
+            },
+            {
+              title: '状态',
               dataIndex: 'status',
-              render: (value: string) => <Tag>{value}</Tag>,
+              render: (value: keyof typeof productStatusLabels) => (
+                <Tag color={productStatusColors[value]}>{productStatusLabels[value]}</Tag>
+              ),
             },
             {
-              title: 'Actions',
+              title: '操作',
               key: 'actions',
               render: (_, row: AdminProductRow) => (
                 <Space>
                   <Button icon={<EditOutlined />} onClick={() => openEdit(row)} />
-                  <Popconfirm title="Delete this product?" onConfirm={() => handleDelete(row.id)}>
+                  <Popconfirm title="确定删除该产品吗？" onConfirm={() => handleDelete(row.id)}>
                     <Button danger icon={<DeleteOutlined />} />
                   </Popconfirm>
                 </Space>
@@ -184,155 +224,148 @@ export function AdminProductsClient({
         }}
         onOk={() => form.submit()}
         confirmLoading={isPending}
-        title={editingId ? 'Edit Product' : 'Create Product'}
+        title={editingId ? '编辑产品' : '新建产品'}
       >
         <Form form={form} layout="vertical" initialValues={initialValues} onFinish={handleSubmit}>
-          <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+          <Form.Item name="name" label="产品名称" rules={[{ required: true, message: '请输入产品名称' }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="slug" label="Slug" rules={[{ required: true }]}>
+          <Form.Item name="slug" label="Slug" rules={[{ required: true, message: '请输入 Slug' }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="sku" label="SKU" rules={[{ required: true }]}>
+          <Form.Item name="sku" label="SKU" rules={[{ required: true, message: '请输入 SKU' }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="shortDescription" label="Short Description">
+          <Form.Item name="shortDescription" label="简短描述">
             <Input.TextArea rows={3} />
           </Form.Item>
-          <Form.Item name="description" label="Description">
+          <Form.Item name="description" label="详细描述">
             <Input.TextArea rows={5} />
           </Form.Item>
-          <Form.Item name="seoTitle" label="SEO Title">
+          <Form.Item name="seoTitle" label="SEO 标题">
             <Input />
           </Form.Item>
-          <Form.Item name="seoDescription" label="SEO Description">
+          <Form.Item name="seoDescription" label="SEO 描述">
             <Input.TextArea rows={3} />
           </Form.Item>
-          <Form.Item name="purchaseMode" label="Purchase Mode" rules={[{ required: true }]}>
-            <Select options={[{ value: 'buy', label: 'buy' }, { value: 'inquiry', label: 'inquiry' }]} />
+          <Form.Item name="purchaseMode" label="购买模式" rules={[{ required: true }]}>
+            <Select options={purchaseModeOptions} />
           </Form.Item>
-          <Form.Item name="status" label="Status" rules={[{ required: true }]}>
-            <Select
-              options={[
-                { value: 'draft', label: 'draft' },
-                { value: 'active', label: 'active' },
-                { value: 'inactive', label: 'inactive' },
-                { value: 'archived', label: 'archived' },
-              ]}
-            />
+          <Form.Item name="status" label="状态" rules={[{ required: true }]}>
+            <Select options={productStatusOptions} />
           </Form.Item>
-          <Form.Item name="price" label="Price" rules={[{ required: true }]}>
+          <Form.Item name="price" label="销售价" rules={[{ required: true, message: '请输入销售价' }]}>
             <InputNumber min={0} precision={2} style={{ width: '100%' }} />
           </Form.Item>
-          <Form.Item name="compareAtPrice" label="Compare At Price">
+          <Form.Item name="compareAtPrice" label="划线价">
             <InputNumber min={0} precision={2} style={{ width: '100%' }} />
           </Form.Item>
-          <Form.Item name="currencyCode" label="Currency" rules={[{ required: true }]}>
+          <Form.Item name="currencyCode" label="币种" rules={[{ required: true }]}>
             <Select options={[{ value: 'USD', label: 'USD' }, { value: 'EUR', label: 'EUR' }, { value: 'CNY', label: 'CNY' }]} />
           </Form.Item>
-          <Form.Item name="stockQuantity" label="Stock Quantity" rules={[{ required: true }]}>
+          <Form.Item name="stockQuantity" label="库存数量" rules={[{ required: true }]}>
             <InputNumber min={0} precision={0} style={{ width: '100%' }} />
           </Form.Item>
-          <Form.Item name="brandId" label="Brand">
+          <Form.Item name="brandId" label="品牌">
             <Select allowClear options={brandOptions} />
           </Form.Item>
-          <Form.Item name="defaultCategoryId" label="Default Category">
+          <Form.Item name="defaultCategoryId" label="默认分类">
             <Select allowClear options={categoryOptions} />
           </Form.Item>
-          <Form.Item name="featured" label="Featured" valuePropName="checked">
+          <Form.Item name="featured" label="首页推荐" valuePropName="checked">
             <Switch />
           </Form.Item>
 
-          <Divider>Images</Divider>
+          <Divider>产品图片</Divider>
           <Form.List name="images">
             {(fields, { add, remove }) => (
-              <Space direction="vertical" style={{ width: '100%' }}>
+              <Space orientation="vertical" style={{ width: '100%' }}>
                 {fields.map((field) => (
                   <Card key={field.key} size="small">
-                    <Space direction="vertical" style={{ width: '100%' }}>
-                      <Form.Item name={[field.name, 'url']} label="Image URL" rules={[{ required: true }]}>
+                    <Space orientation="vertical" style={{ width: '100%' }}>
+                      <Form.Item name={[field.name, 'url']} label="图片 URL" rules={[{ required: true }]}>
                         <Input />
                       </Form.Item>
-                      <Form.Item name={[field.name, 'alt']} label="Alt Text" rules={[{ required: true }]}>
+                      <Form.Item name={[field.name, 'alt']} label="图片描述" rules={[{ required: true }]}>
                         <Input />
                       </Form.Item>
                       <Space style={{ width: '100%' }}>
-                        <Form.Item name={[field.name, 'width']} label="Width" style={{ flex: 1 }}>
+                        <Form.Item name={[field.name, 'width']} label="宽度" style={{ flex: 1 }}>
                           <InputNumber min={1} precision={0} style={{ width: '100%' }} />
                         </Form.Item>
-                        <Form.Item name={[field.name, 'height']} label="Height" style={{ flex: 1 }}>
+                        <Form.Item name={[field.name, 'height']} label="高度" style={{ flex: 1 }}>
                           <InputNumber min={1} precision={0} style={{ width: '100%' }} />
                         </Form.Item>
                       </Space>
-                      <Form.Item name={[field.name, 'isPrimary']} label="Primary" valuePropName="checked">
+                      <Form.Item name={[field.name, 'isPrimary']} label="主图" valuePropName="checked">
                         <Switch />
                       </Form.Item>
                       <Button danger icon={<MinusCircleOutlined />} onClick={() => remove(field.name)}>
-                        Remove Image
+                        删除图片
                       </Button>
                     </Space>
                   </Card>
                 ))}
                 <Button icon={<PlusOutlined />} onClick={() => add({ url: '', alt: '', width: null, height: null, isPrimary: false })}>
-                  Add Image
+                  新增图片
                 </Button>
               </Space>
             )}
           </Form.List>
 
-          <Divider>Features</Divider>
+          <Divider>产品特性</Divider>
           <Form.List name="features">
             {(fields, { add, remove }) => (
-              <Space direction="vertical" style={{ width: '100%' }}>
+              <Space orientation="vertical" style={{ width: '100%' }}>
                 {fields.map((field) => (
                   <Card key={field.key} size="small">
-                    <Space direction="vertical" style={{ width: '100%' }}>
-                      <Form.Item name={[field.name, 'featureKey']} label="Feature Key" rules={[{ required: true }]}>
+                    <Space orientation="vertical" style={{ width: '100%' }}>
+                      <Form.Item name={[field.name, 'featureKey']} label="特性名称" rules={[{ required: true }]}>
                         <Input />
                       </Form.Item>
-                      <Form.Item name={[field.name, 'featureValue']} label="Feature Value" rules={[{ required: true }]}>
+                      <Form.Item name={[field.name, 'featureValue']} label="特性值" rules={[{ required: true }]}>
                         <Input />
                       </Form.Item>
-                      <Form.Item name={[field.name, 'unit']} label="Unit">
+                      <Form.Item name={[field.name, 'unit']} label="单位">
                         <Input />
                       </Form.Item>
                       <Button danger icon={<MinusCircleOutlined />} onClick={() => remove(field.name)}>
-                        Remove Feature
+                        删除特性
                       </Button>
                     </Space>
                   </Card>
                 ))}
                 <Button icon={<PlusOutlined />} onClick={() => add({ featureKey: '', featureValue: '', unit: null })}>
-                  Add Feature
+                  新增特性
                 </Button>
               </Space>
             )}
           </Form.List>
 
-          <Divider>Attachments</Divider>
+          <Divider>资料附件</Divider>
           <Form.List name="attachments">
             {(fields, { add, remove }) => (
-              <Space direction="vertical" style={{ width: '100%' }}>
+              <Space orientation="vertical" style={{ width: '100%' }}>
                 {fields.map((field) => (
                   <Card key={field.key} size="small">
-                    <Space direction="vertical" style={{ width: '100%' }}>
-                      <Form.Item name={[field.name, 'name']} label="Attachment Name" rules={[{ required: true }]}>
+                    <Space orientation="vertical" style={{ width: '100%' }}>
+                      <Form.Item name={[field.name, 'name']} label="附件名称" rules={[{ required: true }]}>
                         <Input />
                       </Form.Item>
-                      <Form.Item name={[field.name, 'url']} label="Attachment URL" rules={[{ required: true }]}>
+                      <Form.Item name={[field.name, 'url']} label="附件 URL" rules={[{ required: true }]}>
                         <Input />
                       </Form.Item>
-                      <Form.Item name={[field.name, 'mimeType']} label="MIME Type" rules={[{ required: true }]}>
+                      <Form.Item name={[field.name, 'mimeType']} label="MIME 类型" rules={[{ required: true }]}>
                         <Input placeholder="application/pdf" />
                       </Form.Item>
                       <Button danger icon={<MinusCircleOutlined />} onClick={() => remove(field.name)}>
-                        Remove Attachment
+                        删除附件
                       </Button>
                     </Space>
                   </Card>
                 ))}
                 <Button icon={<PlusOutlined />} onClick={() => add({ name: '', url: '', mimeType: 'application/pdf' })}>
-                  Add Attachment
+                  新增附件
                 </Button>
               </Space>
             )}

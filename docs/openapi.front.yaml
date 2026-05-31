@@ -321,7 +321,29 @@ components:
             $ref: '#/components/schemas/CartItem'
         itemCount:
           type: integer
+        couponCode:
+          type:
+            - string
+            - 'null'
+        coupon:
+          type:
+            - object
+            - 'null'
+          properties:
+            code:
+              type: string
+            description:
+              type: string
+            isApplied:
+              type: boolean
+            message:
+              type:
+                - string
+                - 'null'
+          required: [code, description, isApplied, message]
         subtotal:
+          $ref: '#/components/schemas/Money'
+        discount:
           $ref: '#/components/schemas/Money'
         shipping:
           $ref: '#/components/schemas/Money'
@@ -329,7 +351,11 @@ components:
           $ref: '#/components/schemas/Money'
         total:
           $ref: '#/components/schemas/Money'
-      required: [id, items, itemCount, subtotal, shipping, tax, total]
+        freeShippingThreshold:
+          $ref: '#/components/schemas/Money'
+        remainingForFreeShipping:
+          $ref: '#/components/schemas/Money'
+      required: [id, items, itemCount, subtotal, discount, shipping, tax, total, freeShippingThreshold, remainingForFreeShipping]
       additionalProperties: false
     Address:
       type: object
@@ -527,6 +553,14 @@ components:
           minimum: 1
       required: [quantity]
       additionalProperties: false
+    UpdateCartCouponRequest:
+      type: object
+      properties:
+        couponCode:
+          type:
+            - string
+            - 'null'
+      additionalProperties: false
     CreateOrderRequest:
       type: object
       properties:
@@ -541,6 +575,14 @@ components:
         paymentMethod:
           type: string
         customerNote:
+          type: string
+        purchaseOrderNumber:
+          type: string
+        taxId:
+          type: string
+        requestedShipDate:
+          type: string
+        tradeTerm:
           type: string
       required: [shippingAddressId, billingAddressId, shippingMethod, paymentMethod]
       additionalProperties: false
@@ -792,7 +834,28 @@ paths:
           description: 订单列表
           content:
             application/json:
+    patch:
+      tags: [Cart]
+      summary: 应用或移除购物车优惠码
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCartCouponRequest'
+      responses:
+        '200':
+          description: 更新后的购物车
+          content:
+            application/json:
               schema:
+                $ref: '#/components/schemas/Cart'
+        '400':
+          description: 请求非法或优惠码不可用
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
                 type: array
                 items:
                   $ref: '#/components/schemas/OrderSummary'

@@ -76,8 +76,13 @@ export const trustHighlights = [
 export const navigation = {
   topLinks: [
     { label: 'Products', href: '/products' },
-    { label: 'Certification', href: '/certification' },
-    { label: 'About Us', href: '/about' },
+    { label: 'Resources', href: '/resources' },
+    { label: 'Applications', href: '/applications' },
+    { label: 'Blog', href: '/blog' },
+    { label: 'Tech FAQ', href: '/tech-faq' },
+    { label: 'Glossary', href: '/glossary' },
+    { label: 'Certifications', href: '/company/certifications' },
+    { label: 'About Us', href: '/company/about' },
     { label: 'FAQ', href: '/faq' },
     { label: 'Contact', href: '/contact' },
   ],

@@ -1,14 +1,9 @@
-'use client';
+import { getAdminCustomers } from '@/server/admin/customers';
 
-import { Card, Typography } from 'antd';
+import { AdminCustomersClient } from './customers-client';
 
-export default function AdminCustomersPage() {
-  return (
-    <Card>
-      <Typography.Title level={2}>Customers</Typography.Title>
-      <Typography.Paragraph type="secondary">
-        Customer detail pages will surface profile, order, address, wishlist, and inquiry data after API implementation.
-      </Typography.Paragraph>
-    </Card>
-  );
+export default async function AdminCustomersPage() {
+  const rows = await getAdminCustomers();
+
+  return <AdminCustomersClient initialRows={rows} />;
 }

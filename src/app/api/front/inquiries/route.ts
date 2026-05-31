@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { getCurrentUserId } from '@/server/auth/session';
-import { db } from '@/server/db';
-import { inquiries } from '@/server/db/schema';
-import { getInquiriesByUser } from '@/server/storefront/account';
+import { createStorefrontInquiry, getGuestInquiryAccessCookieName, getStorefrontInquiriesByUser } from '@/server/storefront/inquiries';
 
 const inquirySchema = z.object({
   productId: z.string().min(1),
@@ -17,10 +15,6 @@ const inquirySchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
-  if (!db) {
-    return NextResponse.json({ code: 'DB_UNAVAILABLE', message: 'Database is not configured' }, { status: 503 });
-  }
-
   const body = await request.json();
   const parsed = inquirySchema.safeParse(body);
 
@@ -33,26 +27,42 @@ export async function POST(request: NextRequest) {
 
   const userId = await getCurrentUserId();
 
-  const [created] = await db
-    .insert(inquiries)
-    .values({
-      productId: parsed.data.productId,
-      userId,
-      fullName: parsed.data.fullName,
-      email: parsed.data.email,
-      phone: parsed.data.phone ?? null,
-      company: parsed.data.company ?? null,
-      country: parsed.data.country ?? null,
-      message: parsed.data.message,
-      status: 'new',
-      sourcePageUrl: request.headers.get('referer') ?? null,
-    })
-    .returning();
+  const created = await createStorefrontInquiry({
+    productId: parsed.data.productId,
+    userId,
+    fullName: parsed.data.fullName,
+    email: parsed.data.email,
+    phone: parsed.data.phone ?? null,
+    company: parsed.data.company ?? null,
+    country: parsed.data.country ?? null,
+    message: parsed.data.message,
+    sourcePageUrl: request.headers.get('referer') ?? null,
+  });
 
-  return NextResponse.json(
-    created,
+  if (!created) {
+    return NextResponse.json({ code: 'INQUIRY_CREATE_FAILED', message: 'Unable to submit your inquiry right now.' }, { status: 400 });
+  }
+
+  const redirectPath = `/inquiries/${created.id}`;
+  const response = NextResponse.json(
+    {
+      id: created.id,
+      fullName: created.fullName,
+      email: created.email,
+      redirectPath,
+    },
     { status: 201 },
   );
+
+  if (!userId && created.guestAccessToken) {
+    response.cookies.set(getGuestInquiryAccessCookieName(created.id), created.guestAccessToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: redirectPath,
+    });
+  }
+
+  return response;
 }
 
 export async function GET() {
@@ -61,5 +71,5 @@ export async function GET() {
     return NextResponse.json({ code: 'UNAUTHORIZED', message: 'Authentication required' }, { status: 401 });
   }
 
-  return NextResponse.json(await getInquiriesByUser(userId));
+  return NextResponse.json(await getStorefrontInquiriesByUser(userId));
 }

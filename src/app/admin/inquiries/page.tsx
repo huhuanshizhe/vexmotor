@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { formatAdminDate, inquiryStatusLabels } from '@/lib/admin-display';
 import { getAdminInquiries } from '@/server/admin/inquiries';
 
 export default async function AdminInquiriesPage() {
@@ -8,13 +9,13 @@ export default async function AdminInquiriesPage() {
   return (
     <main style={{ display: 'grid', gap: 24 }}>
       <div>
-        <h1 style={{ margin: 0 }}>Inquiries</h1>
-        <p style={{ margin: '8px 0 0', color: '#677489' }}>RFQ submissions from the storefront now flow into a real review queue.</p>
+        <h1 style={{ margin: 0 }}>询盘管理</h1>
+        <p style={{ margin: '8px 0 0', color: '#677489' }}>统一处理前台 RFQ 询盘、报价跟进与销售线索流转。</p>
       </div>
       {!inquiries.length ? (
         <article className="info-card">
-          <h2>No inquiries yet</h2>
-          <p className="section-description">Inquiry-mode products will create records here after submission from the storefront.</p>
+          <h2>暂无询盘</h2>
+          <p className="section-description">客户提交询价后，询盘会自动进入这里，供销售团队分配和跟进。</p>
         </article>
       ) : (
         <div className="info-grid">
@@ -22,12 +23,14 @@ export default async function AdminInquiriesPage() {
             <article key={inquiry.id} className="info-card" style={{ display: 'grid', gap: 10 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
                 <h2 style={{ margin: 0 }}>{inquiry.productName}</h2>
-                <span className="product-badge">{inquiry.status}</span>
+                <span className="product-badge">{inquiryStatusLabels[inquiry.status]}</span>
               </div>
               <p style={{ margin: 0, color: '#677489' }}>{inquiry.fullName} · {inquiry.email}</p>
-              <p style={{ margin: 0, color: '#677489' }}>{inquiry.company ?? 'No company'} · {inquiry.country ?? 'No country'}</p>
-              <p style={{ margin: 0, color: '#677489' }}>Submitted {new Date(inquiry.createdAt).toLocaleString()}</p>
-              <Link href={`/admin/inquiries/${inquiry.id}`}>Open inquiry detail</Link>
+              <p style={{ margin: 0, color: '#677489' }}>
+                {[inquiry.company, inquiry.country].filter(Boolean).join(' · ') || '未填写公司信息的游客提交'}
+              </p>
+              <p style={{ margin: 0, color: '#677489' }}>提交时间：{formatAdminDate(inquiry.createdAt)}</p>
+              <Link href={`/admin/inquiries/${inquiry.id}`}>查看询盘详情</Link>
             </article>
           ))}
         </div>

@@ -3,6 +3,8 @@ import { count, desc, eq } from 'drizzle-orm';
 import { db } from '@/server/db';
 import { addresses, inquiries, orderItems, orders, products, users, wishlists } from '@/server/db/schema';
 
+import { getStorefrontInquiriesByUser } from './inquiries';
+
 export async function getProfile(userId: string) {
   if (!db) return null;
 
@@ -14,6 +16,7 @@ export async function getProfile(userId: string) {
       lastName: users.lastName,
       company: users.company,
       phone: users.phone,
+      status: users.status,
     })
     .from(users)
     .where(eq(users.id, userId))
@@ -170,26 +173,7 @@ export async function getAccountSummary(userId: string) {
 }
 
 export async function getInquiriesByUser(userId: string) {
-  if (!db) return [];
-
-  return db
-    .select({
-      id: inquiries.id,
-      status: inquiries.status,
-      fullName: inquiries.fullName,
-      email: inquiries.email,
-      company: inquiries.company,
-      country: inquiries.country,
-      message: inquiries.message,
-      createdAt: inquiries.createdAt,
-      productName: products.name,
-      productSlug: products.slug,
-      productSku: products.sku,
-    })
-    .from(inquiries)
-    .innerJoin(products, eq(products.id, inquiries.productId))
-    .where(eq(inquiries.userId, userId))
-    .orderBy(desc(inquiries.createdAt));
+  return getStorefrontInquiriesByUser(userId);
 }
 
 export async function getWishlistByUser(userId: string) {

@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq, ilike, or, sql as drizzleSql } from 'drizzle-orm';
+import { and, asc, count, desc, eq, ilike, inArray, or, sql as drizzleSql } from 'drizzle-orm';
 
 import { db } from '@/server/db';
 import {
@@ -12,8 +12,25 @@ import {
   productVariants,
 } from '@/server/db/schema';
 
+import { storefrontNavigationBase } from './site-shell';
 import { getSeedCategories, getSeedHomeData, getSeedProductBySlug, getSeedProductsResult } from './seed';
-import type { HomeData, ProductListResult, StorefrontCategory, StorefrontImage, StorefrontProductCard, StorefrontProductDetail } from './types';
+import type { HomeData, NavigationData, ProductListResult, ProductListSort, StorefrontCategory, StorefrontImage, StorefrontProductCard, StorefrontProductDetail } from './types';
+
+function getProductOrderBy(sort: ProductListSort) {
+  switch (sort) {
+    case 'name-asc':
+      return [asc(products.name)];
+    case 'price-asc':
+      return [asc(products.price), asc(products.name)];
+    case 'price-desc':
+      return [desc(products.price), asc(products.name)];
+    case 'newest':
+      return [desc(products.publishedAt), desc(products.createdAt), asc(products.name)];
+    case 'featured':
+    default:
+      return [desc(products.featured), desc(products.publishedAt), asc(products.name)];
+  }
+}
 
 function asMoney(amount: string | number | null | undefined, currencyCode = 'USD') {
   const numeric = Number(amount ?? 0);
@@ -43,6 +60,7 @@ export async function getHomeData(): Promise<HomeData> {
   }
 
   try {
+    const seedHome = getSeedHomeData();
     const [dbCategories, dbProducts] = await Promise.all([
       db.select().from(categories).where(eq(categories.status, 'active')).orderBy(asc(categories.sortOrder)).limit(4),
       db.select({
@@ -67,12 +85,80 @@ export async function getHomeData(): Promise<HomeData> {
         .limit(6),
     ]);
 
-    if (!dbProducts.length) {
-      return getSeedHomeData();
+    const imageRows = dbProducts.length
+      ? await db
+          .select({
+            id: productImages.id,
+            productId: productImages.productId,
+            url: productImages.url,
+            alt: productImages.alt,
+            width: productImages.width,
+            height: productImages.height,
+          })
+          .from(productImages)
+          .where(inArray(productImages.productId, dbProducts.map((item) => item.id)))
+          .orderBy(asc(productImages.productId), asc(productImages.sortOrder))
+      : [];
+
+    const firstImageByProductId = new Map<string, StorefrontImage>();
+    for (const row of imageRows) {
+      if (!firstImageByProductId.has(row.productId)) {
+        firstImageByProductId.set(row.productId, toImage(row));
+      }
     }
 
+    if (!dbProducts.length) {
+      return seedHome;
+    }
+
+    const dynamicCards = dbProducts.map((item) => ({
+      id: item.id,
+      name: item.name,
+      slug: item.slug,
+      sku: item.sku,
+      shortDescription: item.shortDescription,
+      coverImage: firstImageByProductId.get(item.id) ?? null,
+      price: asMoney(item.price, item.currencyCode),
+      compareAtPrice: item.compareAtPrice ? asMoney(item.compareAtPrice, item.currencyCode) : null,
+      purchaseMode: item.purchaseMode,
+      inStock: item.stockQuantity > 0,
+      brand: item.brandId && item.brandName && item.brandSlug ? { id: item.brandId, name: item.brandName, slug: item.brandSlug } : null,
+    }));
+
+    function cycleItems<T>(items: T[], start: number, count: number) {
+      if (!items.length) {
+        return [] as T[];
+      }
+
+      const length = Math.min(count, items.length);
+      return Array.from({ length }, (_, index) => items[(start + index) % items.length]!);
+    }
+
+    const dynamicShelves: HomeData['featuredShelves'] = [
+      {
+        id: 'bestseller',
+        title: 'Bestseller',
+        items: cycleItems(dynamicCards, 0, 4).map((item, index) => ({ ...item, tag: index < 2 ? 'Hot' : null, note: item.shortDescription ?? null })),
+      },
+      {
+        id: 'new-products',
+        title: 'New Products',
+        items: cycleItems(dynamicCards, 1, 4).map((item, index) => ({ ...item, tag: index < 2 ? 'New' : null, note: item.shortDescription ?? null })),
+      },
+      {
+        id: 'sales-products',
+        title: 'Specials',
+        items: cycleItems(dynamicCards, 2, 4).map((item, index) => ({ ...item, tag: `-${10 + index * 5}%`, note: item.shortDescription ?? null })),
+      },
+      {
+        id: 'used-products',
+        title: 'Used Products',
+        items: cycleItems(dynamicCards, 3, 4).map((item) => ({ ...item, tag: 'Used', note: item.shortDescription ?? null })),
+      },
+    ];
+
     return {
-      ...getSeedHomeData(),
+      ...seedHome,
       featuredCategories: dbCategories.map((item) => ({
         id: item.id,
         name: item.name,
@@ -80,46 +166,20 @@ export async function getHomeData(): Promise<HomeData> {
         description: item.description,
         parentId: item.parentId,
       })),
-      hotSale: dbProducts.slice(0, 3).map((item) => ({
-        id: item.id,
-        name: item.name,
-        slug: item.slug,
-        sku: item.sku,
-        shortDescription: item.shortDescription,
-        price: asMoney(item.price, item.currencyCode),
-        compareAtPrice: item.compareAtPrice ? asMoney(item.compareAtPrice, item.currencyCode) : null,
-        purchaseMode: item.purchaseMode,
-        inStock: item.stockQuantity > 0,
-        brand: item.brandId && item.brandName && item.brandSlug ? { id: item.brandId, name: item.brandName, slug: item.brandSlug } : null,
-      })),
-      newRelease: dbProducts.slice(0, 3).map((item) => ({
-        id: item.id,
-        name: item.name,
-        slug: item.slug,
-        sku: item.sku,
-        shortDescription: item.shortDescription,
-        price: asMoney(item.price, item.currencyCode),
-        compareAtPrice: item.compareAtPrice ? asMoney(item.compareAtPrice, item.currencyCode) : null,
-        purchaseMode: item.purchaseMode,
-        inStock: item.stockQuantity > 0,
-        brand: item.brandId && item.brandName && item.brandSlug ? { id: item.brandId, name: item.brandName, slug: item.brandSlug } : null,
-      })),
+      hotSale: dynamicCards.slice(0, 4),
+      newRelease: dynamicCards.slice(0, 3),
+      featuredShelves: dynamicShelves,
+      mostViewedProducts: dynamicCards.slice(0, 4),
     };
   } catch {
     return getSeedHomeData();
   }
 }
 
-export async function getNavigationData() {
+export async function getNavigationData(): Promise<NavigationData> {
   const items = await getCategories();
   return {
-    topLinks: [
-      { label: 'Products', href: '/products' },
-      { label: 'Certification', href: '/certification' },
-      { label: 'About Us', href: '/about' },
-      { label: 'FAQ', href: '/faq' },
-      { label: 'Contact', href: '/contact' },
-    ],
+    ...storefrontNavigationBase,
     categories: items.slice(0, 6),
   };
 }
@@ -151,8 +211,11 @@ export async function getCategories(): Promise<StorefrontCategory[]> {
 export async function getProductList(input: {
   keyword?: string;
   categorySlug?: string;
+  purchaseMode?: 'buy' | 'inquiry';
   page?: number;
   pageSize?: number;
+  sort?: ProductListSort;
+  inStockOnly?: boolean;
 }): Promise<ProductListResult> {
   if (!db) {
     return getSeedProductsResult(input);
@@ -161,6 +224,7 @@ export async function getProductList(input: {
   const page = input.page ?? 1;
   const pageSize = input.pageSize ?? 12;
   const offset = (page - 1) * pageSize;
+  const orderBy = getProductOrderBy(input.sort ?? 'featured');
 
   try {
     let categoryId: string | null = null;
@@ -177,17 +241,31 @@ export async function getProductList(input: {
     }
 
     const filters = [eq(products.status, 'active')];
+    const facetFilters = [eq(products.status, 'active')];
     if (input.keyword) {
-      filters.push(
-        or(
-          ilike(products.name, `%${input.keyword}%`),
-          ilike(products.sku, `%${input.keyword}%`),
-          ilike(products.shortDescription, `%${input.keyword}%`),
-        )!,
+      const keywordFilter = or(
+        ilike(products.name, `%${input.keyword}%`),
+        ilike(products.sku, `%${input.keyword}%`),
+        ilike(products.shortDescription, `%${input.keyword}%`),
       );
+
+      if (keywordFilter) {
+        filters.push(keywordFilter);
+        facetFilters.push(keywordFilter);
+      }
+    }
+
+    if (input.purchaseMode) {
+      filters.push(eq(products.purchaseMode, input.purchaseMode));
+    }
+
+    if (input.inStockOnly) {
+      filters.push(drizzleSql`${products.stockQuantity} > 0`);
+      facetFilters.push(drizzleSql`${products.stockQuantity} > 0`);
     }
 
     const baseWhere = and(...filters);
+    const facetWhere = and(...facetFilters);
 
     const rows = categoryId
       ? await db
@@ -210,7 +288,7 @@ export async function getProductList(input: {
           .innerJoin(productCategories, eq(productCategories.productId, products.id))
           .leftJoin(brands, eq(products.brandId, brands.id))
           .where(and(baseWhere, eq(productCategories.categoryId, categoryId)))
-          .orderBy(desc(products.featured), desc(products.publishedAt), asc(products.name))
+            .orderBy(...orderBy)
           .limit(pageSize)
           .offset(offset)
       : await db
@@ -232,7 +310,7 @@ export async function getProductList(input: {
           .from(products)
           .leftJoin(brands, eq(products.brandId, brands.id))
           .where(baseWhere)
-          .orderBy(desc(products.featured), desc(products.publishedAt), asc(products.name))
+          .orderBy(...orderBy)
           .limit(pageSize)
           .offset(offset);
 
@@ -244,9 +322,46 @@ export async function getProductList(input: {
           .where(and(baseWhere, eq(productCategories.categoryId, categoryId)))
       : await db.select({ total: count() }).from(products).where(baseWhere);
 
+    const facetCountRows = categoryId
+      ? await db
+          .select({ purchaseMode: products.purchaseMode, total: count() })
+          .from(products)
+          .innerJoin(productCategories, eq(productCategories.productId, products.id))
+          .where(and(facetWhere, eq(productCategories.categoryId, categoryId)))
+          .groupBy(products.purchaseMode)
+      : await db
+          .select({ purchaseMode: products.purchaseMode, total: count() })
+          .from(products)
+          .where(facetWhere)
+          .groupBy(products.purchaseMode);
+
+    const listImageRows = rows.length
+      ? await db
+          .select({
+            id: productImages.id,
+            productId: productImages.productId,
+            url: productImages.url,
+            alt: productImages.alt,
+            width: productImages.width,
+            height: productImages.height,
+          })
+          .from(productImages)
+          .where(inArray(productImages.productId, rows.map((item) => item.id)))
+          .orderBy(asc(productImages.productId), asc(productImages.sortOrder))
+      : [];
+
+    const listImageByProductId = new Map<string, StorefrontImage>();
+    for (const row of listImageRows) {
+      if (!listImageByProductId.has(row.productId)) {
+        listImageByProductId.set(row.productId, toImage(row));
+      }
+    }
+
     if (!rows.length && !countRows[0]?.total) {
       return getSeedProductsResult(input);
     }
+
+    const purchaseModeCounts = new Map(facetCountRows.map((row) => [row.purchaseMode, Number(row.total)]));
 
     return {
       items: rows.map((item) => ({
@@ -255,6 +370,7 @@ export async function getProductList(input: {
         slug: item.slug,
         sku: item.sku,
         shortDescription: item.shortDescription,
+        coverImage: listImageByProductId.get(item.id) ?? null,
         price: asMoney(item.price, item.currencyCode),
         compareAtPrice: item.compareAtPrice ? asMoney(item.compareAtPrice, item.currencyCode) : null,
         purchaseMode: item.purchaseMode,
@@ -272,8 +388,8 @@ export async function getProductList(input: {
           key: 'purchaseMode',
           label: 'Purchase Mode',
           options: [
-            { label: 'Direct Buy', value: 'buy', count: rows.filter((item) => item.purchaseMode === 'buy').length },
-            { label: 'Inquiry', value: 'inquiry', count: rows.filter((item) => item.purchaseMode === 'inquiry').length },
+            { label: 'Direct Buy', value: 'buy', count: purchaseModeCounts.get('buy') ?? 0 },
+            { label: 'Inquiry', value: 'inquiry', count: purchaseModeCounts.get('inquiry') ?? 0 },
           ],
         },
       ],

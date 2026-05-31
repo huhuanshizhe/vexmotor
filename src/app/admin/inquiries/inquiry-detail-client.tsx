@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { useState, useTransition } from 'react';
 
+import { formatAdminDate, inquiryStatusLabels, inquiryStatusOptions } from '@/lib/admin-display';
+
 type InquiryDetail = {
   id: string;
   status: 'new' | 'contacted' | 'quoted' | 'closed';
@@ -22,12 +24,29 @@ type InquiryDetail = {
   handledByEmail: string | null;
 };
 
+function parseInquiryMessage(message: string) {
+  const lines = message.split('\n').map((line) => line.trim()).filter(Boolean);
+  return {
+    estimatedQuantity:
+      lines.find((line) => line.startsWith('Estimated Quantity:') || line.startsWith('预计数量：'))?.replace('Estimated Quantity:', '').replace('预计数量：', '').trim() ?? null,
+    targetLeadTime:
+      lines.find((line) => line.startsWith('Target Lead Time:') || line.startsWith('目标交期：'))?.replace('Target Lead Time:', '').replace('目标交期：', '').trim() ?? null,
+    narrative:
+      lines
+        .filter(
+          (line) => !line.startsWith('Estimated Quantity:') && !line.startsWith('Target Lead Time:') && !line.startsWith('预计数量：') && !line.startsWith('目标交期：'),
+        )
+        .join('\n') || message,
+  };
+}
+
 export function InquiryDetailClient({ initialInquiry }: { initialInquiry: InquiryDetail }) {
   const [inquiry, setInquiry] = useState(initialInquiry);
   const [status, setStatus] = useState(initialInquiry.status);
   const [internalNote, setInternalNote] = useState(initialInquiry.internalNote ?? '');
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const parsedMessage = parseInquiryMessage(inquiry.message);
 
   function save() {
     startTransition(async () => {
@@ -39,7 +58,7 @@ export function InquiryDetailClient({ initialInquiry }: { initialInquiry: Inquir
       });
 
       if (!response.ok) {
-        setMessage('Unable to update inquiry state.');
+        setMessage('询盘状态更新失败。');
         return;
       }
 
@@ -47,7 +66,7 @@ export function InquiryDetailClient({ initialInquiry }: { initialInquiry: Inquir
       setInquiry(nextInquiry);
       setStatus(nextInquiry.status);
       setInternalNote(nextInquiry.internalNote ?? '');
-      setMessage('Inquiry updated.');
+      setMessage('询盘已更新。');
     });
   }
 
@@ -55,50 +74,71 @@ export function InquiryDetailClient({ initialInquiry }: { initialInquiry: Inquir
     <main style={{ display: 'grid', gap: 24 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
         <div>
-          <h1 style={{ margin: 0 }}>Inquiry Review</h1>
+          <h1 style={{ margin: 0 }}>询盘详情</h1>
           <p style={{ margin: '8px 0 0', color: '#677489' }}>{inquiry.fullName} · {inquiry.email}</p>
         </div>
-        <Link href="/admin/inquiries">Back to Inquiries</Link>
+        <Link href="/admin/inquiries">返回询盘列表</Link>
       </div>
       <div className="info-grid">
         <article className="info-card">
-          <h2 style={{ marginTop: 0 }}>Customer Context</h2>
-          <p>Company: {inquiry.company ?? 'Not provided'}</p>
-          <p>Phone: {inquiry.phone ?? 'Not provided'}</p>
-          <p>Country: {inquiry.country ?? 'Not provided'}</p>
-          <p>Submitted: {new Date(inquiry.createdAt).toLocaleString()}</p>
-          <p>Handled At: {inquiry.handledAt ? new Date(inquiry.handledAt).toLocaleString() : 'Not handled yet'}</p>
-          <p>Handled By: {inquiry.handledByEmail ?? 'Unassigned'}</p>
+          <h2 style={{ marginTop: 0 }}>客户信息</h2>
+          <p>公司名称：{inquiry.company ?? '未填写'}</p>
+          <p>联系电话：{inquiry.phone ?? '未填写'}</p>
+          <p>国家地区：{inquiry.country ?? '未填写'}</p>
+          <p>提交时间：{formatAdminDate(inquiry.createdAt)}</p>
+          <p>处理时间：{inquiry.handledAt ? formatAdminDate(inquiry.handledAt) : '尚未处理'}</p>
+          <p>处理人：{inquiry.handledByEmail ?? '未分配'}</p>
         </article>
         <article className="info-card">
-          <h2 style={{ marginTop: 0 }}>Product Context</h2>
+          <h2 style={{ marginTop: 0 }}>产品信息</h2>
           <p>{inquiry.productName}</p>
           <p>{inquiry.productSku}</p>
-          <Link href={`/products/${inquiry.productSlug}`} className="nav-link">Open storefront product</Link>
-          {inquiry.sourcePageUrl ? <p style={{ wordBreak: 'break-all' }}>Source: {inquiry.sourcePageUrl}</p> : null}
+          <Link href={`/products/${inquiry.productSlug}`} className="nav-link">查看前台产品页</Link>
+          {inquiry.sourcePageUrl ? <p style={{ wordBreak: 'break-all' }}>来源页面：{inquiry.sourcePageUrl}</p> : null}
         </article>
       </div>
       <article className="info-card">
-        <h2 style={{ marginTop: 0 }}>Customer Message</h2>
-        <p style={{ whiteSpace: 'pre-wrap' }}>{inquiry.message}</p>
+        <h2 style={{ marginTop: 0 }}>客户留言</h2>
+        <p style={{ whiteSpace: 'pre-wrap' }}>{parsedMessage.narrative}</p>
+      </article>
+      {parsedMessage.estimatedQuantity || parsedMessage.targetLeadTime ? (
+        <div className="info-grid">
+          {parsedMessage.estimatedQuantity ? (
+            <article className="info-card">
+              <h2 style={{ marginTop: 0 }}>预计数量</h2>
+              <p style={{ marginBottom: 0 }}>{parsedMessage.estimatedQuantity}</p>
+            </article>
+          ) : null}
+          {parsedMessage.targetLeadTime ? (
+            <article className="info-card">
+              <h2 style={{ marginTop: 0 }}>目标交期</h2>
+              <p style={{ marginBottom: 0 }}>{parsedMessage.targetLeadTime}</p>
+            </article>
+          ) : null}
+        </div>
+      ) : null}
+      <article className="info-card">
+        <h2 style={{ marginTop: 0 }}>处理信息</h2>
+        <p>当前状态：{inquiryStatusLabels[inquiry.status]}</p>
+        <p>处理时间：{inquiry.handledAt ? formatAdminDate(inquiry.handledAt) : '尚未处理'}</p>
+        <p style={{ marginBottom: 0 }}>处理人：{inquiry.handledByEmail ?? '未分配'}</p>
       </article>
       <article className="info-card" style={{ display: 'grid', gap: 12 }}>
-        <h2 style={{ marginTop: 0 }}>Workflow Update</h2>
+        <h2 style={{ marginTop: 0 }}>流程更新</h2>
         <label style={{ display: 'grid', gap: 8 }}>
-          <span>Status</span>
+          <span>询盘状态</span>
           <select value={status} onChange={(event) => setStatus(event.target.value as InquiryDetail['status'])} style={{ minHeight: 44, borderRadius: 12, border: '1px solid var(--color-border)', padding: '0 12px' }}>
-            <option value="new">new</option>
-            <option value="contacted">contacted</option>
-            <option value="quoted">quoted</option>
-            <option value="closed">closed</option>
+            {inquiryStatusOptions.map((option) => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
           </select>
         </label>
         <label style={{ display: 'grid', gap: 8 }}>
-          <span>Internal Note</span>
+          <span>内部备注</span>
           <textarea rows={6} value={internalNote} onChange={(event) => setInternalNote(event.target.value)} style={{ borderRadius: 16, border: '1px solid var(--color-border)', padding: 14, font: 'inherit' }} />
         </label>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <button type="button" className="button-primary" disabled={isPending} onClick={save}>{isPending ? 'Saving...' : 'Save Update'}</button>
+          <button type="button" className="button-primary" disabled={isPending} onClick={save}>{isPending ? '保存中...' : '保存更新'}</button>
         </div>
         {message ? <p style={{ margin: 0, color: '#677489' }}>{message}</p> : null}
       </article>

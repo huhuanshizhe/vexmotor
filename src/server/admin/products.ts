@@ -1,5 +1,14 @@
 import { and, asc, count, desc, eq, ilike, or } from 'drizzle-orm';
 
+import {
+  createMemoryProduct,
+  deleteMemoryProduct,
+  getMemoryProduct,
+  listMemoryBrands,
+  listMemoryCategories,
+  listMemoryProducts,
+  updateMemoryProduct,
+} from '@/server/admin/memory-store';
 import { db } from '@/server/db';
 import { attachments, brands, categories, productFeatures, productImages, products } from '@/server/db/schema';
 
@@ -48,9 +57,119 @@ export type AdminProductDetail = AdminProductRow & {
   }>;
 };
 
+export type AdminProductInput = {
+  name: string;
+  slug: string;
+  sku: string;
+  shortDescription?: string | null;
+  description?: string | null;
+  purchaseMode: 'buy' | 'inquiry';
+  status: 'draft' | 'active' | 'inactive' | 'archived';
+  price: number;
+  compareAtPrice?: number | null;
+  currencyCode: string;
+  stockQuantity: number;
+  featured: boolean;
+  brandId?: string | null;
+  defaultCategoryId?: string | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  images: Array<{
+    url: string;
+    alt: string;
+    width?: number | null;
+    height?: number | null;
+    isPrimary: boolean;
+  }>;
+  features: Array<{
+    featureKey: string;
+    featureValue: string;
+    unit?: string | null;
+  }>;
+  attachments: Array<{
+    name: string;
+    url: string;
+    mimeType: string;
+  }>;
+};
+
+function mapMemoryProductRow(id: string): AdminProductDetail | null {
+  const product = getMemoryProduct(id);
+  if (!product) {
+    return null;
+  }
+
+  const brandName = product.brandId ? listMemoryBrands().find((item) => item.id === product.brandId)?.name ?? null : null;
+  const categoryName = product.defaultCategoryId ? listMemoryCategories().find((item) => item.id === product.defaultCategoryId)?.name ?? null : null;
+
+  return {
+    id: product.id,
+    name: product.name,
+    slug: product.slug,
+    sku: product.sku,
+    shortDescription: product.shortDescription,
+    description: product.description,
+    purchaseMode: product.purchaseMode,
+    status: product.status,
+    stockQuantity: product.stockQuantity,
+    price: product.price,
+    compareAtPrice: product.compareAtPrice,
+    currencyCode: product.currencyCode,
+    featured: product.featured,
+    brandId: product.brandId,
+    defaultCategoryId: product.defaultCategoryId,
+    brandName,
+    categoryName,
+    seoTitle: product.seoTitle,
+    seoDescription: product.seoDescription,
+    images: product.images,
+    features: product.features,
+    attachments: product.attachments,
+  };
+}
+
+function toMemoryProductPayload(input: AdminProductInput) {
+  return {
+    name: input.name,
+    slug: input.slug,
+    sku: input.sku,
+    shortDescription: input.shortDescription ?? null,
+    description: input.description ?? null,
+    purchaseMode: input.purchaseMode,
+    status: input.status,
+    price: input.price.toFixed(2),
+    compareAtPrice: input.compareAtPrice == null ? null : input.compareAtPrice.toFixed(2),
+    currencyCode: input.currencyCode.toUpperCase(),
+    stockQuantity: input.stockQuantity,
+    featured: input.featured,
+    brandId: input.brandId ?? null,
+    defaultCategoryId: input.defaultCategoryId ?? null,
+    seoTitle: input.seoTitle ?? null,
+    seoDescription: input.seoDescription ?? null,
+    images: input.images.map((item) => ({
+      url: item.url,
+      alt: item.alt,
+      width: item.width ?? null,
+      height: item.height ?? null,
+      isPrimary: item.isPrimary,
+    })),
+    features: input.features.map((item) => ({
+      featureKey: item.featureKey,
+      featureValue: item.featureValue,
+      unit: item.unit ?? null,
+    })),
+    attachments: input.attachments.map((item) => ({
+      name: item.name,
+      url: item.url,
+      mimeType: item.mimeType,
+    })),
+  };
+}
+
 export async function getAdminProducts(search = '') {
   if (!db) {
-    return { items: [] as AdminProductRow[], total: 0 };
+    const items = listMemoryProducts(search).map((item) => mapMemoryProductRow(item.id)).filter((item): item is AdminProductDetail => Boolean(item));
+    return { items, total: items.length };
   }
 
   const filters = search
@@ -65,8 +184,77 @@ export async function getAdminProducts(search = '') {
 
   const where = filters.length ? and(...filters) : undefined;
 
-  const [items, totals] = await Promise.all([
-    db
+  try {
+    const [items, totals] = await Promise.all([
+      db
+        .select({
+          id: products.id,
+          name: products.name,
+          slug: products.slug,
+          sku: products.sku,
+          shortDescription: products.shortDescription,
+          description: products.description,
+          purchaseMode: products.purchaseMode,
+          status: products.status,
+          stockQuantity: products.stockQuantity,
+          price: products.price,
+          compareAtPrice: products.compareAtPrice,
+          currencyCode: products.currencyCode,
+          featured: products.featured,
+          brandId: products.brandId,
+          defaultCategoryId: products.defaultCategoryId,
+          brandName: brands.name,
+          categoryName: categories.name,
+        })
+        .from(products)
+        .leftJoin(brands, eq(products.brandId, brands.id))
+        .leftJoin(categories, eq(products.defaultCategoryId, categories.id))
+        .where(where)
+        .orderBy(desc(products.updatedAt), asc(products.name)),
+      db.select({ total: count() }).from(products).where(where),
+    ]);
+
+    return {
+      items,
+      total: Number(totals[0]?.total ?? 0),
+    };
+  } catch {
+    const items = listMemoryProducts(search).map((item) => mapMemoryProductRow(item.id)).filter((item): item is AdminProductDetail => Boolean(item));
+    return { items, total: items.length };
+  }
+}
+
+export async function getAdminProductOptions() {
+  if (!db) {
+    return {
+      brands: listMemoryBrands().map((item) => ({ label: item.name, value: item.id })),
+      categories: listMemoryCategories().map((item) => ({ label: item.name, value: item.id })),
+    };
+  }
+
+  try {
+    const [brandRows, categoryRows] = await Promise.all([
+      db.select({ value: brands.id, label: brands.name }).from(brands).orderBy(asc(brands.name)),
+      db.select({ value: categories.id, label: categories.name }).from(categories).orderBy(asc(categories.sortOrder), asc(categories.name)),
+    ]);
+
+    return {
+      brands: brandRows,
+      categories: categoryRows,
+    };
+  } catch {
+    return {
+      brands: listMemoryBrands().map((item) => ({ label: item.name, value: item.id })),
+      categories: listMemoryCategories().map((item) => ({ label: item.name, value: item.id })),
+    };
+  }
+}
+
+export async function getAdminProductDetail(id: string): Promise<AdminProductDetail | null> {
+  if (!db) return mapMemoryProductRow(id);
+
+  try {
+    const [product] = await db
       .select({
         id: products.id,
         name: products.name,
@@ -85,102 +273,298 @@ export async function getAdminProducts(search = '') {
         defaultCategoryId: products.defaultCategoryId,
         brandName: brands.name,
         categoryName: categories.name,
+        seoTitle: products.seoTitle,
+        seoDescription: products.seoDescription,
       })
       .from(products)
       .leftJoin(brands, eq(products.brandId, brands.id))
       .leftJoin(categories, eq(products.defaultCategoryId, categories.id))
-      .where(where)
-      .orderBy(desc(products.updatedAt), asc(products.name)),
-    db.select({ total: count() }).from(products).where(where),
-  ]);
+      .where(eq(products.id, id))
+      .limit(1);
 
-  return {
-    items,
-    total: Number(totals[0]?.total ?? 0),
-  };
-}
+    if (!product) {
+      return null;
+    }
 
-export async function getAdminProductOptions() {
-  if (!db) {
+    const [imageRows, featureRows, attachmentRows] = await Promise.all([
+      db.select().from(productImages).where(eq(productImages.productId, id)).orderBy(asc(productImages.sortOrder)),
+      db.select().from(productFeatures).where(eq(productFeatures.productId, id)).orderBy(asc(productFeatures.sortOrder)),
+      db.select().from(attachments).where(eq(attachments.productId, id)).orderBy(asc(attachments.sortOrder)),
+    ]);
+
     return {
-      brands: [] as Array<{ label: string; value: string }>,
-      categories: [] as Array<{ label: string; value: string }>,
+      ...product,
+      images: imageRows.map((item) => ({
+        id: item.id,
+        url: item.url,
+        alt: item.alt,
+        width: item.width,
+        height: item.height,
+        isPrimary: item.isPrimary,
+      })),
+      features: featureRows.map((item) => ({
+        id: item.id,
+        featureKey: item.featureKey,
+        featureValue: item.featureValue,
+        unit: item.unit,
+      })),
+      attachments: attachmentRows.map((item) => ({
+        id: item.id,
+        name: item.name,
+        url: item.url,
+        mimeType: item.mimeType,
+      })),
     };
+  } catch {
+    return mapMemoryProductRow(id);
   }
-
-  const [brandRows, categoryRows] = await Promise.all([
-    db.select({ value: brands.id, label: brands.name }).from(brands).orderBy(asc(brands.name)),
-    db.select({ value: categories.id, label: categories.name }).from(categories).orderBy(asc(categories.sortOrder), asc(categories.name)),
-  ]);
-
-  return {
-    brands: brandRows,
-    categories: categoryRows,
-  };
 }
 
-export async function getAdminProductDetail(id: string): Promise<AdminProductDetail | null> {
-  if (!db) return null;
-
-  const [product] = await db
-    .select({
-      id: products.id,
-      name: products.name,
-      slug: products.slug,
-      sku: products.sku,
-      shortDescription: products.shortDescription,
-      description: products.description,
-      purchaseMode: products.purchaseMode,
-      status: products.status,
-      stockQuantity: products.stockQuantity,
-      price: products.price,
-      compareAtPrice: products.compareAtPrice,
-      currencyCode: products.currencyCode,
-      featured: products.featured,
-      brandId: products.brandId,
-      defaultCategoryId: products.defaultCategoryId,
-      brandName: brands.name,
-      categoryName: categories.name,
-      seoTitle: products.seoTitle,
-      seoDescription: products.seoDescription,
-    })
-    .from(products)
-    .leftJoin(brands, eq(products.brandId, brands.id))
-    .leftJoin(categories, eq(products.defaultCategoryId, categories.id))
-    .where(eq(products.id, id))
-    .limit(1);
-
-  if (!product) {
-    return null;
+export async function createAdminProduct(input: AdminProductInput) {
+  if (!db) {
+    return createMemoryProduct(toMemoryProductPayload(input));
   }
 
-  const [imageRows, featureRows, attachmentRows] = await Promise.all([
-    db.select().from(productImages).where(eq(productImages.productId, id)).orderBy(asc(productImages.sortOrder)),
-    db.select().from(productFeatures).where(eq(productFeatures.productId, id)).orderBy(asc(productFeatures.sortOrder)),
-    db.select().from(attachments).where(eq(attachments.productId, id)).orderBy(asc(attachments.sortOrder)),
-  ]);
+  try {
+    const created = await db.transaction(async (tx) => {
+      const [product] = await tx
+        .insert(products)
+        .values({
+          name: input.name,
+          slug: input.slug,
+          sku: input.sku,
+          shortDescription: input.shortDescription ?? null,
+          description: input.description ?? null,
+          purchaseMode: input.purchaseMode,
+          status: input.status,
+          price: input.price.toFixed(2),
+          compareAtPrice: input.compareAtPrice == null ? null : input.compareAtPrice.toFixed(2),
+          currencyCode: input.currencyCode.toUpperCase(),
+          stockQuantity: input.stockQuantity,
+          featured: input.featured,
+          brandId: input.brandId ?? null,
+          defaultCategoryId: input.defaultCategoryId ?? null,
+          seoTitle: input.seoTitle ?? null,
+          seoDescription: input.seoDescription ?? null,
+        })
+        .returning();
 
-  return {
-    ...product,
-    images: imageRows.map((item) => ({
-      id: item.id,
-      url: item.url,
-      alt: item.alt,
-      width: item.width,
-      height: item.height,
-      isPrimary: item.isPrimary,
-    })),
-    features: featureRows.map((item) => ({
-      id: item.id,
-      featureKey: item.featureKey,
-      featureValue: item.featureValue,
-      unit: item.unit,
-    })),
-    attachments: attachmentRows.map((item) => ({
-      id: item.id,
-      name: item.name,
-      url: item.url,
-      mimeType: item.mimeType,
-    })),
-  };
+      if (!product) {
+        return null;
+      }
+
+      if (input.images.length) {
+        await tx.insert(productImages).values(
+          input.images.map((item, index) => ({
+            productId: product.id,
+            url: item.url,
+            alt: item.alt,
+            width: item.width ?? null,
+            height: item.height ?? null,
+            isPrimary: item.isPrimary,
+            sortOrder: index + 1,
+          })),
+        );
+      }
+
+      if (input.features.length) {
+        await tx.insert(productFeatures).values(
+          input.features.map((item, index) => ({
+            productId: product.id,
+            featureKey: item.featureKey,
+            featureValue: item.featureValue,
+            unit: item.unit ?? null,
+            sortOrder: index + 1,
+          })),
+        );
+      }
+
+      if (input.attachments.length) {
+        await tx.insert(attachments).values(
+          input.attachments.map((item, index) => ({
+            productId: product.id,
+            name: item.name,
+            url: item.url,
+            mimeType: item.mimeType,
+            sortOrder: index + 1,
+          })),
+        );
+      }
+
+      return product;
+    });
+
+    return created;
+  } catch {
+    return createMemoryProduct(toMemoryProductPayload(input));
+  }
+}
+
+export async function updateAdminProduct(id: string, input: Partial<AdminProductInput>) {
+  if (!db) {
+    return updateMemoryProduct(id, {
+      name: input.name,
+      slug: input.slug,
+      sku: input.sku,
+      shortDescription: input.shortDescription,
+      description: input.description,
+      purchaseMode: input.purchaseMode,
+      status: input.status,
+      price: input.price == null ? undefined : input.price.toFixed(2),
+      compareAtPrice: input.compareAtPrice == null ? input.compareAtPrice : input.compareAtPrice.toFixed(2),
+      currencyCode: input.currencyCode?.toUpperCase(),
+      stockQuantity: input.stockQuantity,
+      featured: input.featured,
+      brandId: input.brandId,
+      defaultCategoryId: input.defaultCategoryId,
+      seoTitle: input.seoTitle,
+      seoDescription: input.seoDescription,
+      images: input.images?.map((item) => ({
+        url: item.url,
+        alt: item.alt,
+        width: item.width ?? null,
+        height: item.height ?? null,
+        isPrimary: item.isPrimary,
+      })),
+      features: input.features?.map((item) => ({
+        featureKey: item.featureKey,
+        featureValue: item.featureValue,
+        unit: item.unit ?? null,
+      })),
+      attachments: input.attachments?.map((item) => ({
+        name: item.name,
+        url: item.url,
+        mimeType: item.mimeType,
+      })),
+    });
+  }
+
+  try {
+    const updated = await db.transaction(async (tx) => {
+      const updates = {
+        name: input.name,
+        slug: input.slug,
+        sku: input.sku,
+        shortDescription: input.shortDescription,
+        description: input.description,
+        purchaseMode: input.purchaseMode,
+        status: input.status,
+        price: input.price == null ? undefined : input.price.toFixed(2),
+        compareAtPrice: input.compareAtPrice == null ? input.compareAtPrice : input.compareAtPrice.toFixed(2),
+        currencyCode: input.currencyCode?.toUpperCase(),
+        stockQuantity: input.stockQuantity,
+        featured: input.featured,
+        brandId: input.brandId,
+        defaultCategoryId: input.defaultCategoryId,
+        seoTitle: input.seoTitle,
+        seoDescription: input.seoDescription,
+        updatedAt: new Date(),
+      };
+
+      const [product] = await tx.update(products).set(updates).where(eq(products.id, id)).returning();
+      if (!product) {
+        return null;
+      }
+
+      if (input.images) {
+        await tx.delete(productImages).where(eq(productImages.productId, id));
+        if (input.images.length) {
+          await tx.insert(productImages).values(
+            input.images.map((item, index) => ({
+              productId: id,
+              url: item.url,
+              alt: item.alt,
+              width: item.width ?? null,
+              height: item.height ?? null,
+              isPrimary: item.isPrimary,
+              sortOrder: index + 1,
+            })),
+          );
+        }
+      }
+
+      if (input.features) {
+        await tx.delete(productFeatures).where(eq(productFeatures.productId, id));
+        if (input.features.length) {
+          await tx.insert(productFeatures).values(
+            input.features.map((item, index) => ({
+              productId: id,
+              featureKey: item.featureKey,
+              featureValue: item.featureValue,
+              unit: item.unit ?? null,
+              sortOrder: index + 1,
+            })),
+          );
+        }
+      }
+
+      if (input.attachments) {
+        await tx.delete(attachments).where(eq(attachments.productId, id));
+        if (input.attachments.length) {
+          await tx.insert(attachments).values(
+            input.attachments.map((item, index) => ({
+              productId: id,
+              name: item.name,
+              url: item.url,
+              mimeType: item.mimeType,
+              sortOrder: index + 1,
+            })),
+          );
+        }
+      }
+
+      return product;
+    });
+
+    return updated;
+  } catch {
+    return updateMemoryProduct(id, {
+      name: input.name,
+      slug: input.slug,
+      sku: input.sku,
+      shortDescription: input.shortDescription,
+      description: input.description,
+      purchaseMode: input.purchaseMode,
+      status: input.status,
+      price: input.price == null ? undefined : input.price.toFixed(2),
+      compareAtPrice: input.compareAtPrice == null ? input.compareAtPrice : input.compareAtPrice.toFixed(2),
+      currencyCode: input.currencyCode?.toUpperCase(),
+      stockQuantity: input.stockQuantity,
+      featured: input.featured,
+      brandId: input.brandId,
+      defaultCategoryId: input.defaultCategoryId,
+      seoTitle: input.seoTitle,
+      seoDescription: input.seoDescription,
+      images: input.images?.map((item) => ({
+        url: item.url,
+        alt: item.alt,
+        width: item.width ?? null,
+        height: item.height ?? null,
+        isPrimary: item.isPrimary,
+      })),
+      features: input.features?.map((item) => ({
+        featureKey: item.featureKey,
+        featureValue: item.featureValue,
+        unit: item.unit ?? null,
+      })),
+      attachments: input.attachments?.map((item) => ({
+        name: item.name,
+        url: item.url,
+        mimeType: item.mimeType,
+      })),
+    });
+  }
+}
+
+export async function deleteAdminProduct(id: string) {
+  if (!db) {
+    return deleteMemoryProduct(id);
+  }
+
+  try {
+    const [deleted] = await db.delete(products).where(eq(products.id, id)).returning({ id: products.id });
+    return Boolean(deleted);
+  } catch {
+    return deleteMemoryProduct(id);
+  }
 }

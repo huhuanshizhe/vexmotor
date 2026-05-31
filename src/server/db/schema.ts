@@ -15,6 +15,10 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
+import type { ShippingCountryRateConfig, ShippingMethodConfig, VolumePricingRuleConfig } from '@/lib/commerce-config';
+import type { EditorialContentPayload } from '@/lib/editorial-content';
+import type { EditorialAiTemplate, EditorialAutomationRule, EditorialBrief, EditorialGenerationRun, EditorialWorkflowSettings } from '@/lib/editorial-automation';
+
 export const userRoleEnum = pgEnum('user_role', ['customer', 'staff', 'admin']);
 export const userStatusEnum = pgEnum('user_status', ['active', 'disabled', 'pending']);
 export const categoryStatusEnum = pgEnum('category_status', ['active', 'inactive']);
@@ -29,6 +33,7 @@ export const contentStatusEnum = pgEnum('content_status', ['active', 'inactive']
 export const cmsStatusEnum = pgEnum('cms_status', ['draft', 'published', 'archived']);
 export const newsletterStatusEnum = pgEnum('newsletter_status', ['subscribed', 'unsubscribed']);
 export const accountTypeEnum = pgEnum('account_type', ['oauth', 'oidc', 'email', 'credentials']);
+export const editorialContentTypeEnum = pgEnum('editorial_content_type', ['blog', 'press', 'faq', 'tech-faq', 'glossary', 'support']);
 
 export const users = pgTable(
   'users',
@@ -173,6 +178,29 @@ export const products = pgTable(
     featuredIdx: index('products_featured_idx').on(table.featured, table.status),
   }),
 );
+
+export const commerceSettings = pgTable('commerce_settings', {
+  id: varchar('id', { length: 32 }).primaryKey(),
+  currencyCode: varchar('currency_code', { length: 3 }).notNull().default('USD'),
+  defaultCountryCode: varchar('default_country_code', { length: 16 }).notNull().default('US'),
+  defaultShippingMethodCode: varchar('default_shipping_method_code', { length: 100 }).notNull().default('dhl-express'),
+  volumePricingRules: jsonb('volume_pricing_rules').$type<VolumePricingRuleConfig[]>().notNull().default([]),
+  shippingMethods: jsonb('shipping_methods').$type<ShippingMethodConfig[]>().notNull().default([]),
+  shippingCountryRates: jsonb('shipping_country_rates').$type<ShippingCountryRateConfig[]>().notNull().default([]),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const editorialSettings = pgTable('editorial_settings', {
+  id: varchar('id', { length: 32 }).primaryKey(),
+  workflowSettings: jsonb('workflow_settings').$type<EditorialWorkflowSettings>().notNull().default({}),
+  templates: jsonb('templates').$type<EditorialAiTemplate[]>().notNull().default([]),
+  rules: jsonb('rules').$type<EditorialAutomationRule[]>().notNull().default([]),
+  briefs: jsonb('briefs').$type<EditorialBrief[]>().notNull().default([]),
+  runs: jsonb('runs').$type<EditorialGenerationRun[]>().notNull().default([]),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
 
 export const productImages = pgTable('product_images', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -417,6 +445,29 @@ export const contentBlocks = pgTable(
   },
   (table) => ({
     placementKeyUnique: uniqueIndex('content_blocks_placement_key_unique').on(table.placement, table.blockKey),
+  }),
+);
+
+export const editorialContentEntries = pgTable(
+  'editorial_content_entries',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    contentType: editorialContentTypeEnum('content_type').notNull(),
+    title: varchar('title', { length: 255 }).notNull(),
+    slug: varchar('slug', { length: 180 }).notNull(),
+    summary: text('summary'),
+    locale: varchar('locale', { length: 16 }).notNull().default('en-US'),
+    status: cmsStatusEnum('status').notNull().default('draft'),
+    seoTitle: varchar('seo_title', { length: 255 }),
+    seoDescription: varchar('seo_description', { length: 500 }),
+    publishedAt: timestamp('published_at', { withTimezone: true }),
+    payload: jsonb('payload').$type<EditorialContentPayload>().notNull().default({}),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    typeSlugLocaleUnique: uniqueIndex('editorial_content_entries_type_slug_locale_unique').on(table.contentType, table.slug, table.locale),
+    typeStatusPublishedIdx: index('editorial_content_entries_type_status_published_idx').on(table.contentType, table.status, table.publishedAt),
   }),
 );
 

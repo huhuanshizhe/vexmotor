@@ -1,14 +1,9 @@
-'use client';
+import { getAdminCmsPages, getAdminContentBlocks } from '@/server/admin/content';
 
-import { Card, Typography } from 'antd';
+import { AdminContentClient } from './content-client';
 
-export default function AdminContentPage() {
-  return (
-    <Card>
-      <Typography.Title level={2}>Content Blocks</Typography.Title>
-      <Typography.Paragraph type="secondary">
-        Home hero, industry sections, testimonials, and footer highlights will map to the content_blocks schema.
-      </Typography.Paragraph>
-    </Card>
-  );
+export default async function AdminContentPage() {
+  const [blocks, pages] = await Promise.all([getAdminContentBlocks(), getAdminCmsPages()]);
+
+  return <AdminContentClient initialBlocks={blocks} initialPages={pages} />;
 }

@@ -1,16 +1,28 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
+
+import { useToast } from '@C/toast';
+import { parseLocaleFromPathname, withLocalePath } from '@/lib/i18n';
 
 type AddToCartButtonProps = {
   productId: string;
+  showQuantitySelector?: boolean;
+  redirectToCart?: boolean;
 };
 
-export function AddToCartButton({ productId }: AddToCartButtonProps) {
+export function AddToCartButton({ productId, showQuantitySelector = false, redirectToCart = true }: AddToCartButtonProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const { pushToast } = useToast();
   const [message, setMessage] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState(1);
   const [isPending, startTransition] = useTransition();
+
+  function updateQuantity(nextQuantity: number) {
+    setQuantity(Math.max(1, nextQuantity));
+  }
 
   function handleAddToCart() {
     startTransition(async () => {
@@ -18,7 +30,7 @@ export function AddToCartButton({ productId }: AddToCartButtonProps) {
       const response = await fetch('/api/front/cart', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId, quantity: 1 }),
+        body: JSON.stringify({ productId, quantity }),
       });
 
       if (!response.ok) {
@@ -26,16 +38,58 @@ export function AddToCartButton({ productId }: AddToCartButtonProps) {
         return;
       }
 
-      router.push('/cart');
+      const locale = parseLocaleFromPathname(pathname).locale;
+
+      if (redirectToCart) {
+        router.push(withLocalePath('/cart', locale));
+      } else {
+        pushToast({
+          title: 'Added to cart',
+          description: `Quantity ${quantity} is now in your cart.`,
+          tone: 'success',
+        });
+      }
+
       router.refresh();
     });
   }
 
   return (
-    <div style={{ display: 'grid', gap: 8 }}>
-      <button type="button" className="button-primary" onClick={handleAddToCart} disabled={isPending}>
-        {isPending ? 'Adding...' : 'Add to Cart'}
-      </button>
+    <div className="add-to-cart-stack">
+      {showQuantitySelector ? (
+        <div className="quantity-cart-row">
+          <label className="quantity-control">
+            <span className="summary-label">Qty</span>
+            <div className="quantity-stepper">
+              <button type="button" className="quantity-stepper-button" onClick={() => updateQuantity(quantity - 1)} disabled={isPending || quantity <= 1}>
+                -
+              </button>
+              <input
+                type="number"
+                min={1}
+                inputMode="numeric"
+                className="quantity-stepper-input"
+                value={quantity}
+                onChange={(event) => updateQuantity(Number(event.target.value) || 1)}
+                aria-label="Quantity"
+                disabled={isPending}
+              />
+              <button type="button" className="quantity-stepper-button" onClick={() => updateQuantity(quantity + 1)} disabled={isPending}>
+                +
+              </button>
+            </div>
+          </label>
+
+          <button type="button" className="button-primary quantity-cart-button" onClick={handleAddToCart} disabled={isPending}>
+            {isPending ? 'Adding...' : 'Add to Cart'}
+          </button>
+        </div>
+      ) : (
+        <button type="button" className="button-primary" onClick={handleAddToCart} disabled={isPending}>
+          {isPending ? 'Adding...' : 'Add to Cart'}
+        </button>
+      )}
+
       {message ? <span className="section-description">{message}</span> : null}
     </div>
   );
