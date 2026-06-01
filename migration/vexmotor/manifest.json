@@ -1,0 +1,20 @@
+{
+  "generatedAt": "2026-06-01T01:59:05.649Z",
+  "sourceOrigin": "https://www.vexmotor.com",
+  "sitemapInput": null,
+  "totals": {
+    "sitemapUrls": 73,
+    "discoveredFromHome": 60,
+    "mergedUrls": 134,
+    "productsFound": 63,
+    "categoriesFound": 24,
+    "articlesFound": 0,
+    "pagesFound": 32
+  },
+  "sampled": {
+    "products": 63,
+    "categories": 24,
+    "articles": 0,
+    "pages": 32
+  }
+}

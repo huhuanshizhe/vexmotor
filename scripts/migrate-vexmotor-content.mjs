@@ -1,0 +1,666 @@
+#!/usr/bin/env node
+
+import { mkdir, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+
+const DEFAULT_ORIGIN = 'https://www.vexmotor.com';
+const DEFAULT_TIMEOUT_MS = 20_000;
+const DEFAULT_CONCURRENCY = 4;
+
+function parseArgs(argv) {
+  const args = {
+    origin: DEFAULT_ORIGIN,
+    outDir: path.resolve(process.cwd(), 'migration', 'vexmotor'),
+    sitemap: '',
+    timeoutMs: DEFAULT_TIMEOUT_MS,
+    concurrency: DEFAULT_CONCURRENCY,
+    maxProducts: 0,
+    maxCategories: 0,
+    maxArticles: 0,
+    maxPages: 0,
+    rewriteHostFrom: 'www.stepmotech.com,stepmotech.com',
+    rewriteHostTo: 'www.vexmotor.com',
+    includeUrls: '',
+  };
+
+  for (let i = 2; i < argv.length; i += 1) {
+    const part = argv[i];
+    if (!part.startsWith('--')) {
+      continue;
+    }
+
+    const key = part.slice(2);
+    const next = argv[i + 1];
+    if (next && !next.startsWith('--')) {
+      args[key] = next;
+      i += 1;
+    } else {
+      args[key] = 'true';
+    }
+  }
+
+  args.timeoutMs = Number(args.timeoutMs) || DEFAULT_TIMEOUT_MS;
+  args.concurrency = Math.max(1, Number(args.concurrency) || DEFAULT_CONCURRENCY);
+  args.maxProducts = Math.max(0, Number(args.maxProducts) || 0);
+  args.maxCategories = Math.max(0, Number(args.maxCategories) || 0);
+  args.maxArticles = Math.max(0, Number(args.maxArticles) || 0);
+  args.maxPages = Math.max(0, Number(args.maxPages) || 0);
+  args.rewriteHostFrom = String(args.rewriteHostFrom ?? '')
+    .split(',')
+    .map((item) => item.trim().toLowerCase())
+    .filter(Boolean);
+  args.rewriteHostTo = String(args.rewriteHostTo ?? '').trim().toLowerCase();
+  args.includeUrls = String(args.includeUrls ?? '')
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  return args;
+}
+
+function decodeXmlText(value) {
+  return value
+    .replaceAll('&amp;', '&')
+    .replaceAll('&lt;', '<')
+    .replaceAll('&gt;', '>')
+    .replaceAll('&quot;', '"')
+    .replaceAll('&#39;', "'")
+    .trim();
+}
+
+function stripTags(value) {
+  return value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function safeFileName(name) {
+  return name.replace(/[^a-zA-Z0-9-_]/g, '-');
+}
+
+async function fetchText(url, timeoutMs) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        'user-agent': 'vexmotor-migration-bot/1.0 (+https://www.stepmotech.online)',
+        accept: 'text/html,application/xml;q=0.9,*/*;q=0.8',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    return await response.text();
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+function extractLocEntries(xmlText) {
+  const values = [];
+  const regex = /<loc>\s*(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?\s*<\/loc>/gi;
+  for (const match of xmlText.matchAll(regex)) {
+    const loc = decodeXmlText(match[1] ?? '');
+    if (loc) {
+      values.push(loc);
+    }
+  }
+  return values;
+}
+
+function isSitemapIndex(xmlText) {
+  return /<sitemapindex\b/i.test(xmlText);
+}
+
+function extractRobotsSitemaps(robotsText) {
+  const values = [];
+  const regex = /^\s*Sitemap:\s*(\S+)\s*$/gim;
+  for (const match of robotsText.matchAll(regex)) {
+    values.push(match[1]);
+  }
+  return values;
+}
+
+function normalizeUrl(rawUrl) {
+  try {
+    const url = new URL(rawUrl);
+    url.hash = '';
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
+function rewriteUrlHost(rawUrl, fromHosts, toHost) {
+  if (!toHost || !fromHosts.length) {
+    return rawUrl;
+  }
+
+  try {
+    const url = new URL(rawUrl);
+    if (fromHosts.includes(url.hostname.toLowerCase())) {
+      url.hostname = toHost;
+      return url.toString();
+    }
+    return rawUrl;
+  } catch {
+    return rawUrl;
+  }
+}
+
+function classifyUrl(rawUrl) {
+  const url = new URL(rawUrl);
+  const pathname = url.pathname.toLowerCase();
+  const normalizedPathname = pathname.replace(/^\/(en|es|de|fr)(?=\/)/, '');
+
+  if (normalizedPathname.includes('/blog/')) {
+    return 'article';
+  }
+
+  if (normalizedPathname.endsWith('.html') && /\/\d+-/.test(normalizedPathname)) {
+    return 'product';
+  }
+
+  if (/\/[a-z0-9-]+-\d+\/?$/.test(normalizedPathname) && !normalizedPathname.endsWith('.html')) {
+    return 'category';
+  }
+
+  if (
+    normalizedPathname === '/' ||
+    normalizedPathname.startsWith('/content/') ||
+    normalizedPathname.startsWith('/about') ||
+    normalizedPathname.startsWith('/contact')
+  ) {
+    return 'page';
+  }
+
+  return 'other';
+}
+
+function extractTitle(html) {
+  const match = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  return match ? stripTags(match[1]) : null;
+}
+
+function extractMetaDescription(html) {
+  const regex = /<meta[^>]+name=["']description["'][^>]*content=["']([\s\S]*?)["'][^>]*>/i;
+  const altRegex = /<meta[^>]+content=["']([\s\S]*?)["'][^>]*name=["']description["'][^>]*>/i;
+  const match = html.match(regex) ?? html.match(altRegex);
+  return match ? decodeXmlText(match[1]) : null;
+}
+
+function extractCanonical(html) {
+  const regex = /<link[^>]+rel=["']canonical["'][^>]*href=["']([\s\S]*?)["'][^>]*>/i;
+  const altRegex = /<link[^>]+href=["']([\s\S]*?)["'][^>]*rel=["']canonical["'][^>]*>/i;
+  const match = html.match(regex) ?? html.match(altRegex);
+  return match ? match[1].trim() : null;
+}
+
+function extractFirstHeading(html) {
+  const match = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
+  return match ? stripTags(match[1]) : null;
+}
+
+function extractJsonLdBlocks(html) {
+  const blocks = [];
+  const regex = /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  for (const match of html.matchAll(regex)) {
+    const raw = (match[1] ?? '').trim();
+    if (!raw) {
+      continue;
+    }
+    try {
+      blocks.push(JSON.parse(raw));
+    } catch {
+      continue;
+    }
+  }
+  return blocks;
+}
+
+function flattenJsonLd(values) {
+  const out = [];
+  const pushValue = (value) => {
+    if (!value) {
+      return;
+    }
+    if (Array.isArray(value)) {
+      value.forEach(pushValue);
+      return;
+    }
+    if (typeof value === 'object' && value['@graph'] && Array.isArray(value['@graph'])) {
+      value['@graph'].forEach(pushValue);
+      return;
+    }
+    out.push(value);
+  };
+
+  values.forEach(pushValue);
+  return out;
+}
+
+function extractProductFromJsonLd(jsonLdItems) {
+  const all = flattenJsonLd(jsonLdItems);
+  const product = all.find((item) => {
+    const type = item?.['@type'];
+    if (Array.isArray(type)) {
+      return type.includes('Product');
+    }
+    return type === 'Product';
+  });
+
+  if (!product) {
+    return null;
+  }
+
+  const offers = Array.isArray(product.offers) ? product.offers[0] : product.offers;
+  const imageValues = Array.isArray(product.image) ? product.image : product.image ? [product.image] : [];
+
+  return {
+    name: product.name ?? null,
+    sku: product.sku ?? null,
+    mpn: product.mpn ?? null,
+    description: product.description ?? null,
+    brand: typeof product.brand === 'object' ? (product.brand?.name ?? null) : product.brand ?? null,
+    price: offers?.price ?? null,
+    currency: offers?.priceCurrency ?? null,
+    availability: offers?.availability ?? null,
+    images: imageValues,
+  };
+}
+
+function extractBannerImages(html, origin) {
+  const values = [];
+  const regex = /<img[^>]+src=["']([^"']+)["'][^>]*>/gi;
+
+  for (const match of html.matchAll(regex)) {
+    const src = match[1];
+    if (!src) {
+      continue;
+    }
+
+    const marker = src.toLowerCase();
+    const looksLikeBanner = marker.includes('slider') || marker.includes('banner') || marker.includes('homeslide') || marker.includes('imageslider');
+    if (!looksLikeBanner) {
+      continue;
+    }
+
+    try {
+      const absolute = new URL(src, origin).toString();
+      values.push(absolute);
+    } catch {
+      continue;
+    }
+  }
+
+  return [...new Set(values)];
+}
+
+function extractAnchorUrls(html, origin) {
+  const values = [];
+  const regex = /<a[^>]+href=["']([^"']+)["'][^>]*>/gi;
+
+  for (const match of html.matchAll(regex)) {
+    const href = (match[1] ?? '').trim();
+    if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) {
+      continue;
+    }
+
+    try {
+      const url = new URL(href, origin);
+      values.push(url.toString());
+    } catch {
+      continue;
+    }
+  }
+
+  return [...new Set(values)];
+}
+
+function extractFooter(html, origin) {
+  const matches = [...html.matchAll(/<footer[\s\S]*?<\/footer>/gi)].map((item) => item[0]);
+  const footerHtml =
+    matches
+      .map((section) => ({ section, score: stripTags(section).length }))
+      .sort((a, b) => b.score - a.score)[0]?.section ?? '';
+
+  const links = [];
+  const linkRegex = /<a[^>]+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+  for (const match of footerHtml.matchAll(linkRegex)) {
+    const hrefRaw = match[1]?.trim();
+    const label = stripTags(match[2] ?? '');
+    if (!hrefRaw || !label) {
+      continue;
+    }
+
+    try {
+      links.push({ href: new URL(hrefRaw, origin).toString(), label });
+    } catch {
+      links.push({ href: hrefRaw, label });
+    }
+  }
+
+  return {
+    html: footerHtml,
+    text: stripTags(footerHtml),
+    links,
+  };
+}
+
+async function mapLimit(items, limit, worker) {
+  const queue = [...items];
+  const results = [];
+
+  const runners = Array.from({ length: Math.min(limit, queue.length) }, async () => {
+    while (queue.length) {
+      const next = queue.shift();
+      if (!next) {
+        continue;
+      }
+      // eslint-disable-next-line no-await-in-loop
+      const value = await worker(next);
+      if (value !== null) {
+        results.push(value);
+      }
+    }
+  });
+
+  await Promise.all(runners);
+  return results;
+}
+
+function trimByLimit(items, max) {
+  if (!max || max <= 0) {
+    return items;
+  }
+  return items.slice(0, max);
+}
+
+async function resolveSitemaps(origin, preferredSitemap, timeoutMs) {
+  const start = [];
+
+  if (preferredSitemap) {
+    start.push(preferredSitemap);
+  }
+
+  try {
+    const robotsUrl = new URL('/robots.txt', origin).toString();
+    const robots = await fetchText(robotsUrl, timeoutMs);
+    start.push(...extractRobotsSitemaps(robots));
+  } catch {
+    // ignore robots fetch failures
+  }
+
+  start.push(new URL('/sitemap.xml', origin).toString());
+
+  const queue = [...new Set(start)];
+  const visited = new Set();
+  const urlEntries = new Set();
+
+  while (queue.length) {
+    const sitemapUrl = queue.shift();
+    if (!sitemapUrl || visited.has(sitemapUrl)) {
+      continue;
+    }
+
+    visited.add(sitemapUrl);
+
+    let xml;
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      xml = await fetchText(sitemapUrl, timeoutMs);
+    } catch {
+      continue;
+    }
+
+    const locs = extractLocEntries(xml);
+    if (isSitemapIndex(xml)) {
+      locs.forEach((loc) => {
+        const normalized = normalizeUrl(loc);
+        if (normalized && !visited.has(normalized)) {
+          queue.push(normalized);
+        }
+      });
+      continue;
+    }
+
+    locs.forEach((loc) => {
+      const normalized = normalizeUrl(loc);
+      if (normalized) {
+        urlEntries.add(normalized);
+      }
+    });
+  }
+
+  return [...urlEntries];
+}
+
+async function main() {
+  const args = parseArgs(process.argv);
+  const origin = args.origin;
+
+  await mkdir(args.outDir, { recursive: true });
+
+  const allUrls = await resolveSitemaps(origin, args.sitemap, args.timeoutMs);
+
+  let homeHtml = '';
+  try {
+    homeHtml = await fetchText(origin, args.timeoutMs);
+  } catch {
+    // ignore
+  }
+
+  const discoveredFromHome = extractAnchorUrls(homeHtml, origin).filter((url) => {
+    try {
+      const parsed = new URL(url);
+      const host = parsed.hostname.toLowerCase();
+      const sourceHosts = [new URL(origin).hostname.toLowerCase(), ...args.rewriteHostFrom, args.rewriteHostTo].filter(Boolean);
+      return sourceHosts.includes(host);
+    } catch {
+      return false;
+    }
+  });
+
+  const mergedUrlSet = new Set([...allUrls, ...discoveredFromHome]);
+  args.includeUrls.forEach((item) => {
+    const normalized = normalizeUrl(item);
+    if (normalized) {
+      mergedUrlSet.add(normalized);
+    }
+  });
+  const mergedUrls = [...mergedUrlSet].map((url) => normalizeUrl(url)).filter(Boolean);
+
+  const grouped = {
+    product: [],
+    category: [],
+    article: [],
+    page: [],
+    other: [],
+  };
+
+  for (const url of mergedUrls) {
+    const kind = classifyUrl(url);
+    grouped[kind].push(url);
+  }
+
+  const productUrls = trimByLimit(grouped.product, args.maxProducts);
+  const categoryUrls = trimByLimit(grouped.category, args.maxCategories);
+  const articleUrls = trimByLimit(grouped.article, args.maxArticles);
+  const pageUrls = trimByLimit(grouped.page, args.maxPages);
+
+  const scrapePage = async (url, kind) => {
+    const fetchUrl = rewriteUrlHost(url, args.rewriteHostFrom, args.rewriteHostTo);
+    try {
+      const html = await fetchText(fetchUrl, args.timeoutMs);
+      const jsonLd = extractJsonLdBlocks(html);
+      return {
+        kind,
+        url,
+        fetchUrl,
+        title: extractTitle(html),
+        seoDescription: extractMetaDescription(html),
+        canonical: extractCanonical(html),
+        heading: extractFirstHeading(html),
+        jsonLdCount: jsonLd.length,
+        jsonLd,
+        html,
+      };
+    } catch (error) {
+      return {
+        kind,
+        url,
+        fetchUrl,
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  };
+
+  const [productPages, categoryPages, articlePages, staticPages] = await Promise.all([
+    mapLimit(productUrls, args.concurrency, (url) => scrapePage(url, 'product')),
+    mapLimit(categoryUrls, args.concurrency, (url) => scrapePage(url, 'category')),
+    mapLimit(articleUrls, args.concurrency, (url) => scrapePage(url, 'article')),
+    mapLimit(pageUrls, args.concurrency, (url) => scrapePage(url, 'page')),
+  ]);
+
+  const products = productPages.map((item) => {
+    if (item.error) {
+      return {
+        url: item.url,
+        fetchUrl: item.fetchUrl,
+        error: item.error,
+      };
+    }
+
+    const ldProduct = extractProductFromJsonLd(item.jsonLd ?? []);
+    return {
+      url: item.url,
+      fetchUrl: item.fetchUrl,
+      title: item.title,
+      heading: item.heading,
+      seoTitle: item.title,
+      seoDescription: item.seoDescription,
+      canonical: item.canonical,
+      ldProduct,
+    };
+  });
+
+  const categories = categoryPages.map((item) => {
+    if (item.error) {
+      return {
+        url: item.url,
+        fetchUrl: item.fetchUrl,
+        error: item.error,
+      };
+    }
+
+    return {
+      url: item.url,
+      fetchUrl: item.fetchUrl,
+      title: item.title,
+      heading: item.heading,
+      seoTitle: item.title,
+      seoDescription: item.seoDescription,
+      canonical: item.canonical,
+    };
+  });
+
+  const articles = articlePages.map((item) => {
+    if (item.error) {
+      return {
+        url: item.url,
+        fetchUrl: item.fetchUrl,
+        error: item.error,
+      };
+    }
+
+    const articleHtmlMatch = item.html?.match(/<article[\s\S]*?<\/article>/i) ?? null;
+    return {
+      url: item.url,
+      fetchUrl: item.fetchUrl,
+      title: item.title,
+      heading: item.heading,
+      seoTitle: item.title,
+      seoDescription: item.seoDescription,
+      canonical: item.canonical,
+      bodyTextExcerpt: stripTags(articleHtmlMatch ? articleHtmlMatch[0] : item.html ?? '').slice(0, 2400),
+    };
+  });
+
+  const pages = staticPages.map((item) => {
+    if (item.error) {
+      return {
+        url: item.url,
+        fetchUrl: item.fetchUrl,
+        error: item.error,
+      };
+    }
+
+    return {
+      url: item.url,
+      fetchUrl: item.fetchUrl,
+      title: item.title,
+      heading: item.heading,
+      seoTitle: item.title,
+      seoDescription: item.seoDescription,
+      canonical: item.canonical,
+      bodyTextExcerpt: stripTags(item.html ?? '').slice(0, 2000),
+    };
+  });
+
+  const banner = {
+    source: origin,
+    images: extractBannerImages(homeHtml, origin),
+  };
+
+  const footer = extractFooter(homeHtml, origin);
+
+  const manifest = {
+    generatedAt: new Date().toISOString(),
+    sourceOrigin: origin,
+    sitemapInput: args.sitemap || null,
+    totals: {
+      sitemapUrls: allUrls.length,
+      discoveredFromHome: discoveredFromHome.length,
+      mergedUrls: mergedUrls.length,
+      productsFound: grouped.product.length,
+      categoriesFound: grouped.category.length,
+      articlesFound: grouped.article.length,
+      pagesFound: grouped.page.length,
+    },
+    sampled: {
+      products: productUrls.length,
+      categories: categoryUrls.length,
+      articles: articleUrls.length,
+      pages: pageUrls.length,
+    },
+  };
+
+  const files = [
+    ['manifest.json', manifest],
+    ['products.json', products],
+    ['categories.json', categories],
+    ['articles.json', articles],
+    ['pages.json', pages],
+    ['banner.json', banner],
+    ['footer.json', footer],
+    ['urls.json', grouped],
+  ];
+
+  await Promise.all(
+    files.map(async ([file, payload]) => {
+      const fullPath = path.join(args.outDir, file);
+      await writeFile(fullPath, JSON.stringify(payload, null, 2), 'utf8');
+    }),
+  );
+
+  process.stdout.write(`Migration snapshot generated in ${args.outDir}\n`);
+  process.stdout.write(JSON.stringify(manifest, null, 2));
+  process.stdout.write('\n');
+}
+
+main().catch((error) => {
+  process.stderr.write(`Migration snapshot failed: ${error instanceof Error ? error.message : String(error)}\n`);
+  process.exitCode = 1;
+});
