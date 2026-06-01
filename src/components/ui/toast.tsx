@@ -20,7 +20,12 @@ type ToastContextValue = {
   dismissToast: (id: string) => void;
 };
 
-const ToastContext = createContext<ToastContextValue | null>(null);
+const noopToastContext: ToastContextValue = {
+  pushToast: () => {},
+  dismissToast: () => {},
+};
+
+const ToastContext = createContext<ToastContextValue>(noopToastContext);
 
 function ToastCard({ id, title, description, tone = 'default', persistent = false, onDismiss }: ToastMessage & { onDismiss: (id: string) => void }) {
   return (
@@ -77,11 +82,5 @@ export function ToastProvider({ children }: PropsWithChildren) {
 }
 
 export function useToast() {
-  const context = useContext(ToastContext);
-
-  if (!context) {
-    throw new Error('useToast must be used within a ToastProvider');
-  }
-
-  return context;
+  return useContext(ToastContext);
 }

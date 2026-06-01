@@ -75,8 +75,17 @@
 - 开发端口固定为 `4000`
 - 推荐安装命令：`pnpm install`
 - 推荐开发命令：`pnpm dev`
+- 显式连库开发命令：`pnpm dev:db`
+- 显式使用 Turbopack：`pnpm dev:turbo`
+- 显式使用 Turbopack 且连库：`pnpm dev:turbo:db`
 - 推荐校验命令：`pnpm check`
 - 本地环境变量放在 `.env.local`
+
+说明：
+
+- `pnpm dev` 默认使用 webpack，并关闭开发态数据库连接，直接走现有 seed / memory fallback，保证本地页面响应稳定。
+- 只有在明确需要验证真实数据库读写时，才使用 `pnpm dev:db`，其内部会设置 `DB_ENABLE_IN_DEV=true`。
+- `pnpm dev:turbo` 与 `pnpm dev:turbo:db` 只作为显式调试入口保留，不作为默认本地开发模式。
 
 ### 5.1.1 包管理约束
 
@@ -87,6 +96,7 @@
 ### 5.2 核心环境变量
 
 - `DATABASE_URL`
+- `DB_ENABLE_IN_DEV`
 - `AUTH_SECRET`
 - `AUTH_URL`
 - `NEXT_PUBLIC_SITE_URL`

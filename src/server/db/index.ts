@@ -5,14 +5,19 @@ import postgres from 'postgres';
 
 import * as schema from './schema';
 
+const isProduction = process.env.NODE_ENV === 'production';
 const connectionString = process.env.DATABASE_URL;
+const connectTimeout = Number(process.env.DB_CONNECT_TIMEOUT_SECONDS ?? (process.env.NODE_ENV === 'production' ? 30 : 2));
+const idleTimeout = Number(process.env.DB_IDLE_TIMEOUT_SECONDS ?? (process.env.NODE_ENV === 'production' ? 20 : 5));
+const isDatabaseEnabledInDevelopment = process.env.DB_ENABLE_IN_DEV === 'true';
+const shouldUseDatabase = Boolean(connectionString) && (isProduction || isDatabaseEnabledInDevelopment);
 
-const client = connectionString
+const client = shouldUseDatabase
   ? postgres(connectionString, {
       prepare: false,
       max: 5,
-      idle_timeout: 20,
-      connect_timeout: 30,
+      idle_timeout: idleTimeout,
+      connect_timeout: connectTimeout,
     })
   : null;
 
