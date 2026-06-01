@@ -114,6 +114,15 @@ body {
   letter-spacing: 0.03em;
 }
 
+.brand-logo-image {
+  width: clamp(168px, 18vw, 220px);
+  height: auto;
+}
+
+.brand-title-fallback {
+  display: none;
+}
+
 .brand-subtitle {
   color: var(--gray-500);
 }
@@ -235,7 +244,96 @@ body {
 .storefront-footer .footer-contact-item span,
 .storefront-footer .footer-contact-link,
 .storefront-footer .footer-note {
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.storefront-footer .footer-column-title,
+.storefront-footer .footer-service-title,
+.storefront-footer .footer-contact-title,
+.storefront-footer .footer-product-price,
+.storefront-footer .footer-link-item,
+.storefront-footer .footer-contact-link,
+.storefront-footer .footer-note,
+.storefront-footer .footer-payment-badge {
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.18);
+}
+
+.storefront-footer .footer-column-title,
+.storefront-footer .footer-service-title,
+.storefront-footer .footer-contact-title,
+.storefront-footer .footer-product-price {
+  color: #f4f9ff;
+}
+
+.storefront-footer .footer-link-item,
+.storefront-footer .footer-contact-link,
+.storefront-footer .footer-product-link {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.storefront-footer .footer-link-item:hover,
+.storefront-footer .footer-contact-link:hover,
+.storefront-footer .footer-product-link:hover,
+.storefront-footer .footer-link-item:focus-visible,
+.storefront-footer .footer-contact-link:focus-visible,
+.storefront-footer .footer-product-link:focus-visible {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.storefront-footer .footer-payment-badge {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  color: #ffffff;
+}
+
+.header-utility-link {
+  color: var(--brand-900);
+}
+
+.header-utility-pill {
+  border: 1px solid rgba(6, 25, 46, 0.14);
+  box-shadow: 0 2px 8px rgba(16, 41, 66, 0.14);
+}
+
+.header-utility-pill-secondary {
+  background: linear-gradient(135deg, #0c3259 0%, #0f4375 100%);
+  color: #ffffff;
+  border-color: rgba(155, 203, 255, 0.56);
+}
+
+.header-utility-pill-secondary .header-utility-count {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.header-utility-pill:hover,
+.header-utility-pill:focus-visible {
+  filter: brightness(1.06);
+}
+
+.button-secondary {
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(16, 41, 66, 0.24);
+  color: #ffffff;
+}
+
+.button-secondary:hover,
+.button-secondary:focus-visible {
+  background: rgba(16, 41, 66, 0.38);
+}
+
+.page-button-secondary-dark,
+.button-secondary-dark {
+  border-color: rgba(16, 41, 66, 0.3);
+  background: #ffffff;
+  color: var(--brand-900);
+}
+
+.page-button-secondary-dark:hover,
+.page-button-secondary-dark:focus-visible,
+.button-secondary-dark:hover,
+.button-secondary-dark:focus-visible {
+  background: #f3f8ff;
 }
 
 .ui-button {
