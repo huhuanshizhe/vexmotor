@@ -53,6 +53,11 @@ const engineeringResources = [
   { label: 'Wiring Diagrams', href: '/resources' },
 ];
 
+function formatPublishedDate(value: string, formatter: Intl.DateTimeFormat) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? 'Date TBD' : formatter.format(date);
+}
+
 export default async function HomePage() {
   const preferences = await getServerSitePreferences();
   const locale = preferences.locale;
@@ -315,7 +320,7 @@ export default async function HomePage() {
                   <Link href={withLocalePath(`/blog/${article.slug}`, locale)}>{article.title}</Link>
                 </h3>
                 <p className="section-description compact-copy">{article.summary}</p>
-                <p className="product-meta">{dateFormatter.format(new Date(article.publishedAt))} · {article.readMinutes} min read</p>
+                <p className="product-meta">{formatPublishedDate(article.publishedAt, dateFormatter)} · {article.readMinutes} min read</p>
               </article>
             ))}
           </div>
