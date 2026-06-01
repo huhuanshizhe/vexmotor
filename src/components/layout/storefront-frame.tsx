@@ -7,12 +7,15 @@ import { HeaderUtilityStrip } from '@/components/layout/header-utility-strip';
 import { CookieConsentBar, COOKIE_CONSENT_COOKIE_NAME } from '@/components/layout/cookie-consent-bar';
 import { NotificationBar } from '@/components/layout/notification-bar';
 import type { Locale } from '@/lib/i18n';
+import type { SitePreferences } from '@/lib/i18n';
 import { withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
 import { notificationBarConfig, NOTIFICATION_BAR_COOKIE_NAME } from '@/lib/site-config';
 import { getHomeData, getNavigationData } from '@/server/storefront';
 import { getCurrentUserId } from '@/server/auth/session';
 import { getExistingActiveCartDetail } from '@/server/storefront/cart';
+import { getSeedCategories, getSeedHomeData } from '@/server/storefront/seed';
+import { storefrontNavigationBase } from '@/server/storefront/site-shell';
 import { NewsletterSignupForm } from '@/components/storefront/newsletter-signup-form';
 
 type StorefrontFrameProps = {
@@ -29,6 +32,12 @@ type FrameLinkProps = {
   children: ReactNode;
   external?: boolean;
   locale: Locale;
+};
+
+const fallbackSitePreferences: SitePreferences = {
+  locale: 'en',
+  currency: 'USD',
+  unitSystem: 'imperial',
 };
 
 function FrameLink({ href, className, children, external, locale }: FrameLinkProps) {
@@ -49,13 +58,13 @@ function FrameLink({ href, className, children, external, locale }: FrameLinkPro
 
 export async function StorefrontFrame({ title, description, eyebrow, actions, children }: StorefrontFrameProps) {
   const cookieStore = await cookies();
-  const userId = await getCurrentUserId();
+  const userId = await getCurrentUserId().catch(() => null);
   const anonymousToken = cookieStore.get('cart_token')?.value ?? null;
-  const preferences = await getServerSitePreferences();
+  const preferences = await getServerSitePreferences().catch(() => fallbackSitePreferences);
   const [homeData, navigation, activeCart] = await Promise.all([
-    getHomeData(),
-    getNavigationData(),
-    getExistingActiveCartDetail({ userId, anonymousToken }),
+    getHomeData().catch(() => getSeedHomeData()),
+    getNavigationData().catch(() => ({ ...storefrontNavigationBase, categories: getSeedCategories().slice(0, 6) })),
+    getExistingActiveCartDetail({ userId, anonymousToken }).catch(() => null),
   ]);
   const notificationDismissed = cookieStore.get(NOTIFICATION_BAR_COOKIE_NAME)?.value === notificationBarConfig.id;
   const cookieConsentAccepted = cookieStore.get(COOKIE_CONSENT_COOKIE_NAME)?.value === 'accepted';
