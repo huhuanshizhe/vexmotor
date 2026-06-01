@@ -3,10 +3,18 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth/options';
 
 export async function getAuthSession() {
-  return getServerSession(authOptions);
+  try {
+    return await getServerSession(authOptions);
+  } catch {
+    return null;
+  }
 }
 
 export async function getCurrentUserId() {
-  const session = await getAuthSession();
-  return session?.user?.id ?? null;
+  try {
+    const session = await getAuthSession();
+    return session?.user?.id ?? null;
+  } catch {
+    return null;
+  }
 }
