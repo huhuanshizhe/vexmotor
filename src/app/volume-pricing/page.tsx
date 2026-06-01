@@ -8,7 +8,6 @@ import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 import { getCommerceConfig } from '@/server/commerce/config';
 import { getProductList } from '@/server/storefront';
-import { getSeedProductById } from '@/server/storefront/seed';
 
 const faq = [
   {
@@ -36,19 +35,18 @@ type VolumePricingPageProps = {
 };
 
 export default async function VolumePricingPage({ searchParams }: VolumePricingPageProps) {
-  const [{ locale }, catalog, intakeProduct, params, commerceConfig] = await Promise.all([
+  const [{ locale }, catalog, params, commerceConfig] = await Promise.all([
     getServerSitePreferences(),
     getProductList({ pageSize: 96, sort: 'featured' }),
-    Promise.resolve(getSeedProductById('prod-3')),
     searchParams,
     getCommerceConfig(),
   ]);
 
+  const products = catalog.items.filter((product) => product.purchaseMode === 'buy');
+  const intakeProduct = products[0] ?? null;
   if (!intakeProduct) {
     return null;
   }
-
-  const products = catalog.items.filter((product) => product.purchaseMode === 'buy');
   const initialSku = params.sku?.trim() || products[0]?.sku || undefined;
   const browsePath = withLocalePath('/products', locale);
   const breadcrumbJsonLd = buildBreadcrumbJsonLd(

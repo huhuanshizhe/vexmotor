@@ -271,6 +271,143 @@ function extractProductFromJsonLd(jsonLdItems) {
   };
 }
 
+function extractProductGalleryImages(html, origin, ldImages = []) {
+  const values = [];
+
+  for (const value of ldImages) {
+    if (typeof value !== 'string' || !value.trim()) {
+      continue;
+    }
+    try {
+      values.push(new URL(value, origin).toString());
+    } catch {
+      continue;
+    }
+  }
+
+  const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/gi;
+  for (const match of html.matchAll(imgRegex)) {
+    const src = (match[1] ?? '').trim();
+    if (!src) {
+      continue;
+    }
+
+    const marker = src.toLowerCase();
+    const looksLikeProduct = marker.includes('product') || marker.includes('gallery') || marker.includes('detail') || marker.includes('zoom') || marker.includes('thumb');
+    const looksLikeNoise = marker.includes('logo') || marker.includes('icon') || marker.includes('banner') || marker.includes('sprite');
+    if (!looksLikeProduct || looksLikeNoise) {
+      continue;
+    }
+
+    try {
+      values.push(new URL(src, origin).toString());
+    } catch {
+      continue;
+    }
+  }
+
+  return [...new Set(values)].slice(0, 12);
+}
+
+function guessMimeTypeFromUrl(url) {
+  const lower = url.toLowerCase();
+  if (lower.endsWith('.pdf')) {
+    return 'application/pdf';
+  }
+  if (lower.endsWith('.step') || lower.endsWith('.stp')) {
+    return 'application/step';
+  }
+  if (lower.endsWith('.dxf')) {
+    return 'image/vnd.dxf';
+  }
+  if (lower.endsWith('.dwg')) {
+    return 'image/vnd.dwg';
+  }
+  if (lower.endsWith('.iges') || lower.endsWith('.igs')) {
+    return 'model/iges';
+  }
+  if (lower.endsWith('.zip')) {
+    return 'application/zip';
+  }
+  return 'application/octet-stream';
+}
+
+function extractDownloadAssets(html, origin) {
+  const values = [];
+  const linkRegex = /<a[^>]+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+  const allowedExtensions = ['.pdf', '.step', '.stp', '.dxf', '.dwg', '.igs', '.iges', '.zip'];
+
+  for (const match of html.matchAll(linkRegex)) {
+    const hrefRaw = (match[1] ?? '').trim();
+    const label = stripTags(match[2] ?? '').trim();
+    if (!hrefRaw) {
+      continue;
+    }
+
+    let absolute;
+    try {
+      absolute = new URL(hrefRaw, origin).toString();
+    } catch {
+      continue;
+    }
+
+    const lower = absolute.toLowerCase();
+    const hasAllowedExtension = allowedExtensions.some((extension) => lower.includes(extension));
+    const labelMarker = `${label} ${absolute}`.toLowerCase();
+    const looksLikeDrawing = labelMarker.includes('datasheet') || labelMarker.includes('drawing') || labelMarker.includes('cad') || labelMarker.includes('2d') || labelMarker.includes('3d') || labelMarker.includes('spec');
+    if (!hasAllowedExtension && !looksLikeDrawing) {
+      continue;
+    }
+
+    values.push({
+      url: absolute,
+      label: label || 'Technical document',
+      mimeType: guessMimeTypeFromUrl(absolute),
+    });
+  }
+
+  const dedup = new Map();
+  for (const item of values) {
+    if (!dedup.has(item.url)) {
+      dedup.set(item.url, item);
+    }
+  }
+
+  return [...dedup.values()].slice(0, 10);
+}
+
+function extractTechnicalSpecs(text) {
+  if (!text) {
+    return [];
+  }
+
+  const source = text.replace(/_/g, ' ').replace(/[，,]+/g, ' ');
+  const specs = [];
+  const rules = [
+    { key: 'Step Angle', regex: /(\d+(?:\.\d+)?)\s*°\s*step/i, unit: 'deg' },
+    { key: 'Holding Torque', regex: /(\d+(?:\.\d+)?)\s*N\s*[·.]?\s*cm\s*torque/i, unit: 'N.cm' },
+    { key: 'Rated Current', regex: /(\d+(?:\.\d+)?)\s*A\s*current/i, unit: 'A' },
+    { key: 'Body Length', regex: /(\d+(?:\.\d+)?)\s*mm\s*body/i, unit: 'mm' },
+    { key: 'Wire Count', regex: /(\d+)\s*[- ]?wire/i, unit: 'wire' },
+  ];
+
+  for (const rule of rules) {
+    const match = source.match(rule.regex);
+    if (!match?.[1]) {
+      continue;
+    }
+    specs.push({ key: rule.key, value: match[1], unit: rule.unit });
+  }
+
+  const dedup = new Map();
+  for (const spec of specs) {
+    if (!dedup.has(spec.key)) {
+      dedup.set(spec.key, spec);
+    }
+  }
+  return [...dedup.values()];
+}
+
 function extractBannerImages(html, origin) {
   const values = [];
   const regex = /<img[^>]+src=["']([^"']+)["'][^>]*>/gi;
@@ -534,6 +671,10 @@ async function main() {
     }
 
     const ldProduct = extractProductFromJsonLd(item.jsonLd ?? []);
+    const galleryImages = extractProductGalleryImages(item.html ?? '', origin, ldProduct?.images ?? []);
+    const downloads = extractDownloadAssets(item.html ?? '', origin);
+    const technicalSpecs = extractTechnicalSpecs(`${item.heading ?? ''} ${item.title ?? ''} ${ldProduct?.description ?? ''}`);
+
     return {
       url: item.url,
       fetchUrl: item.fetchUrl,
@@ -543,6 +684,9 @@ async function main() {
       seoDescription: item.seoDescription,
       canonical: item.canonical,
       ldProduct,
+      galleryImages,
+      downloads,
+      technicalSpecs,
     };
   });
 

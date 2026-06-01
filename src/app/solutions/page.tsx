@@ -6,7 +6,7 @@ import { solutionIndustries } from '@/lib/solutions';
 import { withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
-import { getSeedCategories } from '@/server/storefront/seed';
+import { getCategories } from '@/server/storefront';
 
 export const metadata = buildMetadata({
   title: 'Industry Motion Solutions — STEPMOTECH',
@@ -15,7 +15,7 @@ export const metadata = buildMetadata({
 });
 
 export default async function SolutionsPage() {
-  const [{ locale }, categories] = await Promise.all([getServerSitePreferences(), Promise.resolve(getSeedCategories())]);
+  const [{ locale }, categories] = await Promise.all([getServerSitePreferences(), getCategories()]);
   const categoryMap = new Map(categories.map((category) => [category.slug, category]));
   const selectorPath = withLocalePath('/selector', locale);
   const customPath = withLocalePath('/custom', locale);

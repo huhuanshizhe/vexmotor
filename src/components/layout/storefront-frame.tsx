@@ -14,7 +14,6 @@ import { notificationBarConfig, NOTIFICATION_BAR_COOKIE_NAME } from '@/lib/site-
 import { getHomeData, getNavigationData } from '@/server/storefront';
 import { getCurrentUserId } from '@/server/auth/session';
 import { getExistingActiveCartDetail } from '@/server/storefront/cart';
-import { getSeedCategories, getSeedHomeData } from '@/server/storefront/seed';
 import { storefrontNavigationBase } from '@/server/storefront/site-shell';
 import { NewsletterSignupForm } from '@/components/storefront/newsletter-signup-form';
 
@@ -62,8 +61,8 @@ export async function StorefrontFrame({ title, description, eyebrow, actions, ch
   const anonymousToken = cookieStore.get('cart_token')?.value ?? null;
   const preferences = await getServerSitePreferences().catch(() => fallbackSitePreferences);
   const [homeData, navigation, activeCart] = await Promise.all([
-    getHomeData().catch(() => getSeedHomeData()),
-    getNavigationData().catch(() => ({ ...storefrontNavigationBase, categories: getSeedCategories().slice(0, 6) })),
+    getHomeData(),
+    getNavigationData().catch(() => ({ ...storefrontNavigationBase, categories: [] })),
     getExistingActiveCartDetail({ userId, anonymousToken }).catch(() => null),
   ]);
   const notificationDismissed = cookieStore.get(NOTIFICATION_BAR_COOKIE_NAME)?.value === notificationBarConfig.id;

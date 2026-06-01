@@ -12,8 +12,7 @@ import { buildMetadata } from '@/lib/seo';
 import { getPublishedBlogPosts } from '@/server/content/blog';
 import { getKnowledgeCatalog } from '@/server/content/knowledge';
 import { getSupportCatalog } from '@/server/content/support';
-import { getProductList } from '@/server/storefront';
-import { getSeedHomeData, getSeedProductBySlug } from '@/server/storefront/seed';
+import { getProductBySlug, getProductList } from '@/server/storefront';
 
 function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -75,8 +74,7 @@ export default async function SearchPage({
     getKnowledgeCatalog(),
     getSupportCatalog(),
   ]);
-  const homeData = getSeedHomeData();
-  const productDetails = listing.items.slice(0, 8).map((item) => getSeedProductBySlug(item.slug));
+  const productDetails = await Promise.all(listing.items.slice(0, 8).map((item) => getProductBySlug(item.slug)));
   const lowerQuery = query.trim().toLowerCase();
   const contentMatches = [
     ...supportCatalog.pages.map((pageItem) => ({

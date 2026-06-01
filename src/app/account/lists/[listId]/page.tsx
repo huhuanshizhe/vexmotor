@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 
 import { AddToCartButton } from '@/components/storefront/add-to-cart-button';
 import { getAccountSavedListById } from '@/lib/account-portal';
-import { getSeedProductBySlug } from '@/server/storefront/seed';
+import { getProductBySlug } from '@/server/storefront';
 
 type AccountListDetailPageProps = {
   params: Promise<{ listId: string }>;
@@ -16,6 +16,9 @@ export default async function AccountListDetailPage({ params }: AccountListDetai
   if (!list) {
     notFound();
   }
+
+  const products = await Promise.all(list.items.map((item) => getProductBySlug(item.productSlug)));
+  const productBySlug = new Map(products.filter((item): item is NonNullable<typeof item> => Boolean(item)).map((item) => [item.slug, item]));
 
   return (
     <div className="account-panel-stack">
@@ -49,7 +52,7 @@ export default async function AccountListDetailPage({ params }: AccountListDetai
           <span>Actions</span>
         </div>
         {list.items.map((item) => {
-          const product = getSeedProductBySlug(item.productSlug);
+          const product = productBySlug.get(item.productSlug) ?? null;
 
           return (
             <div key={item.sku} className="account-list-row">

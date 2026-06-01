@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import { StorefrontFrame } from '@/components/layout/storefront-frame';
 import { parseOrderNote } from '@/lib/order-note';
 import { getGuestOrderDetailByNumber } from '@/server/storefront/cart';
-import { getSeedProductById } from '@/server/storefront/seed';
+import { getProductList } from '@/server/storefront';
 
 import { ConfirmationActions } from './confirmation-actions';
 
@@ -62,6 +62,7 @@ export default async function CheckoutConfirmationPage({ params }: { params: Pro
     notFound();
   }
 
+  const listing = await getProductList({ pageSize: 12, sort: 'featured', purchaseMode: 'buy' });
   const shippingAddress = order.shippingAddressSnapshot;
   const billingAddress = order.billingAddressSnapshot;
   const parsedNote = parseOrderNote(order.customerNote);
@@ -73,9 +74,7 @@ export default async function CheckoutConfirmationPage({ params }: { params: Pro
     { title: 'Shipped', body: 'Tracking is attached after the carrier booking clears warehouse processing.' },
     { title: 'Delivered', body: 'Keep the order number for replenishment questions, invoice follow-up, or account registration.' },
   ];
-  const recommendedProducts = ['prod-5', 'prod-6', 'prod-7']
-    .map((productId) => getSeedProductById(productId))
-    .filter((product): product is NonNullable<typeof product> => Boolean(product))
+  const recommendedProducts = listing.items
     .filter((product) => !order.items.some((item) => item.productId === product.id))
     .slice(0, 3);
   const createAccountHref = parsedNote.contactEmail ? `/register?email=${encodeURIComponent(parsedNote.contactEmail)}` : undefined;

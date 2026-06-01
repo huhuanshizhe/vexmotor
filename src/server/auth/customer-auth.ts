@@ -6,7 +6,6 @@ import { md5Hash } from '@/lib/auth/password';
 import { db } from '@/server/db';
 import { products, users, verificationTokens } from '@/server/db/schema';
 import { createStorefrontInquiry } from '@/server/storefront/inquiries';
-import { getSeedProductById } from '@/server/storefront/seed';
 
 type AuthUserRecord = {
   id: string;
@@ -96,7 +95,7 @@ function splitName(input: { firstName: string; lastName: string }) {
 }
 
 async function resolveAuthIntakeProductId() {
-  const fallbackId = getSeedProductById('prod-3')?.id ?? 'prod-3';
+  const fallbackId = 'legacy-registration-intake';
   if (!db) {
     return fallbackId;
   }

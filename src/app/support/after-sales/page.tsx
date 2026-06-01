@@ -6,7 +6,7 @@ import { type Locale, withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 import { footerContactBlocks } from '@/server/storefront/site-shell';
-import { getSeedProductById } from '@/server/storefront/seed';
+import { getProductList } from '@/server/storefront';
 
 const repairPolicy = [
   'Open after-sales support when the issue involves troubleshooting, replacement parts, tuning, or a field failure that cannot be resolved from the product page alone.',
@@ -66,6 +66,7 @@ function supportLink(href: string, locale: Locale, className: string, label: str
 
 export default async function AfterSalesPage() {
   const { locale } = await getServerSitePreferences();
+  const listing = await getProductList({ pageSize: 24, sort: 'featured' });
   const phoneBlock = footerContactBlocks.find((block) => block.title === 'Phone');
   const emailBlock = footerContactBlocks.find((block) => block.title === 'Email');
 
@@ -96,12 +97,8 @@ export default async function AfterSalesPage() {
     },
   ];
 
-  const spareParts = ['prod-5', 'prod-6', 'prod-7']
-    .map((id) => getSeedProductById(id))
-    .filter((product): product is NonNullable<ReturnType<typeof getSeedProductById>> => Boolean(product));
-  const softwarePacks = ['prod-4', 'prod-5', 'prod-6']
-    .map((id) => getSeedProductById(id))
-    .filter((product): product is NonNullable<ReturnType<typeof getSeedProductById>> => Boolean(product));
+  const spareParts = listing.items.slice(0, 3);
+  const softwarePacks = listing.items.slice(3, 6);
 
   const breadcrumbJsonLd = buildBreadcrumbJsonLd(
     [

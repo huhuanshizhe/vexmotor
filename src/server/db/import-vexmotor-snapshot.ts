@@ -3,16 +3,18 @@ import '@/lib/env';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import { eq } from 'drizzle-orm';
+import { eq, inArray, notInArray } from 'drizzle-orm';
 
 import { db } from '@/server/db';
 import {
+  attachments,
   brands,
   categories,
   cmsPages,
   contentBlocks,
   editorialContentEntries,
   productCategories,
+  productFeatures,
   productImages,
   products,
 } from '@/server/db/schema';
@@ -32,6 +34,9 @@ type ProductSnapshot = {
     currency?: string | null;
     images?: string[];
   } | null;
+  galleryImages?: string[];
+  downloads?: Array<{ url: string; label?: string; mimeType?: string }>;
+  technicalSpecs?: Array<{ key: string; value: string; unit?: string | null }>;
 };
 
 type CategorySnapshot = {
@@ -72,7 +77,9 @@ function normalizeSlug(value: string) {
 
 function categorySlugFromPath(pathname: string) {
   const segment = pathname.split('/').filter(Boolean)[0] ?? '';
-  return normalizeSlug(segment.replace(/-\d+$/, ''));
+  const withoutLeadId = segment.replace(/^\d+-/, '');
+  const withoutTailId = withoutLeadId.replace(/-\d+$/, '');
+  return normalizeSlug(withoutTailId);
 }
 
 function productSlugFromPath(pathname: string) {
@@ -113,6 +120,100 @@ function toTitleCaseFromSlug(slug: string) {
     .join(' ');
 }
 
+function decodeBasicEntities(value: string) {
+  return value
+    .replace(/&amp;/gi, '&')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&nbsp;/gi, ' ')
+    .trim();
+}
+
+function isGenericLegacyHeading(value: string | null | undefined) {
+  if (!value) {
+    return false;
+  }
+
+  return /didn[’']?t find what you[\s\S]*looking for/i.test(value);
+}
+
+function inferCategorySlugFromProduct(item: ProductSnapshot) {
+  const candidates = [item.ldProduct?.name, item.heading, item.title, item.seoTitle]
+    .filter((value): value is string => Boolean(value))
+    .map((value) => decodeBasicEntities(value).toLowerCase());
+
+  for (const candidate of candidates) {
+    const nemaMatch = candidate.match(/\bnema[\s-]*(8|11|14|16|17|23|24|34)\b/);
+    if (nemaMatch) {
+      return `nema-${nemaMatch[1]}-stepper-motor`;
+    }
+
+    const leadingFrameMatch = candidate.match(/^(8|11|14|16|17|23|24|34)\b.*stepper motor/);
+    if (leadingFrameMatch) {
+      return `nema-${leadingFrameMatch[1]}-stepper-motor`;
+    }
+
+    if (candidate.includes('integrated stepper')) {
+      return 'integrated-stepper-motor';
+    }
+    if (candidate.includes('closed loop')) {
+      return 'closed-loop-stepper-motor';
+    }
+    if (candidate.includes('brushless spindle')) {
+      return 'brushless-spindle-motor';
+    }
+    if (candidate.includes('brushless dc')) {
+      return 'brushless-dc-motor';
+    }
+    if (candidate.includes('power supply')) {
+      return 'power-supply';
+    }
+    if (candidate.includes('driver')) {
+      return 'stepper-motor-driver';
+    }
+    if (candidate.includes('stepper motor')) {
+      return 'stepper-motor';
+    }
+  }
+
+  return null;
+}
+
+function sanitizeSku(value: string) {
+  return value
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^A-Za-z0-9._-]/g, '-')
+    .replace(/-{2,}/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .toUpperCase();
+}
+
+async function resolveUniqueSku(baseSku: string, slug: string) {
+  const safeBase = sanitizeSku(baseSku || slug || 'LEGACY-SKU');
+  const fallbackSuffix = slug.replace(/[^a-z0-9]/gi, '').toUpperCase().slice(-8) || 'LEGACY';
+
+  const [existingBySlug] = await db!.select({ sku: products.sku }).from(products).where(eq(products.slug, slug)).limit(1);
+  if (existingBySlug?.sku) {
+    return existingBySlug.sku;
+  }
+
+  let candidate = safeBase;
+  let attempt = 0;
+  // Guarantee uniqueness against products_sku_unique while preserving readable SKU roots.
+  while (attempt < 30) {
+    const [existingBySku] = await db!.select({ id: products.id }).from(products).where(eq(products.sku, candidate)).limit(1);
+    if (!existingBySku) {
+      return candidate;
+    }
+
+    attempt += 1;
+    candidate = `${safeBase}-${fallbackSuffix}${attempt > 1 ? `-${attempt}` : ''}`;
+  }
+
+  return `${safeBase}-${Date.now()}`;
+}
+
 async function loadJson<T>(baseDir: string, fileName: string): Promise<T> {
   const fullPath = path.join(baseDir, fileName);
   const raw = await readFile(fullPath, 'utf8');
@@ -126,7 +227,8 @@ async function upsertCategory(entry: CategorySnapshot) {
     return null;
   }
 
-  const name = (entry.heading || entry.title || toTitleCaseFromSlug(slug)).trim();
+  const preferredName = isGenericLegacyHeading(entry.heading) ? (entry.title || entry.heading || '') : (entry.heading || entry.title || '');
+  const name = decodeBasicEntities((preferredName || toTitleCaseFromSlug(slug)).trim());
   const seoTitle = entry.seoTitle || entry.title || name;
   const seoDescription = entry.seoDescription || null;
 
@@ -175,6 +277,41 @@ async function main() {
   const legacyBrandSlug = 'stepmotech';
   const legacyBrandName = 'StepMotech';
 
+  const importedProductSlugs = Array.from(
+    new Set(
+      productsSnapshot
+        .map((item) => {
+          const url = new URL(item.url);
+          return productSlugFromPath(url.pathname);
+        })
+        .filter((slug): slug is string => Boolean(slug)),
+    ),
+  );
+
+  if (importedProductSlugs.length > 0) {
+    const staleProducts = await db!
+      .select({ id: products.id })
+      .from(products)
+      .where(notInArray(products.slug, importedProductSlugs));
+
+    const staleProductIds = staleProducts.map((item) => item.id);
+    if (staleProductIds.length > 0) {
+      await db!.delete(attachments).where(inArray(attachments.productId, staleProductIds));
+      await db!.delete(productImages).where(inArray(productImages.productId, staleProductIds));
+      await db!.delete(productFeatures).where(inArray(productFeatures.productId, staleProductIds));
+      await db!.delete(productCategories).where(inArray(productCategories.productId, staleProductIds));
+      await db!
+        .update(products)
+        .set({
+          status: 'archived',
+          defaultCategoryId: null,
+          featured: false,
+          updatedAt: new Date(),
+        })
+        .where(inArray(products.id, staleProductIds));
+    }
+  }
+
   await db!
     .insert(brands)
     .values({
@@ -198,6 +335,27 @@ async function main() {
   }
 
   const categoryBySlug = new Map<string, string>();
+  const importedCategorySlugs = Array.from(
+    new Set(
+      categoriesSnapshot
+        .map((item) => {
+          const url = new URL(item.url);
+          return categorySlugFromPath(url.pathname);
+        })
+        .filter((slug): slug is string => Boolean(slug)),
+    ),
+  );
+
+  if (importedCategorySlugs.length > 0) {
+    await db!
+      .update(categories)
+      .set({
+        status: 'inactive',
+        updatedAt: new Date(),
+      })
+      .where(notInArray(categories.slug, importedCategorySlugs));
+  }
+
   for (const item of categoriesSnapshot) {
     const row = await upsertCategory(item);
     if (row) {
@@ -213,7 +371,9 @@ async function main() {
 
     const url = new URL(item.url);
     const slug = productSlugFromPath(url.pathname);
-    const categorySlug = categorySlugFromPath(url.pathname);
+    const rawCategorySlug = categorySlugFromPath(url.pathname);
+    const inferredCategorySlug = inferCategorySlugFromProduct(item);
+    const categorySlug = categoryBySlug.has(rawCategorySlug) ? rawCategorySlug : inferredCategorySlug;
     const categoryId = categoryBySlug.get(categorySlug) ?? null;
 
     if (!slug) {
@@ -221,21 +381,39 @@ async function main() {
     }
 
     const name = item.ldProduct.name.trim();
-    const sku = (item.ldProduct.sku || slug).trim();
+    const sku = await resolveUniqueSku(item.ldProduct.sku || slug, slug);
     const description = (item.ldProduct.description || item.seoDescription || '').trim();
     const shortDescription = (item.heading || item.seoDescription || '').trim();
     const price = Number(item.ldProduct.price ?? 0);
     const safePrice = Number.isFinite(price) ? price.toFixed(2) : '0.00';
 
-    const [existingBySku] = await db!.select({ id: products.id, slug: products.slug }).from(products).where(eq(products.sku, sku)).limit(1);
-
-    if (existingBySku && existingBySku.slug !== slug) {
-      await db!
-        .update(products)
-        .set({
+    await db!
+      .insert(products)
+      .values({
+        brandId: brand.id,
+        defaultCategoryId: categoryId,
+        name,
+        slug,
+        sku,
+        shortDescription: shortDescription || null,
+        description: description || null,
+        purchaseMode: 'buy',
+        status: 'active',
+        price: safePrice,
+        currencyCode: item.ldProduct.currency || 'USD',
+        stockQuantity: 100,
+        featured: false,
+        seoTitle: item.seoTitle || item.title || name,
+        seoDescription: item.seoDescription || null,
+        publishedAt: new Date(),
+      })
+      .onConflictDoUpdate({
+        target: products.slug,
+        set: {
           brandId: brand.id,
           defaultCategoryId: categoryId,
           name,
+          sku,
           shortDescription: shortDescription || null,
           description: description || null,
           status: 'active',
@@ -244,55 +422,19 @@ async function main() {
           seoTitle: item.seoTitle || item.title || name,
           seoDescription: item.seoDescription || null,
           updatedAt: new Date(),
-        })
-        .where(eq(products.id, existingBySku.id));
-    } else {
-      await db!
-        .insert(products)
-        .values({
-          brandId: brand.id,
-          defaultCategoryId: categoryId,
-          name,
-          slug,
-          sku,
-          shortDescription: shortDescription || null,
-          description: description || null,
-          purchaseMode: 'buy',
-          status: 'active',
-          price: safePrice,
-          currencyCode: item.ldProduct.currency || 'USD',
-          stockQuantity: 100,
-          featured: false,
-          seoTitle: item.seoTitle || item.title || name,
-          seoDescription: item.seoDescription || null,
-          publishedAt: new Date(),
-        })
-        .onConflictDoUpdate({
-          target: products.slug,
-          set: {
-            brandId: brand.id,
-            defaultCategoryId: categoryId,
-            name,
-            shortDescription: shortDescription || null,
-            description: description || null,
-            status: 'active',
-            price: safePrice,
-            currencyCode: item.ldProduct.currency || 'USD',
-            seoTitle: item.seoTitle || item.title || name,
-            seoDescription: item.seoDescription || null,
-            updatedAt: new Date(),
-          },
-        });
-    }
+        },
+      });
 
     const [saved] = await db!
       .select({ id: products.id })
       .from(products)
-      .where(existingBySku && existingBySku.slug !== slug ? eq(products.id, existingBySku.id) : eq(products.slug, slug))
+      .where(eq(products.slug, slug))
       .limit(1);
     if (!saved) {
       continue;
     }
+
+    await db!.delete(productCategories).where(eq(productCategories.productId, saved.id));
 
     if (categoryId) {
       await db!
@@ -301,18 +443,50 @@ async function main() {
         .onConflictDoNothing();
     }
 
-    const imageUrl = item.ldProduct.images?.[0];
-    if (imageUrl) {
+    const galleryImages = [...new Set([...(item.galleryImages || []), ...(item.ldProduct.images || [])].filter(Boolean))].slice(0, 12);
+    await db!.delete(productImages).where(eq(productImages.productId, saved.id));
+    if (galleryImages.length) {
       await db!
         .insert(productImages)
-        .values({
-          productId: saved.id,
-          url: imageUrl,
-          alt: item.heading || name,
-          sortOrder: 1,
-          isPrimary: true,
-        })
-        .onConflictDoNothing();
+        .values(
+          galleryImages.map((imageUrl, index) => ({
+            productId: saved.id,
+            url: imageUrl,
+            alt: item.heading || name,
+            sortOrder: index + 1,
+            isPrimary: index === 0,
+          })),
+        );
+    }
+
+    await db!.delete(productFeatures).where(eq(productFeatures.productId, saved.id));
+    const specRows = (item.technicalSpecs || [])
+      .filter((spec) => spec.key && spec.value)
+      .slice(0, 24)
+      .map((spec, index) => ({
+        productId: saved.id,
+        featureKey: spec.key.trim(),
+        featureValue: String(spec.value).trim(),
+        unit: spec.unit || null,
+        sortOrder: index + 1,
+      }));
+    if (specRows.length) {
+      await db!.insert(productFeatures).values(specRows);
+    }
+
+    await db!.delete(attachments).where(eq(attachments.productId, saved.id));
+    const attachmentRows = (item.downloads || [])
+      .filter((asset) => asset.url)
+      .slice(0, 10)
+      .map((asset, index) => ({
+        productId: saved.id,
+        name: (asset.label || `Technical Asset ${index + 1}`).slice(0, 255),
+        url: asset.url,
+        mimeType: asset.mimeType || 'application/octet-stream',
+        sortOrder: index + 1,
+      }));
+    if (attachmentRows.length) {
+      await db!.insert(attachments).values(attachmentRows);
     }
 
     importedProducts += 1;

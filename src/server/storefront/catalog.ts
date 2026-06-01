@@ -13,8 +13,63 @@ import {
 } from '@/server/db/schema';
 
 import { storefrontNavigationBase } from './site-shell';
-import { getSeedCategories, getSeedHomeData, getSeedProductBySlug, getSeedProductsResult } from './seed';
 import type { HomeData, NavigationData, ProductListResult, ProductListSort, StorefrontCategory, StorefrontImage, StorefrontProductCard, StorefrontProductDetail } from './types';
+
+const defaultHomeData: HomeData = {
+  heroBanners: [],
+  featuredCategories: [],
+  hotSale: [],
+  newRelease: [],
+  featuredIndustries: [],
+  testimonials: [],
+  trustHighlights: [
+    { title: 'Free Shipping', description: 'Free shipping and duties on orders $299+.' },
+    { title: 'Easy Returns', description: 'Fast returns processed within 30 days.' },
+    { title: 'Secure Payments', description: 'Multiple secure payment options available.' },
+    { title: 'Reliable Support', description: 'Quick support during business hours.' },
+  ],
+  categoryGroups: [],
+  sellingPoints: [],
+  featuredShelves: [],
+  mostViewedProducts: [],
+  newsletter: {
+    title: 'Subscribe To Our Newsletter!!',
+    description: 'Be Aware of The Latest News, Special Offers and Discounts',
+    placeholder: 'Enter Your E-mail Address...',
+    buttonLabel: 'SUBSCRIBE',
+  },
+  brandStory: {
+    title: 'Our Promise',
+    description: 'Factory-direct motion components with transparent specs, stable quality control, and engineering-first support.',
+  },
+  footerSections: [
+    { id: 'catalog', title: 'Catalog', links: [{ label: 'Products', href: '/products' }, { label: 'Categories', href: '/products' }] },
+    { id: 'support', title: 'Support', links: [{ label: 'FAQ', href: '/faq' }, { label: 'Contact', href: '/contact' }] },
+  ],
+  footerContact: [
+    { title: 'Sales', lines: ['sales@stepmotech.com'], href: 'mailto:sales@stepmotech.com' },
+    { title: 'Service Window', lines: ['Mon-Fri 09:00-18:00 (UTC+8)'] },
+  ],
+  paymentMethods: ['Visa', 'Mastercard', 'PayPal'],
+  copyright: `Copyright ${new Date().getFullYear()} STEPMOTECH. All rights reserved.`,
+};
+
+function emptyProductListResult(page: number, pageSize: number): ProductListResult {
+  return {
+    items: [],
+    meta: { page, pageSize, total: 0, totalPages: 1 },
+    facets: [
+      {
+        key: 'purchaseMode',
+        label: 'Purchase Mode',
+        options: [
+          { label: 'Direct Buy', value: 'buy', count: 0 },
+          { label: 'Inquiry', value: 'inquiry', count: 0 },
+        ],
+      },
+    ],
+  };
+}
 
 function getProductOrderBy(sort: ProductListSort) {
   switch (sort) {
@@ -56,11 +111,10 @@ function toImage(row: { id: string; url: string; alt: string; width: number | nu
 
 export async function getHomeData(): Promise<HomeData> {
   if (!db) {
-    return getSeedHomeData();
+    return defaultHomeData;
   }
 
   try {
-    const seedHome = getSeedHomeData();
     const [featuredProducts, categoryRows] = await Promise.all([
       db.select({
         id: products.id,
@@ -167,7 +221,7 @@ export async function getHomeData(): Promise<HomeData> {
       },
       {
         id: 'new-products',
-        title: 'New Products',
+        ...defaultHomeData,
         items: cycleItems(dynamicCards, 1, 4).map((item, index) => ({ ...item, tag: index < 2 ? 'New' : null, note: item.shortDescription ?? null })),
       },
       {
@@ -194,7 +248,7 @@ export async function getHomeData(): Promise<HomeData> {
       mostViewedProducts: dynamicCards.slice(0, 4),
     };
   } catch {
-    return getSeedHomeData();
+    return defaultHomeData;
   }
 }
 
@@ -208,7 +262,7 @@ export async function getNavigationData(): Promise<NavigationData> {
 
 export async function getCategories(): Promise<StorefrontCategory[]> {
   if (!db) {
-    return getSeedCategories();
+    return [];
   }
 
   try {
@@ -221,7 +275,7 @@ export async function getCategories(): Promise<StorefrontCategory[]> {
         .groupBy(products.defaultCategoryId),
     ]);
     if (!rows.length) {
-      return getSeedCategories();
+      return [];
     }
 
     const productCountByCategoryId = new Map(countRows.map((item) => [item.categoryId, Number(item.total)]));
@@ -236,7 +290,7 @@ export async function getCategories(): Promise<StorefrontCategory[]> {
       image: item.imageUrl ? { id: `${item.id}-img`, url: item.imageUrl, alt: item.name } : null,
     }));
   } catch {
-    return getSeedCategories();
+    return [];
   }
 }
 
@@ -250,7 +304,7 @@ export async function getProductList(input: {
   inStockOnly?: boolean;
 }): Promise<ProductListResult> {
   if (!db) {
-    return getSeedProductsResult(input);
+    return emptyProductListResult(input.page ?? 1, input.pageSize ?? 12);
   }
 
   const page = input.page ?? 1;
@@ -389,10 +443,6 @@ export async function getProductList(input: {
       }
     }
 
-    if (!rows.length && !countRows[0]?.total) {
-      return getSeedProductsResult(input);
-    }
-
     const purchaseModeCounts = new Map(facetCountRows.map((row) => [row.purchaseMode, Number(row.total)]));
 
     return {
@@ -427,13 +477,13 @@ export async function getProductList(input: {
       ],
     };
   } catch {
-    return getSeedProductsResult(input);
+    return emptyProductListResult(page, pageSize);
   }
 }
 
 export async function getProductBySlug(slug: string): Promise<StorefrontProductDetail | null> {
   if (!db) {
-    return getSeedProductBySlug(slug);
+    return null;
   }
 
   try {
@@ -462,7 +512,7 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
       .limit(1);
 
     if (!product) {
-      return getSeedProductBySlug(slug);
+      return null;
     }
 
     const [images, categoryRows, attachmentRows, featureRows, variantRows] = await Promise.all([
@@ -526,14 +576,13 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
       })),
     };
   } catch {
-    return getSeedProductBySlug(slug);
+    return null;
   }
 }
 
 export async function getRelatedProducts(slug: string, categorySlug?: string | null, excludeId?: string): Promise<StorefrontProductCard[]> {
   if (!db) {
-    const detail = getSeedProductBySlug(slug);
-    return detail?.relatedProducts ?? [];
+    return [];
   }
 
   try {
@@ -601,7 +650,6 @@ export async function getRelatedProducts(slug: string, categorySlug?: string | n
       brand: item.brandId && item.brandName && item.brandSlug ? { id: item.brandId, name: item.brandName, slug: item.brandSlug } : null,
     }));
   } catch {
-    const detail = getSeedProductBySlug(slug);
-    return detail?.relatedProducts ?? [];
+    return [];
   }
 }

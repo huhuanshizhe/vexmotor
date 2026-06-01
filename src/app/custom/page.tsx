@@ -6,7 +6,7 @@ import { CustomDevelopmentForm } from '@/components/storefront/custom-developmen
 import { withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
-import { getSeedProductById } from '@/server/storefront/seed';
+import { getProductList } from '@/server/storefront';
 
 const capabilities = [
   {
@@ -69,8 +69,8 @@ type CustomDevelopmentPageProps = {
 };
 
 export default async function CustomDevelopmentPage({ searchParams }: CustomDevelopmentPageProps) {
-  const [preferences, params] = await Promise.all([getServerSitePreferences(), searchParams]);
-  const intakeProduct = getSeedProductById('prod-3');
+  const [preferences, params, listing] = await Promise.all([getServerSitePreferences(), searchParams, getProductList({ purchaseMode: 'buy', pageSize: 1, sort: 'featured' })]);
+  const intakeProduct = listing.items[0] ?? null;
 
   if (!intakeProduct) {
     return null;

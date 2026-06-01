@@ -6,7 +6,6 @@ import { getServerSitePreferences } from '@/lib/i18n-server';
 import { getCurrentUserId } from '@/server/auth/session';
 import { getProductList } from '@/server/storefront';
 import { getActiveCartDetail } from '@/server/storefront/cart';
-import { getSeedProductById } from '@/server/storefront/seed';
 
 import { QuoteClient } from './quote-client';
 
@@ -23,11 +22,11 @@ export default async function QuotePage() {
   const { locale } = await getServerSitePreferences();
   const anonymousToken = cookieStore.get('cart_token')?.value ?? null;
 
-  const [cart, catalog, intakeProduct] = await Promise.all([
+  const [cart, catalog] = await Promise.all([
     getActiveCartDetail({ userId, anonymousToken }),
     getProductList({ pageSize: 96, sort: 'featured' }),
-    Promise.resolve(getSeedProductById('prod-3')),
   ]);
+  const intakeProduct = catalog.items[0] ?? null;
 
   if (!intakeProduct) {
     return null;

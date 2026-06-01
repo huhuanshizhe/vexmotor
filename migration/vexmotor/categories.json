@@ -18,15 +18,6 @@
     "canonical": "https://www.vexmotor.com/37-nema-11-stepper-motor-211"
   },
   {
-    "url": "https://www.stepmotech.com/3-machine-human-177",
-    "fetchUrl": "https://www.vexmotor.com/3-machine-human-177",
-    "title": "Machine human",
-    "heading": "Didn’t find what you’re looking for? Let us know what you need.",
-    "seoTitle": "Machine human",
-    "seoDescription": "",
-    "canonical": "https://www.vexmotor.com/3-machine-human-177"
-  },
-  {
     "url": "https://www.stepmotech.com/35-nema-17-stepper-motor-209",
     "fetchUrl": "https://www.vexmotor.com/35-nema-17-stepper-motor-209",
     "title": "Nema 17 Stepper Motor – Best-Selling Models for 3D Printers &amp; DIY Projects",
@@ -34,6 +25,15 @@
     "seoTitle": "Nema 17 Stepper Motor – Best-Selling Models for 3D Printers &amp; DIY Projects",
     "seoDescription": "Shop Nema 17 motor deals now. Get powerful, compact stepper motors ideal for automation, 3D printing, and robotics — all at competitive prices.",
     "canonical": "https://www.vexmotor.com/35-nema-17-stepper-motor-209"
+  },
+  {
+    "url": "https://www.stepmotech.com/3-machine-human-177",
+    "fetchUrl": "https://www.vexmotor.com/3-machine-human-177",
+    "title": "Machine human",
+    "heading": "Didn’t find what you’re looking for? Let us know what you need.",
+    "seoTitle": "Machine human",
+    "seoDescription": "",
+    "canonical": "https://www.vexmotor.com/3-machine-human-177"
   },
   {
     "url": "https://www.stepmotech.com/39-nema-16-stepper-motor-213",
@@ -81,13 +81,13 @@
     "canonical": "https://www.vexmotor.com/36-nema-8-stepper-motor-210"
   },
   {
-    "url": "https://www.vexmotor.com/37-nema-11-stepper-motor-211",
-    "fetchUrl": "https://www.vexmotor.com/37-nema-11-stepper-motor-211",
-    "title": "NEMA Stepper Motor 11 – Precision That Fits in the Palm of Your Hand",
+    "url": "https://www.stepmotech.com/42-nema-34-stepper-motor-216",
+    "fetchUrl": "https://www.vexmotor.com/42-nema-34-stepper-motor-216",
+    "title": "Nema 34 Stepper Motor",
     "heading": "Didn’t find what you’re looking for? Let us know what you need.",
-    "seoTitle": "NEMA Stepper Motor 11 – Precision That Fits in the Palm of Your Hand",
-    "seoDescription": "NEMA stepper motor 11 options designed for high-resolution movement—ideal for makers, prototypers, and OEMs building space-constrained machines.",
-    "canonical": "https://www.vexmotor.com/37-nema-11-stepper-motor-211"
+    "seoTitle": "Nema 34 Stepper Motor",
+    "seoDescription": "",
+    "canonical": "https://www.vexmotor.com/42-nema-34-stepper-motor-216"
   },
   {
     "url": "https://www.vexmotor.com/28-stepper-motor-206",
@@ -99,22 +99,13 @@
     "canonical": "https://www.vexmotor.com/28-stepper-motor-206"
   },
   {
-    "url": "https://www.stepmotech.com/42-nema-34-stepper-motor-216",
-    "fetchUrl": "https://www.vexmotor.com/42-nema-34-stepper-motor-216",
-    "title": "Nema 34 Stepper Motor",
+    "url": "https://www.vexmotor.com/37-nema-11-stepper-motor-211",
+    "fetchUrl": "https://www.vexmotor.com/37-nema-11-stepper-motor-211",
+    "title": "NEMA Stepper Motor 11 – Precision That Fits in the Palm of Your Hand",
     "heading": "Didn’t find what you’re looking for? Let us know what you need.",
-    "seoTitle": "Nema 34 Stepper Motor",
-    "seoDescription": "",
-    "canonical": "https://www.vexmotor.com/42-nema-34-stepper-motor-216"
-  },
-  {
-    "url": "https://www.vexmotor.com/39-nema-16-stepper-motor-213",
-    "fetchUrl": "https://www.vexmotor.com/39-nema-16-stepper-motor-213",
-    "title": "NEMA 16 Stepper Motor Options Built for Compact Power — Ships Fast",
-    "heading": "Didn’t find what you’re looking for? Let us know what you need.",
-    "seoTitle": "NEMA 16 Stepper Motor Options Built for Compact Power — Ships Fast",
-    "seoDescription": "",
-    "canonical": "https://www.vexmotor.com/39-nema-16-stepper-motor-213"
+    "seoTitle": "NEMA Stepper Motor 11 – Precision That Fits in the Palm of Your Hand",
+    "seoDescription": "NEMA stepper motor 11 options designed for high-resolution movement—ideal for makers, prototypers, and OEMs building space-constrained machines.",
+    "canonical": "https://www.vexmotor.com/37-nema-11-stepper-motor-211"
   },
   {
     "url": "https://www.vexmotor.com/38-nema-14-stepper-motor-212",
@@ -124,6 +115,15 @@
     "seoTitle": "Nema 14 Stepper Motor – Miniature Power for Precision Applications",
     "seoDescription": "Find reliable Nema 14 stepper motor solutions for your next compact build. Smooth motion, low noise, and consistent torque performance.",
     "canonical": "https://www.vexmotor.com/38-nema-14-stepper-motor-212"
+  },
+  {
+    "url": "https://www.vexmotor.com/39-nema-16-stepper-motor-213",
+    "fetchUrl": "https://www.vexmotor.com/39-nema-16-stepper-motor-213",
+    "title": "NEMA 16 Stepper Motor Options Built for Compact Power — Ships Fast",
+    "heading": "Didn’t find what you’re looking for? Let us know what you need.",
+    "seoTitle": "NEMA 16 Stepper Motor Options Built for Compact Power — Ships Fast",
+    "seoDescription": "",
+    "canonical": "https://www.vexmotor.com/39-nema-16-stepper-motor-213"
   },
   {
     "url": "https://www.vexmotor.com/35-nema-17-stepper-motor-209",

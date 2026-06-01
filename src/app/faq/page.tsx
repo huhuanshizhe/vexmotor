@@ -4,9 +4,11 @@ import { StorefrontFrame } from '@/components/layout/storefront-frame';
 import { JsonLdScript } from '@/components/seo/json-ld';
 import { withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
+import { sanitizeLegacyCopy } from '@/lib/legacy-content';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 import { SITE_NAME, SITE_URL } from '@/lib/site-config';
 import { getKnowledgeCatalog } from '@/server/content/knowledge';
+import { getCmsPageByLegacySlug } from '@/server/storefront';
 
 export async function generateMetadata() {
   const { locale } = await getServerSitePreferences();
@@ -20,7 +22,12 @@ export async function generateMetadata() {
 }
 
 export default async function FaqPage() {
-  const [{ locale }, knowledgeCatalog] = await Promise.all([getServerSitePreferences(), getKnowledgeCatalog()]);
+  const [{ locale }, knowledgeCatalog, legacyFaq] = await Promise.all([
+    getServerSitePreferences(),
+    getKnowledgeCatalog(),
+    getCmsPageByLegacySlug('12-faq', 'en'),
+  ]);
+  const legacyText = sanitizeLegacyCopy(legacyFaq?.content ?? legacyFaq?.summary ?? '');
   const pageUrl = `${SITE_URL}${withLocalePath('/faq', locale)}`;
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: 'Home', path: '/' },
@@ -51,8 +58,8 @@ export default async function FaqPage() {
   return (
     <StorefrontFrame
       eyebrow="FAQ"
-      title="Answers for catalog orders, inquiry workflows, and industrial sourcing questions."
-      description="This page covers the operational differences between direct-buy products and RFQ-mode products, together with common pre-sales expectations."
+      title={legacyFaq?.title || 'FAQ'}
+      description={legacyText || 'Answers for catalog orders, inquiry workflows, and industrial sourcing questions.'}
       actions={
         <>
           <Link href={withLocalePath('/tech-faq', locale)} className="button-secondary page-button-secondary-dark">
@@ -68,6 +75,14 @@ export default async function FaqPage() {
       <JsonLdScript id="faq-jsonld" data={faqJsonLd} />
       <section className="section">
         <div className="section-inner info-grid">
+          {legacyText ? (
+            <article className="info-card" style={{ gridColumn: '1 / -1' }}>
+              <div className="product-card-top">
+                <span className="product-badge">Legacy FAQ Content</span>
+              </div>
+              <p className="section-description">{legacyText}</p>
+            </article>
+          ) : null}
           {knowledgeCatalog.storefrontFaqs.map((item) => (
             <article key={item.id} id={`q-${item.id}`} className="info-card">
               <div className="product-card-top">

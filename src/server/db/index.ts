@@ -7,7 +7,7 @@ import * as schema from './schema';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const connectionString = process.env.DATABASE_URL;
-const connectTimeout = Number(process.env.DB_CONNECT_TIMEOUT_SECONDS ?? (process.env.NODE_ENV === 'production' ? 30 : 2));
+const connectTimeout = Number(process.env.DB_CONNECT_TIMEOUT_SECONDS ?? (process.env.NODE_ENV === 'production' ? 30 : 10));
 const idleTimeout = Number(process.env.DB_IDLE_TIMEOUT_SECONDS ?? (process.env.NODE_ENV === 'production' ? 20 : 5));
 const isDatabaseEnabledInDevelopment = process.env.DB_ENABLE_IN_DEV === 'true';
 const shouldUseDatabase = Boolean(connectionString) && (isProduction || isDatabaseEnabledInDevelopment);

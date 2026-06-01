@@ -110,7 +110,7 @@ export default async function ProductsPage({
     <StorefrontFrame
       eyebrow="Catalog"
       title="Product Catalog"
-      description={`${totalSkuCount}+ engineering-grade SKUs across ${categories.length} motion categories and matched support components.`}
+      description={`${totalSkuCount} engineering-grade SKUs across ${categories.length} motion categories and matched support components.`}
       actions={
         <form action={withLocalePath('/products', locale)} className="search-inline-form">
           <input name="keyword" defaultValue={params.keyword ?? ''} className="newsletter-input" placeholder="Search category names or engineering use cases" />

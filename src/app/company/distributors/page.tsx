@@ -9,7 +9,7 @@ import { withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 import { footerContactBlocks } from '@/server/storefront/site-shell';
-import { getSeedProductById } from '@/server/storefront/seed';
+import { getProductList } from '@/server/storefront';
 
 export const metadata = buildMetadata({
   title: 'Distributors — STEPMOTECH',
@@ -18,8 +18,8 @@ export const metadata = buildMetadata({
 });
 
 export default async function CompanyDistributorsPage() {
-  const { locale } = await getServerSitePreferences();
-  const intakeProduct = getSeedProductById('prod-3');
+  const [{ locale }, listing] = await Promise.all([getServerSitePreferences(), getProductList({ purchaseMode: 'buy', pageSize: 1, sort: 'featured' })]);
+  const intakeProduct = listing.items[0] ?? null;
 
   if (!intakeProduct) {
     return null;

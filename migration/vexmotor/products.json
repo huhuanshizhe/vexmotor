@@ -1,27 +1,5 @@
 [
   {
-    "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/21-17-single-shaft-bipolar-stepper-motor18step22ncm-torque133a-current34mm-body4-wire-745-1234567890127.html",
-    "fetchUrl": "https://www.vexmotor.com/nema-17-stepper-motor-209/21-17-single-shaft-bipolar-stepper-motor18step22ncm-torque133a-current34mm-body4-wire-745-1234567890127.html",
-    "title": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,22N·cm Torque,1.33A Current,34mm Body,4_Wire",
-    "heading": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,22N·cm Torque,1.33A Current,34mm Body,4_Wire",
-    "seoTitle": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,22N·cm Torque,1.33A Current,34mm Body,4_Wire",
-    "seoDescription": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,22N·cm Torque,1.33A Current,34mm Body,4_Wire",
-    "canonical": "https://www.vexmotor.com/nema-17-stepper-motor-209/21-17-single-shaft-bipolar-stepper-motor-1-8-step-22n-cm-torque-1-33a-current-34mm-body-4-wire-745-1234567890127.html",
-    "ldProduct": {
-      "name": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,22N·cm Torque,1.33A Current,34mm Body,4_Wire",
-      "sku": "17HB13-1334S",
-      "mpn": "XYZ-12345",
-      "description": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,22N·cm Torque,1.33A Current,34mm Body,4_Wire",
-      "brand": "StepMotech",
-      "price": "6.99",
-      "currency": "USD",
-      "availability": "https://schema.org/InStock",
-      "images": [
-        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/xKY0aVwKPEhR5Uwuu3sHp7GgG.jpg"
-      ]
-    }
-  },
-  {
     "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/20-17-dual-shaft-bipolar-stepper-motor18step44ncm-torque168a-current48mm-body4-wire-746-1234567890127.html",
     "fetchUrl": "https://www.vexmotor.com/nema-17-stepper-motor-209/20-17-dual-shaft-bipolar-stepper-motor18step44ncm-torque168a-current48mm-body4-wire-746-1234567890127.html",
     "title": "17 Dual Shaft Bipolar Stepper Motor,1.8°Step,44N·cm Torque,1.68A Current,48mm Body,4_Wire",
@@ -41,29 +19,133 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/202507/24/17-dual-shaft-bipolar-stepper-motor-1-8-step-44n-cm-torque-1-68a-current-48mm-body-4-wire-0.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/202507/24/17-dual-shaft-bipolar-stepper-motor-1-8-step-44n-cm-torque-1-68a-current-48mm-body-4-wire-0.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=20/17HB19-1684D_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=20/17HB19-1684D_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "44",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "1.68",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "48",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
-    "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/22-17-single-shaft-bipolar-stepper-motor09step36ncm-torque09a-current40mm-body4-wire-744-1234567890127.html",
-    "fetchUrl": "https://www.vexmotor.com/nema-17-stepper-motor-209/22-17-single-shaft-bipolar-stepper-motor09step36ncm-torque09a-current40mm-body4-wire-744-1234567890127.html",
-    "title": "17 Single Shaft Bipolar Stepper Motor,0.9°Step,36N·cm Torque,0.9A Current,40mm Body,4_Wire",
-    "heading": "17 Single Shaft Bipolar Stepper Motor,0.9°Step,36N·cm Torque,0.9A Current,40mm Body,4_Wire",
-    "seoTitle": "17 Single Shaft Bipolar Stepper Motor,0.9°Step,36N·cm Torque,0.9A Current,40mm Body,4_Wire",
-    "seoDescription": "17 Single Shaft Bipolar Stepper Motor,0.9°Step,36N·cm Torque,0.9A Current,40mm Body,4_Wire",
-    "canonical": "https://www.vexmotor.com/nema-17-stepper-motor-209/22-17-single-shaft-bipolar-stepper-motor-0-9-step-36n-cm-torque-0-9a-current-40mm-body-4-wire-744-1234567890127.html",
+    "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/21-17-single-shaft-bipolar-stepper-motor18step22ncm-torque133a-current34mm-body4-wire-745-1234567890127.html",
+    "fetchUrl": "https://www.vexmotor.com/nema-17-stepper-motor-209/21-17-single-shaft-bipolar-stepper-motor18step22ncm-torque133a-current34mm-body4-wire-745-1234567890127.html",
+    "title": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,22N·cm Torque,1.33A Current,34mm Body,4_Wire",
+    "heading": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,22N·cm Torque,1.33A Current,34mm Body,4_Wire",
+    "seoTitle": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,22N·cm Torque,1.33A Current,34mm Body,4_Wire",
+    "seoDescription": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,22N·cm Torque,1.33A Current,34mm Body,4_Wire",
+    "canonical": "https://www.vexmotor.com/nema-17-stepper-motor-209/21-17-single-shaft-bipolar-stepper-motor-1-8-step-22n-cm-torque-1-33a-current-34mm-body-4-wire-745-1234567890127.html",
     "ldProduct": {
-      "name": "17 Single Shaft Bipolar Stepper Motor,0.9°Step,36N·cm Torque,0.9A Current,40mm Body,4_Wire",
-      "sku": "17H915-0904S",
+      "name": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,22N·cm Torque,1.33A Current,34mm Body,4_Wire",
+      "sku": "17HB13-1334S",
       "mpn": "XYZ-12345",
-      "description": "17 Single Shaft Bipolar Stepper Motor,0.9°Step,36N·cm Torque,0.9A Current,40mm Body,4_Wire",
+      "description": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,22N·cm Torque,1.33A Current,34mm Body,4_Wire",
       "brand": "StepMotech",
-      "price": "8.99",
+      "price": "6.99",
       "currency": "USD",
       "availability": "https://schema.org/InStock",
       "images": [
-        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/7P5x21aMCLV6UZg9XgdhShDyk.jpg"
+        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/xKY0aVwKPEhR5Uwuu3sHp7GgG.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/xKY0aVwKPEhR5Uwuu3sHp7GgG.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=21/17HB13-1334S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=21/17HB13-1334S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "22",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "1.33",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "34",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-23-stepper-motor-214/23-23-single-shaft-bipolar-stepper-motor18step240ncm-torque18a-current104mm-body4-wire-743-1234567890127.html",
@@ -85,7 +167,123 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/MzoJnMRTdxXlXUlZkDZBr0amG.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/MzoJnMRTdxXlXUlZkDZBr0amG.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=23/23HB41-1804S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=23/23HB41-1804S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "240",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "1.8",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "100",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
+  },
+  {
+    "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/22-17-single-shaft-bipolar-stepper-motor09step36ncm-torque09a-current40mm-body4-wire-744-1234567890127.html",
+    "fetchUrl": "https://www.vexmotor.com/nema-17-stepper-motor-209/22-17-single-shaft-bipolar-stepper-motor09step36ncm-torque09a-current40mm-body4-wire-744-1234567890127.html",
+    "title": "17 Single Shaft Bipolar Stepper Motor,0.9°Step,36N·cm Torque,0.9A Current,40mm Body,4_Wire",
+    "heading": "17 Single Shaft Bipolar Stepper Motor,0.9°Step,36N·cm Torque,0.9A Current,40mm Body,4_Wire",
+    "seoTitle": "17 Single Shaft Bipolar Stepper Motor,0.9°Step,36N·cm Torque,0.9A Current,40mm Body,4_Wire",
+    "seoDescription": "17 Single Shaft Bipolar Stepper Motor,0.9°Step,36N·cm Torque,0.9A Current,40mm Body,4_Wire",
+    "canonical": "https://www.vexmotor.com/nema-17-stepper-motor-209/22-17-single-shaft-bipolar-stepper-motor-0-9-step-36n-cm-torque-0-9a-current-40mm-body-4-wire-744-1234567890127.html",
+    "ldProduct": {
+      "name": "17 Single Shaft Bipolar Stepper Motor,0.9°Step,36N·cm Torque,0.9A Current,40mm Body,4_Wire",
+      "sku": "17H915-0904S",
+      "mpn": "XYZ-12345",
+      "description": "17 Single Shaft Bipolar Stepper Motor,0.9°Step,36N·cm Torque,0.9A Current,40mm Body,4_Wire",
+      "brand": "StepMotech",
+      "price": "8.99",
+      "currency": "USD",
+      "availability": "https://schema.org/InStock",
+      "images": [
+        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/7P5x21aMCLV6UZg9XgdhShDyk.jpg"
+      ]
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/7P5x21aMCLV6UZg9XgdhShDyk.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "0.9",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "36",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "0.9",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "40",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-23-stepper-motor-214/24-23-single-shaft-bipolar-stepper-motor18step60ncm-torque088a-current42mm-body4-wire-742-1234567890127.html",
@@ -107,7 +305,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/XPRyzMk7UwM05MlmOdMMiPh0x.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/XPRyzMk7UwM05MlmOdMMiPh0x.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=24/23HB16-0884S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=24/23HB16-0884S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "60",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "0.88",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "42",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/25-17-single-shaft-unipolar-stepper-motor18step65ncm-torque12a-current60mm-body6-wire-741-1234567890127.html",
@@ -129,7 +379,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/V1LfLdAXabEJxWlxhIlvWgyBv.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/V1LfLdAXabEJxWlxhIlvWgyBv.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=25/17HB24-1206S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=25/17HB24-1206S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "65",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "1.2",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "60",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "6",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-23-stepper-motor-214/26-23-single-shaft-bipolar-stepper-motor18step126ncm-torque28a-current56mm-body4-wire-740-1234567890127.html",
@@ -151,7 +453,54 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/14jYZ7e6iStLVGBhx9O3VMU7P.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/14jYZ7e6iStLVGBhx9O3VMU7P.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=26/23HB22-2804S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "125",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "2.8",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "56",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/27-17-single-shaft-bipolar-stepper-motor18step44ncm-torque085a-current48mm-body4-wire-739-1234567890127.html",
@@ -173,51 +522,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/Li2oxRBh1lQ8lCXrBLAhh9tIe.jpg"
       ]
-    }
-  },
-  {
-    "url": "https://www.stepmotech.com/nema-34-stepper-motor-216/29-34-single-shaft-bipolar-stepper-motor18step1300ncm-torque5a-current1515mm-body4-wire-737-1234567890127.html",
-    "fetchUrl": "https://www.vexmotor.com/nema-34-stepper-motor-216/29-34-single-shaft-bipolar-stepper-motor18step1300ncm-torque5a-current1515mm-body4-wire-737-1234567890127.html",
-    "title": "34 Single Shaft Bipolar Stepper Motor,1.8°Step,1300N·cm Torque,5A Current,151.5mm Body,4_Wire",
-    "heading": "34 Single Shaft Bipolar Stepper Motor,1.8°Step,1300N·cm Torque,5A Current,151.5mm Body,4_Wire",
-    "seoTitle": "34 Single Shaft Bipolar Stepper Motor,1.8°Step,1300N·cm Torque,5A Current,151.5mm Body,4_Wire",
-    "seoDescription": "34 Single Shaft Bipolar Stepper Motor,1.8°Step,1300N·cm Torque,5A Current,151.5mm Body,4_Wire",
-    "canonical": "https://www.vexmotor.com/nema-34-stepper-motor-216/29-34-single-shaft-bipolar-stepper-motor-1-8-step-1300n-cm-torque-5a-current-151-5mm-body-4-wire-737-1234567890127.html",
-    "ldProduct": {
-      "name": "34 Single Shaft Bipolar Stepper Motor,1.8°Step,1300N·cm Torque,5A Current,151.5mm Body,4_Wire",
-      "sku": "34HB59-5004S",
-      "mpn": "XYZ-12345",
-      "description": "34 Single Shaft Bipolar Stepper Motor,1.8°Step,1300N·cm Torque,5A Current,151.5mm Body,4_Wire",
-      "brand": "StepMotech",
-      "price": "53.99",
-      "currency": "USD",
-      "availability": "https://schema.org/InStock",
-      "images": [
-        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/1jDxs07pYcLjU25fufwBqKleS.jpg"
-      ]
-    }
-  },
-  {
-    "url": "https://www.stepmotech.com/nema-11-stepper-motor-211/30-11-single-shaft-bipolar-stepper-motor18step71ncm-torque067a-current315mm-body4-wire-736-1234567890127.html",
-    "fetchUrl": "https://www.vexmotor.com/nema-11-stepper-motor-211/30-11-single-shaft-bipolar-stepper-motor18step71ncm-torque067a-current315mm-body4-wire-736-1234567890127.html",
-    "title": "11 Single Shaft Bipolar Stepper Motor,1.8°Step,6N·cm Torque,0.67A Current,32mm Body,4_Wire",
-    "heading": "11 Single Shaft Bipolar Stepper Motor,1.8°Step,6N·cm Torque,0.67A Current,32mm Body,4_Wire",
-    "seoTitle": "11 Single Shaft Bipolar Stepper Motor,1.8°Step,6N·cm Torque,0.67A Current,32mm Body,4_Wire",
-    "seoDescription": "11 Single Shaft Bipolar Stepper Motor,1.8°Step,6N·cm Torque,0.67A Current,32mm Body,4_Wire",
-    "canonical": "https://www.vexmotor.com/nema-11-stepper-motor-211/30-11-single-shaft-bipolar-stepper-motor-1-8-step-6n-cm-torque-0-67a-current-32mm-body-4-wire-736-1234567890127.html",
-    "ldProduct": {
-      "name": "11 Single Shaft Bipolar Stepper Motor,1.8°Step,6N·cm Torque,0.67A Current,32mm Body,4_Wire",
-      "sku": "11HB12-0674S",
-      "mpn": "XYZ-12345",
-      "description": "11 Single Shaft Bipolar Stepper Motor,1.8°Step,6N·cm Torque,0.67A Current,32mm Body,4_Wire",
-      "brand": "StepMotech",
-      "price": "6.99",
-      "currency": "USD",
-      "availability": "https://schema.org/InStock",
-      "images": [
-        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/6uF91sUdB1i8ar4QhRPEzGYry.jpg"
-      ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/Li2oxRBh1lQ8lCXrBLAhh9tIe.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=27/17HB19-0854S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=27/17HB19-0854S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "44",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "0.85",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "48",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-23-stepper-motor-214/28-23-dual-shaft-bipolarunipolar-stepper-motor18step126ncm-torque424a-current56mm-body8-wire-738-1234567890127.html",
@@ -239,7 +596,207 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/S2OV2bYZNyoJNqGvFRGe6Gnnq.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/S2OV2bYZNyoJNqGvFRGe6Gnnq.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=28/23HB22-3008D_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=28/23HB22-3008D_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "126",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "4.24",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "56",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "8",
+        "unit": "wire"
+      }
+    ]
+  },
+  {
+    "url": "https://www.stepmotech.com/nema-11-stepper-motor-211/30-11-single-shaft-bipolar-stepper-motor18step71ncm-torque067a-current315mm-body4-wire-736-1234567890127.html",
+    "fetchUrl": "https://www.vexmotor.com/nema-11-stepper-motor-211/30-11-single-shaft-bipolar-stepper-motor18step71ncm-torque067a-current315mm-body4-wire-736-1234567890127.html",
+    "title": "11 Single Shaft Bipolar Stepper Motor,1.8°Step,6N·cm Torque,0.67A Current,32mm Body,4_Wire",
+    "heading": "11 Single Shaft Bipolar Stepper Motor,1.8°Step,6N·cm Torque,0.67A Current,32mm Body,4_Wire",
+    "seoTitle": "11 Single Shaft Bipolar Stepper Motor,1.8°Step,6N·cm Torque,0.67A Current,32mm Body,4_Wire",
+    "seoDescription": "11 Single Shaft Bipolar Stepper Motor,1.8°Step,6N·cm Torque,0.67A Current,32mm Body,4_Wire",
+    "canonical": "https://www.vexmotor.com/nema-11-stepper-motor-211/30-11-single-shaft-bipolar-stepper-motor-1-8-step-6n-cm-torque-0-67a-current-32mm-body-4-wire-736-1234567890127.html",
+    "ldProduct": {
+      "name": "11 Single Shaft Bipolar Stepper Motor,1.8°Step,6N·cm Torque,0.67A Current,32mm Body,4_Wire",
+      "sku": "11HB12-0674S",
+      "mpn": "XYZ-12345",
+      "description": "11 Single Shaft Bipolar Stepper Motor,1.8°Step,6N·cm Torque,0.67A Current,32mm Body,4_Wire",
+      "brand": "StepMotech",
+      "price": "6.99",
+      "currency": "USD",
+      "availability": "https://schema.org/InStock",
+      "images": [
+        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/6uF91sUdB1i8ar4QhRPEzGYry.jpg"
+      ]
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/6uF91sUdB1i8ar4QhRPEzGYry.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=30/11HB12-0674S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=30/11HB12-0674S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "6",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "0.67",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "32",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
+  },
+  {
+    "url": "https://www.stepmotech.com/nema-34-stepper-motor-216/29-34-single-shaft-bipolar-stepper-motor18step1300ncm-torque5a-current1515mm-body4-wire-737-1234567890127.html",
+    "fetchUrl": "https://www.vexmotor.com/nema-34-stepper-motor-216/29-34-single-shaft-bipolar-stepper-motor18step1300ncm-torque5a-current1515mm-body4-wire-737-1234567890127.html",
+    "title": "34 Single Shaft Bipolar Stepper Motor,1.8°Step,1300N·cm Torque,5A Current,151.5mm Body,4_Wire",
+    "heading": "34 Single Shaft Bipolar Stepper Motor,1.8°Step,1300N·cm Torque,5A Current,151.5mm Body,4_Wire",
+    "seoTitle": "34 Single Shaft Bipolar Stepper Motor,1.8°Step,1300N·cm Torque,5A Current,151.5mm Body,4_Wire",
+    "seoDescription": "34 Single Shaft Bipolar Stepper Motor,1.8°Step,1300N·cm Torque,5A Current,151.5mm Body,4_Wire",
+    "canonical": "https://www.vexmotor.com/nema-34-stepper-motor-216/29-34-single-shaft-bipolar-stepper-motor-1-8-step-1300n-cm-torque-5a-current-151-5mm-body-4-wire-737-1234567890127.html",
+    "ldProduct": {
+      "name": "34 Single Shaft Bipolar Stepper Motor,1.8°Step,1300N·cm Torque,5A Current,151.5mm Body,4_Wire",
+      "sku": "34HB59-5004S",
+      "mpn": "XYZ-12345",
+      "description": "34 Single Shaft Bipolar Stepper Motor,1.8°Step,1300N·cm Torque,5A Current,151.5mm Body,4_Wire",
+      "brand": "StepMotech",
+      "price": "53.99",
+      "currency": "USD",
+      "availability": "https://schema.org/InStock",
+      "images": [
+        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/1jDxs07pYcLjU25fufwBqKleS.jpg"
+      ]
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/1jDxs07pYcLjU25fufwBqKleS.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=29/34HB59-5004S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=29/34HB59-5004S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "1300",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "5",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "151.5",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-23-stepper-motor-214/31-23-single-shaft-bipolarunipolar-stepper-motor18step283ncm-torque566a-current84mm-body8-wire-735-1234567890127.html",
@@ -261,7 +818,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/7AIlyPR97Fuy9SmfAvwEB5VFY.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/7AIlyPR97Fuy9SmfAvwEB5VFY.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=31/23HB33-4008S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=31/23HB33-4008S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "283",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "5.66",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "84",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "8",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-8-stepper-motor-210/32-stepmotech-8-single-shaft-bipolar-stepper-motor18step16ncm-torque02a-current28mm-body4-wire-734-1234567890127.html",
@@ -283,7 +892,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/lJRkSu3SPVcaC0ttjSCjzhUJX.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/lJRkSu3SPVcaC0ttjSCjzhUJX.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=32/8HB11-0204S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=32/8HB11-0204S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "1.6",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "0.2",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "28",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-11-stepper-motor-211/35-11-single-shaft-bipolar-stepper-motor18step12ncm-torque067a-current51mm-body4-wire-731-1234567890127.html",
@@ -305,7 +966,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/zz4zhr1qroFIVDh7KIouzxf4r.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/zz4zhr1qroFIVDh7KIouzxf4r.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=35/11HB20-0674S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=35/11HB20-0674S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "12",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "0.67",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "51",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-23-stepper-motor-214/33-23-single-shaft-bipolar-stepper-motor18step189ncm-torque3a-current76mm-body4-wire-733-1234567890127.html",
@@ -327,7 +1040,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/ygv0tzS3YQV96V6m23iOrpO9v.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/ygv0tzS3YQV96V6m23iOrpO9v.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=33/23HB30-3004S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=33/23HB30-3004S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "189",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "3",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "76",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/36-17-single-shaft-bipolar-stepper-motor18step65ncm-torque21a-current60mm-body4-wire-730-1234567890127.html",
@@ -349,7 +1114,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/OULX7BfYKjYJdwsm7jnSGcwpr.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/OULX7BfYKjYJdwsm7jnSGcwpr.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=36/17HB24-2104S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=36/17HB24-2104S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "70",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "2",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "60",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-23-stepper-motor-214/37-23-single-shaft-bipolar-stepper-motor18step280ncm-torque42a-current113mm-body4-wire-729-1234567890127.html",
@@ -371,7 +1188,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/z6A0QOlXmH6Te6jGjADM3oBA2.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/z6A0QOlXmH6Te6jGjADM3oBA2.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=37/23HB45-4204S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=37/23HB45-4204S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "300",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "4",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "112",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-23-stepper-motor-214/38-23-single-shaft-bipolar-stepper-motor18step116ncm-torque15a-current56mm-body4-wire-728-1234567890127.html",
@@ -393,7 +1262,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/TAUuVreylxXvuqXMQxDp7I0h4.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/TAUuVreylxXvuqXMQxDp7I0h4.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=38/23HB22-1504S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=38/23HB22-1504S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "135",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "1.5",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "56",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-14-stepper-motor-212/39-14-single-shaft-bipolar-stepper-motor09step5ncm-torque05a-current12mm-body4-wire-727-1234567890127.html",
@@ -415,7 +1336,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/8VR12AxAkadFhE5EphmBrpQ9K.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/8VR12AxAkadFhE5EphmBrpQ9K.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=39/14HC05-0504S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=39/14HC05-0504S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "0.9",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "5",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "0.5",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "12",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-14-stepper-motor-212/40-14-single-shaft-bipolar-stepper-motor18step40ncm-torque15a-current52mm-body4-wire-726-1234567890127.html",
@@ -437,7 +1410,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/WnNDbpFGxtxprnWJMEHdPrtGT.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/WnNDbpFGxtxprnWJMEHdPrtGT.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=40/14HB20-1504S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=40/14HB20-1504S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "30",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "0.8",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "45",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-24-stepper-motor-215/41-24-dual-shaft-bipolarunipolar-stepper-motor18step400ncm-torque424a-current100mm-body8-wire-725-1234567890127.html",
@@ -459,7 +1484,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/qmtMZrLIItjsKstweYS5UqLP2.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/qmtMZrLIItjsKstweYS5UqLP2.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=41/24HB39-3008D_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=41/24HB39-3008D_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "400",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "4.24",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "100",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "8",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-14-stepper-motor-212/42-14-single-shaft-bipolar-stepper-motor09step85ncm-torque065a-current196mm-body4-wire-724-1234567890127.html",
@@ -481,29 +1558,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/oSrbEMfYIaIDEDJzbNdUdV8kq.jpg"
       ]
-    }
-  },
-  {
-    "url": "https://www.stepmotech.com/nema-14-stepper-motor-212/43-14-single-shaft-bipolar-stepper-motor18step23ncm-torque05a-current42mm-body4-wire-723-1234567890127.html",
-    "fetchUrl": "https://www.vexmotor.com/nema-14-stepper-motor-212/43-14-single-shaft-bipolar-stepper-motor18step23ncm-torque05a-current42mm-body4-wire-723-1234567890127.html",
-    "title": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,23N·cm Torque,0.5A Current,42mm Body,4_Wire",
-    "heading": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,23N·cm Torque,0.5A Current,42mm Body,4_Wire",
-    "seoTitle": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,23N·cm Torque,0.5A Current,42mm Body,4_Wire",
-    "seoDescription": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,23N·cm Torque,0.5A Current,42mm Body,4_Wire",
-    "canonical": "https://www.vexmotor.com/nema-14-stepper-motor-212/43-14-single-shaft-bipolar-stepper-motor-1-8-step-23n-cm-torque-0-5a-current-42mm-body-4-wire-723-1234567890127.html",
-    "ldProduct": {
-      "name": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,23N·cm Torque,0.5A Current,42mm Body,4_Wire",
-      "sku": "14HB17-0504S",
-      "mpn": "XYZ-12345",
-      "description": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,23N·cm Torque,0.5A Current,42mm Body,4_Wire",
-      "brand": "StepMotech",
-      "price": "7.99",
-      "currency": "USD",
-      "availability": "https://schema.org/InStock",
-      "images": [
-        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/5JnkMOCAUGZXakqWoAF4US7n5.jpg"
-      ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/oSrbEMfYIaIDEDJzbNdUdV8kq.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=42/14HC08-0654S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=42/14HC08-0654S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "0.9",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "8.5",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "0.65",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "19.6",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/44-17-single-shaft-bipolar-stepper-motor18step40ncm-torque04a-current40mm-body4-wire-722-1234567890127.html",
@@ -525,29 +1632,128 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/GiTGeMHw3iZgiTYQMqIzULsDV.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/GiTGeMHw3iZgiTYQMqIzULsDV.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=44/17HB15-0404S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "40",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "0.4",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "40",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
-    "url": "https://www.stepmotech.com/nema-24-stepper-motor-215/46-24-dual-shaft-bipolar-stepper-motor18step400ncm-torque424a-current100mm-body4-wire-720-1234567890127.html",
-    "fetchUrl": "https://www.vexmotor.com/nema-24-stepper-motor-215/46-24-dual-shaft-bipolar-stepper-motor18step400ncm-torque424a-current100mm-body4-wire-720-1234567890127.html",
-    "title": "24 Dual Shaft Bipolar Stepper Motor,1.8°Step,400N·cm Torque,4.24A Current,100mm Body,4_Wire",
-    "heading": "24 Dual Shaft Bipolar Stepper Motor,1.8°Step,400N·cm Torque,4.24A Current,100mm Body,4_Wire",
-    "seoTitle": "24 Dual Shaft Bipolar Stepper Motor,1.8°Step,400N·cm Torque,4.24A Current,100mm Body,4_Wire",
-    "seoDescription": "24 Dual Shaft Bipolar Stepper Motor,1.8°Step,400N·cm Torque,4.24A Current,100mm Body,4_Wire",
-    "canonical": "https://www.vexmotor.com/nema-24-stepper-motor-215/46-24-dual-shaft-bipolar-stepper-motor-1-8-step-400n-cm-torque-4-24a-current-100mm-body-4-wire-720-1234567890127.html",
+    "url": "https://www.stepmotech.com/nema-14-stepper-motor-212/43-14-single-shaft-bipolar-stepper-motor18step23ncm-torque05a-current42mm-body4-wire-723-1234567890127.html",
+    "fetchUrl": "https://www.vexmotor.com/nema-14-stepper-motor-212/43-14-single-shaft-bipolar-stepper-motor18step23ncm-torque05a-current42mm-body4-wire-723-1234567890127.html",
+    "title": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,23N·cm Torque,0.5A Current,42mm Body,4_Wire",
+    "heading": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,23N·cm Torque,0.5A Current,42mm Body,4_Wire",
+    "seoTitle": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,23N·cm Torque,0.5A Current,42mm Body,4_Wire",
+    "seoDescription": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,23N·cm Torque,0.5A Current,42mm Body,4_Wire",
+    "canonical": "https://www.vexmotor.com/nema-14-stepper-motor-212/43-14-single-shaft-bipolar-stepper-motor-1-8-step-23n-cm-torque-0-5a-current-42mm-body-4-wire-723-1234567890127.html",
     "ldProduct": {
-      "name": "24 Dual Shaft Bipolar Stepper Motor,1.8°Step,400N·cm Torque,4.24A Current,100mm Body,4_Wire",
-      "sku": "24HB39-4204D",
+      "name": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,23N·cm Torque,0.5A Current,42mm Body,4_Wire",
+      "sku": "14HB17-0504S",
       "mpn": "XYZ-12345",
-      "description": "24 Dual Shaft Bipolar Stepper Motor,1.8°Step,400N·cm Torque,4.24A Current,100mm Body,4_Wire",
+      "description": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,23N·cm Torque,0.5A Current,42mm Body,4_Wire",
       "brand": "StepMotech",
-      "price": "29.99",
+      "price": "7.99",
       "currency": "USD",
       "availability": "https://schema.org/InStock",
       "images": [
-        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/u19vL1UfBiJglkzQzBGEVGcH7.jpg"
+        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/5JnkMOCAUGZXakqWoAF4US7n5.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/5JnkMOCAUGZXakqWoAF4US7n5.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=43/14HB17-0504S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=43/14HB17-0504S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "23",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "0.5",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "42",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-23-stepper-motor-214/45-23-dual-shaft-bipolarunipolar-stepper-motor18step283ncm-torque566a-current84mm-body8-wire-721-1234567890127.html",
@@ -569,7 +1775,133 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/mjsDs5D2AH7ewvodwoXFgIe1v.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/mjsDs5D2AH7ewvodwoXFgIe1v.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=45/23HB33-4008D_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=45/23HB33-4008D_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "283",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "5.66",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "84",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "8",
+        "unit": "wire"
+      }
+    ]
+  },
+  {
+    "url": "https://www.stepmotech.com/nema-24-stepper-motor-215/46-24-dual-shaft-bipolar-stepper-motor18step400ncm-torque424a-current100mm-body4-wire-720-1234567890127.html",
+    "fetchUrl": "https://www.vexmotor.com/nema-24-stepper-motor-215/46-24-dual-shaft-bipolar-stepper-motor18step400ncm-torque424a-current100mm-body4-wire-720-1234567890127.html",
+    "title": "24 Dual Shaft Bipolar Stepper Motor,1.8°Step,400N·cm Torque,4.24A Current,100mm Body,4_Wire",
+    "heading": "24 Dual Shaft Bipolar Stepper Motor,1.8°Step,400N·cm Torque,4.24A Current,100mm Body,4_Wire",
+    "seoTitle": "24 Dual Shaft Bipolar Stepper Motor,1.8°Step,400N·cm Torque,4.24A Current,100mm Body,4_Wire",
+    "seoDescription": "24 Dual Shaft Bipolar Stepper Motor,1.8°Step,400N·cm Torque,4.24A Current,100mm Body,4_Wire",
+    "canonical": "https://www.vexmotor.com/nema-24-stepper-motor-215/46-24-dual-shaft-bipolar-stepper-motor-1-8-step-400n-cm-torque-4-24a-current-100mm-body-4-wire-720-1234567890127.html",
+    "ldProduct": {
+      "name": "24 Dual Shaft Bipolar Stepper Motor,1.8°Step,400N·cm Torque,4.24A Current,100mm Body,4_Wire",
+      "sku": "24HB39-4204D",
+      "mpn": "XYZ-12345",
+      "description": "24 Dual Shaft Bipolar Stepper Motor,1.8°Step,400N·cm Torque,4.24A Current,100mm Body,4_Wire",
+      "brand": "StepMotech",
+      "price": "29.99",
+      "currency": "USD",
+      "availability": "https://schema.org/InStock",
+      "images": [
+        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/u19vL1UfBiJglkzQzBGEVGcH7.jpg"
+      ]
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/u19vL1UfBiJglkzQzBGEVGcH7.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=46/24HB39-4204D_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=46/24HB39-4204D_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "400",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "4.24",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "100",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/47-17-single-shaft-bipolar-stepper-motor09step42ncm-torque168a-current48mm-body4-wire-719-1234567890127.html",
@@ -591,7 +1923,49 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/E0L90nED3ByxA298pcfQyzmKb.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/E0L90nED3ByxA298pcfQyzmKb.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "0.9",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "42",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "1.68",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "48",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/48-17-single-shaft-bipolar-stepper-motor18step13ncm-torque1a-current20mm-body4-wire-718-1234567890127.html",
@@ -613,7 +1987,54 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/fc8yfEdimbHfKpaZiPRqpt7Wl.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/fc8yfEdimbHfKpaZiPRqpt7Wl.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=48/17HB08-1004S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "10",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "1.5",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "24",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-23-stepper-motor-214/49-23-single-shaft-bipolar-stepper-motor18step280ncm-torque35a-current113mm-body4-wire-717-1234567890127.html",
@@ -635,7 +2056,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/br06EOW012I6aQpMn7Qk8uUFT.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/br06EOW012I6aQpMn7Qk8uUFT.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=49/23HB45-3504S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=49/23HB45-3504S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "280",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "3.5",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "112",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-8-stepper-motor-210/51-stepmotech-8-single-shaft-bipolar-stepper-motor18step4ncm-torque06a-current38mm-body4-wire-715-1234567890127.html",
@@ -657,29 +2130,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/dfxtOpSUgea0Fm2bDPZl0srkP.jpg"
       ]
-    }
-  },
-  {
-    "url": "https://www.stepmotech.com/nema-14-stepper-motor-212/50-14-single-shaft-bipolar-stepper-motor18step125ncm-torque1a-current28mm-body4-wire-716-1234567890127.html",
-    "fetchUrl": "https://www.vexmotor.com/nema-14-stepper-motor-212/50-14-single-shaft-bipolar-stepper-motor18step125ncm-torque1a-current28mm-body4-wire-716-1234567890127.html",
-    "title": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,12.5N·cm Torque,1A Current,28mm Body,4_Wire",
-    "heading": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,12.5N·cm Torque,1A Current,28mm Body,4_Wire",
-    "seoTitle": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,12.5N·cm Torque,1A Current,28mm Body,4_Wire",
-    "seoDescription": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,12.5N·cm Torque,1A Current,28mm Body,4_Wire",
-    "canonical": "https://www.vexmotor.com/nema-14-stepper-motor-212/50-14-single-shaft-bipolar-stepper-motor-1-8-step-12-5n-cm-torque-1a-current-28mm-body-4-wire-716-1234567890127.html",
-    "ldProduct": {
-      "name": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,12.5N·cm Torque,1A Current,28mm Body,4_Wire",
-      "sku": "14HB11-1004S",
-      "mpn": "XYZ-12345",
-      "description": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,12.5N·cm Torque,1A Current,28mm Body,4_Wire",
-      "brand": "StepMotech",
-      "price": "7.99",
-      "currency": "USD",
-      "availability": "https://schema.org/InStock",
-      "images": [
-        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/1rcRUemKxdbr4oZ8GFPRAorCM.jpg"
-      ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/dfxtOpSUgea0Fm2bDPZl0srkP.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=51/8HB15-0604S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=51/8HB15-0604S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "4",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "0.6",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "38",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/53-17-single-shaft-bipolar-stepper-motor09step46ncm-torque2a-current48mm-body4-wire-713-1234567890127.html",
@@ -701,7 +2204,128 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/ndslMAnJczO6nWgo4DDIrGcS0.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/ndslMAnJczO6nWgo4DDIrGcS0.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=53/17H919-2004S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=53/17H919-2004S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "0.9",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "42",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "1.68",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "48",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
+  },
+  {
+    "url": "https://www.stepmotech.com/nema-14-stepper-motor-212/50-14-single-shaft-bipolar-stepper-motor18step125ncm-torque1a-current28mm-body4-wire-716-1234567890127.html",
+    "fetchUrl": "https://www.vexmotor.com/nema-14-stepper-motor-212/50-14-single-shaft-bipolar-stepper-motor18step125ncm-torque1a-current28mm-body4-wire-716-1234567890127.html",
+    "title": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,12.5N·cm Torque,1A Current,28mm Body,4_Wire",
+    "heading": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,12.5N·cm Torque,1A Current,28mm Body,4_Wire",
+    "seoTitle": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,12.5N·cm Torque,1A Current,28mm Body,4_Wire",
+    "seoDescription": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,12.5N·cm Torque,1A Current,28mm Body,4_Wire",
+    "canonical": "https://www.vexmotor.com/nema-14-stepper-motor-212/50-14-single-shaft-bipolar-stepper-motor-1-8-step-12-5n-cm-torque-1a-current-28mm-body-4-wire-716-1234567890127.html",
+    "ldProduct": {
+      "name": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,12.5N·cm Torque,1A Current,28mm Body,4_Wire",
+      "sku": "14HB11-1004S",
+      "mpn": "XYZ-12345",
+      "description": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,12.5N·cm Torque,1A Current,28mm Body,4_Wire",
+      "brand": "StepMotech",
+      "price": "7.99",
+      "currency": "USD",
+      "availability": "https://schema.org/InStock",
+      "images": [
+        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/1rcRUemKxdbr4oZ8GFPRAorCM.jpg"
+      ]
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/1rcRUemKxdbr4oZ8GFPRAorCM.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=50/14HB11-1004S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "12.5",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "1",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "28",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-14-stepper-motor-212/54-14-single-shaft-bipolar-stepper-motor18step18ncm-torque08a-current34mm-body4-wire-712-1234567890127.html",
@@ -723,7 +2347,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/TU7be64rDLkcyB5udPW3za4Pg.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/TU7be64rDLkcyB5udPW3za4Pg.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=54/14HB13-0804S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=54/14HB13-0804S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "18",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "0.8",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "34",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-23-stepper-motor-214/55-23-single-shaft-bipolar-stepper-motor18step189ncm-torque28a-current77mm-body4-wire-711-1234567890127.html",
@@ -745,7 +2421,49 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/BnKvZ42LLWEgt7ALK8gty5W6S.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/BnKvZ42LLWEgt7ALK8gty5W6S.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "190",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "2.8",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "76",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-24-stepper-motor-215/56-24-dual-shaft-bipolar-stepper-motor18step290ncm-torque35a-current88mm-body4-wire-710-1234567890127.html",
@@ -767,7 +2485,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/BXsD9VjHRzgQk94k1E9vIUWXy.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/BXsD9VjHRzgQk94k1E9vIUWXy.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=56/24HB34-3504D_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=56/24HB34-3504D_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "290",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "3.5",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "88",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/57-17-single-shaft-bipolar-stepper-motor09step11ncm-torque12a-current22mm-body4-wire-709-1234567890127.html",
@@ -789,7 +2559,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/zisvuWQvkUH37mzxKyJW4VzVZ.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/zisvuWQvkUH37mzxKyJW4VzVZ.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=57/17H908-1204S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=57/17H908-1204S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "0.9",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "11",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "1.2",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "22",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-23-stepper-motor-214/58-23-single-shaft-bipolar-stepper-motor09step126ncm-torque28a-current56mm-body4-wire-708-1234567890127.html",
@@ -811,29 +2633,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/IVjIFwWdihVqAPcPfbw6zCw9Q.jpg"
       ]
-    }
-  },
-  {
-    "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/59-17-single-shaft-bipolar-stepper-motor18step45ncm-torque2a-current40mm-body4-wire-707-1234567890127.html",
-    "fetchUrl": "https://www.vexmotor.com/nema-17-stepper-motor-209/59-17-single-shaft-bipolar-stepper-motor18step45ncm-torque2a-current40mm-body4-wire-707-1234567890127.html",
-    "title": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,2A Current,40mm Body,4_Wire",
-    "heading": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,2A Current,40mm Body,4_Wire",
-    "seoTitle": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,2A Current,40mm Body,4_Wire",
-    "seoDescription": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,2A Current,40mm Body,4_Wire",
-    "canonical": "https://www.vexmotor.com/nema-17-stepper-motor-209/59-17-single-shaft-bipolar-stepper-motor-1-8-step-40n-cm-torque-2a-current-40mm-body-4-wire-707-1234567890127.html",
-    "ldProduct": {
-      "name": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,2A Current,40mm Body,4_Wire",
-      "sku": "17HB16-2004S1",
-      "mpn": "XYZ-12345",
-      "description": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,2A Current,40mm Body,4_Wire",
-      "brand": "StepMotech",
-      "price": "3.99",
-      "currency": "USD",
-      "availability": "https://schema.org/InStock",
-      "images": [
-        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250605/t3Vwm6I3NR0J2ofwZ3EsO7A6W.jpg"
-      ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/IVjIFwWdihVqAPcPfbw6zCw9Q.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=58/23H922-2804S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=58/23H922-2804S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "0.9",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "126",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "2.8",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "56",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/60-17-single-shaft-bipolar-stepper-motor18step13ncm-torque07a-current25mm-body4-wire-706-1234567890127.html",
@@ -855,7 +2707,128 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/VIiVc98uZwtulCUOVtjXfi6Lr.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/VIiVc98uZwtulCUOVtjXfi6Lr.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=60/17HB10-0704S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=60/17HB10-0704S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "10",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "1.5",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "24",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
+  },
+  {
+    "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/59-17-single-shaft-bipolar-stepper-motor18step45ncm-torque2a-current40mm-body4-wire-707-1234567890127.html",
+    "fetchUrl": "https://www.vexmotor.com/nema-17-stepper-motor-209/59-17-single-shaft-bipolar-stepper-motor18step45ncm-torque2a-current40mm-body4-wire-707-1234567890127.html",
+    "title": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,2A Current,40mm Body,4_Wire",
+    "heading": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,2A Current,40mm Body,4_Wire",
+    "seoTitle": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,2A Current,40mm Body,4_Wire",
+    "seoDescription": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,2A Current,40mm Body,4_Wire",
+    "canonical": "https://www.vexmotor.com/nema-17-stepper-motor-209/59-17-single-shaft-bipolar-stepper-motor-1-8-step-40n-cm-torque-2a-current-40mm-body-4-wire-707-1234567890127.html",
+    "ldProduct": {
+      "name": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,2A Current,40mm Body,4_Wire",
+      "sku": "17HB16-2004S1",
+      "mpn": "XYZ-12345",
+      "description": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,2A Current,40mm Body,4_Wire",
+      "brand": "StepMotech",
+      "price": "3.99",
+      "currency": "USD",
+      "availability": "https://schema.org/InStock",
+      "images": [
+        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250605/t3Vwm6I3NR0J2ofwZ3EsO7A6W.jpg"
+      ]
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250605/t3Vwm6I3NR0J2ofwZ3EsO7A6W.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=59/17HB16-2004S1_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "40",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "2",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "40",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-11-stepper-motor-211/61-11-single-shaft-bipolar-stepper-motor18step95ncm-torque067a-current445mm-body4-wire-705-1234567890127.html",
@@ -877,29 +2850,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/gJup5YPM7v7AZVVB9mQl1gtJv.jpg"
       ]
-    }
-  },
-  {
-    "url": "https://www.stepmotech.com/nema-14-stepper-motor-212/63-14-single-shaft-bipolar-stepper-motor18step14ncm-torque04a-current26mm-body4-wire-703-1234567890127.html",
-    "fetchUrl": "https://www.vexmotor.com/nema-14-stepper-motor-212/63-14-single-shaft-bipolar-stepper-motor18step14ncm-torque04a-current26mm-body4-wire-703-1234567890127.html",
-    "title": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,14N·cm Torque,0.4A Current,26mm Body,4_Wire",
-    "heading": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,14N·cm Torque,0.4A Current,26mm Body,4_Wire",
-    "seoTitle": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,14N·cm Torque,0.4A Current,26mm Body,4_Wire",
-    "seoDescription": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,14N·cm Torque,0.4A Current,26mm Body,4_Wire",
-    "canonical": "https://www.vexmotor.com/nema-14-stepper-motor-212/63-14-single-shaft-bipolar-stepper-motor-1-8-step-14n-cm-torque-0-4a-current-26mm-body-4-wire-703-1234567890127.html",
-    "ldProduct": {
-      "name": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,14N·cm Torque,0.4A Current,26mm Body,4_Wire",
-      "sku": "14HB10-0404S",
-      "mpn": "XYZ-12345",
-      "description": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,14N·cm Torque,0.4A Current,26mm Body,4_Wire",
-      "brand": "StepMotech",
-      "price": "6.99",
-      "currency": "USD",
-      "availability": "https://schema.org/InStock",
-      "images": [
-        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/xQoysBiJV1cnNPSgNhR2YZMnm.jpg"
-      ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/gJup5YPM7v7AZVVB9mQl1gtJv.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=61/11HB18-0674S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=61/11HB18-0674S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "9.5",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "0.67",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "44.5",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/62-17-single-shaft-bipolar-stepper-motor18step60ncm-torque064a-current60mm-body4-wire-704-1234567890127.html",
@@ -921,29 +2924,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/O58UoTUWWz73nwcdBfaxBsy1A.jpg"
       ]
-    }
-  },
-  {
-    "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/64-17-single-shaft-bipolar-stepper-motor18step26ncm-torque04a-current34mm-body4-wire-702-1234567890127.html",
-    "fetchUrl": "https://www.vexmotor.com/nema-17-stepper-motor-209/64-17-single-shaft-bipolar-stepper-motor18step26ncm-torque04a-current34mm-body4-wire-702-1234567890127.html",
-    "title": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,32N·cm Torque,0.4A Current,34mm Body,4_Wire",
-    "heading": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,32N·cm Torque,0.4A Current,34mm Body,4_Wire",
-    "seoTitle": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,32N·cm Torque,0.4A Current,34mm Body,4_Wire",
-    "seoDescription": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,32N·cm Torque,0.4A Current,34mm Body,4_Wire",
-    "canonical": "https://www.vexmotor.com/nema-17-stepper-motor-209/64-17-single-shaft-bipolar-stepper-motor-1-8-step-32n-cm-torque-0-4a-current-34mm-body-4-wire-702-1234567890127.html",
-    "ldProduct": {
-      "name": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,32N·cm Torque,0.4A Current,34mm Body,4_Wire",
-      "sku": "17HB13-0404S1",
-      "mpn": "XYZ-12345",
-      "description": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,32N·cm Torque,0.4A Current,34mm Body,4_Wire",
-      "brand": "StepMotech",
-      "price": "5.99",
-      "currency": "USD",
-      "availability": "https://schema.org/InStock",
-      "images": [
-        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/1d70iOY30KoDmpiyv33WOADHs.jpg"
-      ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/O58UoTUWWz73nwcdBfaxBsy1A.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=62/17HB24-0644S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=62/17HB24-0644S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "60",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "0.64",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "60",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/65-17-single-shaft-bipolar-stepper-motor18step44ncm-torque168a-current48mm-body4-wire-701-1234567890127.html",
@@ -965,7 +2998,202 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/EcHDlRc7QQHQBBaCA5DpzafUP.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/EcHDlRc7QQHQBBaCA5DpzafUP.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=65/17HB19-1684S1_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=65/17HB19-1684S1_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "52",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "1.68",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "48",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
+  },
+  {
+    "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/64-17-single-shaft-bipolar-stepper-motor18step26ncm-torque04a-current34mm-body4-wire-702-1234567890127.html",
+    "fetchUrl": "https://www.vexmotor.com/nema-17-stepper-motor-209/64-17-single-shaft-bipolar-stepper-motor18step26ncm-torque04a-current34mm-body4-wire-702-1234567890127.html",
+    "title": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,32N·cm Torque,0.4A Current,34mm Body,4_Wire",
+    "heading": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,32N·cm Torque,0.4A Current,34mm Body,4_Wire",
+    "seoTitle": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,32N·cm Torque,0.4A Current,34mm Body,4_Wire",
+    "seoDescription": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,32N·cm Torque,0.4A Current,34mm Body,4_Wire",
+    "canonical": "https://www.vexmotor.com/nema-17-stepper-motor-209/64-17-single-shaft-bipolar-stepper-motor-1-8-step-32n-cm-torque-0-4a-current-34mm-body-4-wire-702-1234567890127.html",
+    "ldProduct": {
+      "name": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,32N·cm Torque,0.4A Current,34mm Body,4_Wire",
+      "sku": "17HB13-0404S1",
+      "mpn": "XYZ-12345",
+      "description": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,32N·cm Torque,0.4A Current,34mm Body,4_Wire",
+      "brand": "StepMotech",
+      "price": "5.99",
+      "currency": "USD",
+      "availability": "https://schema.org/InStock",
+      "images": [
+        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/1d70iOY30KoDmpiyv33WOADHs.jpg"
+      ]
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/1d70iOY30KoDmpiyv33WOADHs.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=64/17HB13-0404S1_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "32",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "0.4",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "34",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
+  },
+  {
+    "url": "https://www.stepmotech.com/nema-14-stepper-motor-212/63-14-single-shaft-bipolar-stepper-motor18step14ncm-torque04a-current26mm-body4-wire-703-1234567890127.html",
+    "fetchUrl": "https://www.vexmotor.com/nema-14-stepper-motor-212/63-14-single-shaft-bipolar-stepper-motor18step14ncm-torque04a-current26mm-body4-wire-703-1234567890127.html",
+    "title": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,14N·cm Torque,0.4A Current,26mm Body,4_Wire",
+    "heading": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,14N·cm Torque,0.4A Current,26mm Body,4_Wire",
+    "seoTitle": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,14N·cm Torque,0.4A Current,26mm Body,4_Wire",
+    "seoDescription": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,14N·cm Torque,0.4A Current,26mm Body,4_Wire",
+    "canonical": "https://www.vexmotor.com/nema-14-stepper-motor-212/63-14-single-shaft-bipolar-stepper-motor-1-8-step-14n-cm-torque-0-4a-current-26mm-body-4-wire-703-1234567890127.html",
+    "ldProduct": {
+      "name": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,14N·cm Torque,0.4A Current,26mm Body,4_Wire",
+      "sku": "14HB10-0404S",
+      "mpn": "XYZ-12345",
+      "description": "14 Single Shaft Bipolar Stepper Motor,1.8°Step,14N·cm Torque,0.4A Current,26mm Body,4_Wire",
+      "brand": "StepMotech",
+      "price": "6.99",
+      "currency": "USD",
+      "availability": "https://schema.org/InStock",
+      "images": [
+        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/xQoysBiJV1cnNPSgNhR2YZMnm.jpg"
+      ]
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/xQoysBiJV1cnNPSgNhR2YZMnm.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=63/14HB10-0404S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=63/14HB10-0404S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "14",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "0.4",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "26",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/66-17-single-shaft-bipolar-stepper-motor18step59ncm-torque2a-current48mm-body4-wire-700-1234567890127.html",
@@ -987,7 +3215,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/bBRjxlh6TQYdpDxVzX8hGlNlD.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/bBRjxlh6TQYdpDxVzX8hGlNlD.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=66/17HB19-2004S1_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=66/17HB19-2004S1_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "52",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "2",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "48",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-14-stepper-motor-212/67-14-single-shaft-bipolar-stepper-motor09step11ncm-torque04a-current28mm-body4-wire-699-1234567890127.html",
@@ -1009,7 +3289,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/PXUN8q6iHcV7FZWW7LDgmgsum.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/PXUN8q6iHcV7FZWW7LDgmgsum.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=67/14H911-0404S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=67/14H911-0404S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "0.9",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "11",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "0.4",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "28",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/131-17-single-shaft-bipolar-stepper-motor18step42ncm-torque15a-current38mm-body4-wire-748-1234567890127.html",
@@ -1031,7 +3363,49 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/UMiOFoh9AArXocwdKzGI5HZI3.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/UMiOFoh9AArXocwdKzGI5HZI3.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "40",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "1.5",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "40",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/132-17-single-shaft-bipolar-stepper-motor09step46ncm-torque2a-current48mm-body4-wire-749-1234567890127.html",
@@ -1053,7 +3427,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/QW52vAOijpj6okXfhlWxQK2P5.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/QW52vAOijpj6okXfhlWxQK2P5.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=132/17H919-2004S1_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=132/17H919-2004S1_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "0.9",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "42",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "1.68",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "48",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/133-17-dual-shaft-bipolar-stepper-motor18step59ncm-torque2a-current48mm-body4-wire-750-1234567890127.html",
@@ -1075,51 +3501,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/K3AxtgFJDOkDo170zFrSEfcks.jpg"
       ]
-    }
-  },
-  {
-    "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/134-17-single-shaft-bipolar-stepper-motor18step45ncm-torque15a-current40mm-body4-wire-751-1234567890127.html",
-    "fetchUrl": "https://www.vexmotor.com/nema-17-stepper-motor-209/134-17-single-shaft-bipolar-stepper-motor18step45ncm-torque15a-current40mm-body4-wire-751-1234567890127.html",
-    "title": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,1.5A Current,40mm Body,4_Wire",
-    "heading": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,1.5A Current,40mm Body,4_Wire",
-    "seoTitle": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,1.5A Current,40mm Body,4_Wire",
-    "seoDescription": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,1.5A Current,40mm Body,4_Wire",
-    "canonical": "https://www.vexmotor.com/nema-17-stepper-motor-209/134-17-single-shaft-bipolar-stepper-motor-1-8-step-40n-cm-torque-1-5a-current-40mm-body-4-wire-751-1234567890127.html",
-    "ldProduct": {
-      "name": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,1.5A Current,40mm Body,4_Wire",
-      "sku": "17HB15-1504S-X1",
-      "mpn": "XYZ-12345",
-      "description": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,1.5A Current,40mm Body,4_Wire",
-      "brand": "StepMotech",
-      "price": "3.99",
-      "currency": "USD",
-      "availability": "https://schema.org/InStock",
-      "images": [
-        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250605/rkRoppgcwkaCuHo9q0g8GSPYN.jpg"
-      ]
-    }
-  },
-  {
-    "url": "https://www.stepmotech.com/nema-34-stepper-motor-216/136-34-single-shaft-bipolarunipolar-stepper-motor18step707ncm-torque424a-current98mm-body8-wire-753-1234567890127.html",
-    "fetchUrl": "https://www.vexmotor.com/nema-34-stepper-motor-216/136-34-single-shaft-bipolarunipolar-stepper-motor18step707ncm-torque424a-current98mm-body8-wire-753-1234567890127.html",
-    "title": "34 Single Shaft Bipolar/Unipolar Stepper Motor,1.8°Step,690N·cm Torque,4.2A Current,100mm Body",
-    "heading": "34 Single Shaft Bipolar/Unipolar Stepper Motor,1.8°Step,690N·cm Torque,4.2A Current,100mm Body,8_Wire",
-    "seoTitle": "34 Single Shaft Bipolar/Unipolar Stepper Motor,1.8°Step,690N·cm Torque,4.2A Current,100mm Body",
-    "seoDescription": "34 Single Shaft Bipolar/Unipolar Stepper Motor,1.8°Step,690N·cm Torque,4.2A Current,100mm Body",
-    "canonical": "https://www.vexmotor.com/nema-34-stepper-motor-216/136-34-single-shaft-bipolar-unipolar-stepper-motor-1-8-step-690n-cm-torque-4-2a-current-100mm-body-8-wire-753-1234567890127.html",
-    "ldProduct": {
-      "name": "34 Single Shaft Bipolar/Unipolar Stepper Motor,1.8°Step,690N·cm Torque,4.2A Current,100mm Body,8_Wire",
-      "sku": "34HB38-3008S",
-      "mpn": "XYZ-12345",
-      "description": "34 Single Shaft Bipolar/Unipolar Stepper Motor,1.8°Step,690N·cm Torque,4.2A Current,100mm Body",
-      "brand": "StepMotech",
-      "price": "34.99",
-      "currency": "USD",
-      "availability": "https://schema.org/InStock",
-      "images": [
-        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/bfWkQmnn3vvCfK9nbf8qOujTp.jpg"
-      ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/K3AxtgFJDOkDo170zFrSEfcks.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=133/17HB19-2004D_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=133/17HB19-2004D_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "41",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "2",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "48",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/135-17-single-shaft-bipolar-stepper-motor09step30ncm-torque15a-current38mm-body4-wire-752-1234567890127.html",
@@ -1141,7 +3575,118 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/qJK6N4vQcfM6FH5vqtbFUJafF.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/qJK6N4vQcfM6FH5vqtbFUJafF.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "0.9",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "32",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "2",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "40",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
+  },
+  {
+    "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/134-17-single-shaft-bipolar-stepper-motor18step45ncm-torque15a-current40mm-body4-wire-751-1234567890127.html",
+    "fetchUrl": "https://www.vexmotor.com/nema-17-stepper-motor-209/134-17-single-shaft-bipolar-stepper-motor18step45ncm-torque15a-current40mm-body4-wire-751-1234567890127.html",
+    "title": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,1.5A Current,40mm Body,4_Wire",
+    "heading": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,1.5A Current,40mm Body,4_Wire",
+    "seoTitle": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,1.5A Current,40mm Body,4_Wire",
+    "seoDescription": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,1.5A Current,40mm Body,4_Wire",
+    "canonical": "https://www.vexmotor.com/nema-17-stepper-motor-209/134-17-single-shaft-bipolar-stepper-motor-1-8-step-40n-cm-torque-1-5a-current-40mm-body-4-wire-751-1234567890127.html",
+    "ldProduct": {
+      "name": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,1.5A Current,40mm Body,4_Wire",
+      "sku": "17HB15-1504S-X1",
+      "mpn": "XYZ-12345",
+      "description": "17 Single Shaft Bipolar Stepper Motor,1.8°Step,40N·cm Torque,1.5A Current,40mm Body,4_Wire",
+      "brand": "StepMotech",
+      "price": "3.99",
+      "currency": "USD",
+      "availability": "https://schema.org/InStock",
+      "images": [
+        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250605/rkRoppgcwkaCuHo9q0g8GSPYN.jpg"
+      ]
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250605/rkRoppgcwkaCuHo9q0g8GSPYN.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=134/17HB15-1504S-X1_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "40",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "1.5",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "40",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-23-stepper-motor-214/137-23-single-shaft-bipolar-stepper-motor18step240ncm-torque4a-current82mm-body4-wire-754-1234567890127.html",
@@ -1163,7 +3708,123 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/HZ9NOBj6KaOxeWLCXfKJpM9X7.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/HZ9NOBj6KaOxeWLCXfKJpM9X7.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=137/23HB32-4004S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=137/23HB32-4004S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "220",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "4",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "82",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
+  },
+  {
+    "url": "https://www.stepmotech.com/nema-34-stepper-motor-216/136-34-single-shaft-bipolarunipolar-stepper-motor18step707ncm-torque424a-current98mm-body8-wire-753-1234567890127.html",
+    "fetchUrl": "https://www.vexmotor.com/nema-34-stepper-motor-216/136-34-single-shaft-bipolarunipolar-stepper-motor18step707ncm-torque424a-current98mm-body8-wire-753-1234567890127.html",
+    "title": "34 Single Shaft Bipolar/Unipolar Stepper Motor,1.8°Step,690N·cm Torque,4.2A Current,100mm Body",
+    "heading": "34 Single Shaft Bipolar/Unipolar Stepper Motor,1.8°Step,690N·cm Torque,4.2A Current,100mm Body,8_Wire",
+    "seoTitle": "34 Single Shaft Bipolar/Unipolar Stepper Motor,1.8°Step,690N·cm Torque,4.2A Current,100mm Body",
+    "seoDescription": "34 Single Shaft Bipolar/Unipolar Stepper Motor,1.8°Step,690N·cm Torque,4.2A Current,100mm Body",
+    "canonical": "https://www.vexmotor.com/nema-34-stepper-motor-216/136-34-single-shaft-bipolar-unipolar-stepper-motor-1-8-step-690n-cm-torque-4-2a-current-100mm-body-8-wire-753-1234567890127.html",
+    "ldProduct": {
+      "name": "34 Single Shaft Bipolar/Unipolar Stepper Motor,1.8°Step,690N·cm Torque,4.2A Current,100mm Body,8_Wire",
+      "sku": "34HB38-3008S",
+      "mpn": "XYZ-12345",
+      "description": "34 Single Shaft Bipolar/Unipolar Stepper Motor,1.8°Step,690N·cm Torque,4.2A Current,100mm Body",
+      "brand": "StepMotech",
+      "price": "34.99",
+      "currency": "USD",
+      "availability": "https://schema.org/InStock",
+      "images": [
+        "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/bfWkQmnn3vvCfK9nbf8qOujTp.jpg"
+      ]
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/bfWkQmnn3vvCfK9nbf8qOujTp.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "690",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "4.2",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "100",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "8",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-23-stepper-motor-214/138-23-single-shaft-bipolar-stepper-motor18step300ncm-torque5a-current100mm-body4-wire-755-1234567890127.html",
@@ -1185,7 +3846,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/7eAmFV9l1p6m2QLYPLeRJk1qr.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/7eAmFV9l1p6m2QLYPLeRJk1qr.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=138/23HB39-5004S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=138/23HB39-5004S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "300",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "5",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "100",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.stepmotech.com/nema-17-stepper-motor-209/139-17-single-axis-bipolar-stepper-motor-18--stepper-60ncm-torque-21a-current-60mm-body-4-wire-756-1234567890127.html",
@@ -1207,7 +3920,49 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/OrKSwf07D7qeHbtJRCWQ8GueE.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/OrKSwf07D7qeHbtJRCWQ8GueE.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "90",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "2",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "60",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.vexmotor.com/nema-17-stepper-motor-209/48-3584-17-single-shaft-bipolar-stepper-motor18step13ncm-torque1a-current20mm-body4-wire-718-1234567890127.html",
@@ -1229,7 +3984,54 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/fc8yfEdimbHfKpaZiPRqpt7Wl.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/fc8yfEdimbHfKpaZiPRqpt7Wl.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=48/17HB08-1004S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "10",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "1.5",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "24",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.vexmotor.com/nema-17-stepper-motor-209/186-3674-17-single-shaft-bipolar-stepper-motor18step17ncm-torque1a-current23mm-body4-wire-799-1234567890127.html",
@@ -1251,7 +4053,49 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250515/6Empu9x6FtWGYOcUf5qRFznMU.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250515/6Empu9x6FtWGYOcUf5qRFznMU.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "17",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "1",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "23",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.vexmotor.com/nema-17-stepper-motor-209/64-3588-17-single-shaft-bipolar-stepper-motor18step26ncm-torque04a-current34mm-body4-wire-702-1234567890127.html",
@@ -1273,7 +4117,54 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/1d70iOY30KoDmpiyv33WOADHs.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250425/1d70iOY30KoDmpiyv33WOADHs.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=64/17HB13-0404S1_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "32",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "0.4",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "34",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.vexmotor.com/nema-17-stepper-motor-209/131-3637-17-single-shaft-bipolar-stepper-motor18step42ncm-torque15a-current38mm-body4-wire-748-1234567890127.html",
@@ -1295,7 +4186,49 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/UMiOFoh9AArXocwdKzGI5HZI3.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/UMiOFoh9AArXocwdKzGI5HZI3.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "40",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "1.5",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "40",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.vexmotor.com/nema-17-stepper-motor-209/134-3640-17-single-shaft-bipolar-stepper-motor18step45ncm-torque15a-current40mm-body4-wire-751-1234567890127.html",
@@ -1317,7 +4250,54 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250605/rkRoppgcwkaCuHo9q0g8GSPYN.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250605/rkRoppgcwkaCuHo9q0g8GSPYN.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=134/17HB15-1504S-X1_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "40",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "1.5",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "40",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.vexmotor.com/nema-17-stepper-motor-209/66-3586-17-single-shaft-bipolar-stepper-motor18step59ncm-torque2a-current48mm-body4-wire-700-1234567890127.html",
@@ -1339,7 +4319,59 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/bBRjxlh6TQYdpDxVzX8hGlNlD.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250430/bBRjxlh6TQYdpDxVzX8hGlNlD.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=66/17HB19-2004S1_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=66/17HB19-2004S1_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "52",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "2",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "48",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.vexmotor.com/181-3669-17-single-shaft-bipolar-stepper-motor18step55ncm-torque2a-current48mm-body4-wire-814-1234567890127.html",
@@ -1361,7 +4393,49 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250515/Oy8OLvUHEylbYTTW3P3KpArQK.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250515/Oy8OLvUHEylbYTTW3P3KpArQK.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "52",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "2",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "48",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   },
   {
     "url": "https://www.vexmotor.com/nema-23-stepper-motor-214/137-3643-23-single-shaft-bipolar-stepper-motor18step240ncm-torque4a-current82mm-body4-wire-754-1234567890127.html",
@@ -1383,6 +4457,58 @@
       "images": [
         "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/HZ9NOBj6KaOxeWLCXfKJpM9X7.jpg"
       ]
-    }
+    },
+    "galleryImages": [
+      "https://diiospp53gsun.cloudfront.net/geiwohuo/20250429/HZ9NOBj6KaOxeWLCXfKJpM9X7.jpg"
+    ],
+    "downloads": [
+      {
+        "url": "https://www.vexmotor.com/content/12-faq#content-id3",
+        "label": "Product Specs &amp; Technical Support",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/#product-details",
+        "label": "Specifications",
+        "mimeType": "application/octet-stream"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=137/23HB32-4004S_Torque_Curve.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      },
+      {
+        "url": "https://www.vexmotor.com/module-custommodules-download?file=137/23HB32-4004S_Full_Datasheet.pdf",
+        "label": "Download",
+        "mimeType": "application/pdf"
+      }
+    ],
+    "technicalSpecs": [
+      {
+        "key": "Step Angle",
+        "value": "1.8",
+        "unit": "deg"
+      },
+      {
+        "key": "Holding Torque",
+        "value": "220",
+        "unit": "N.cm"
+      },
+      {
+        "key": "Rated Current",
+        "value": "4",
+        "unit": "A"
+      },
+      {
+        "key": "Body Length",
+        "value": "82",
+        "unit": "mm"
+      },
+      {
+        "key": "Wire Count",
+        "value": "4",
+        "unit": "wire"
+      }
+    ]
   }
 ]

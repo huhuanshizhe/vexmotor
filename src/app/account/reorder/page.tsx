@@ -2,8 +2,7 @@ import Link from 'next/link';
 
 import { AddToCartButton } from '@/components/storefront/add-to-cart-button';
 import { accountReorderCandidates, accountSavedLists } from '@/lib/account-portal';
-import { getProductList } from '@/server/storefront';
-import { getSeedProductBySlug } from '@/server/storefront/seed';
+import { getProductBySlug, getProductList } from '@/server/storefront';
 
 export default async function AccountReorderPage({
   searchParams,
@@ -13,6 +12,8 @@ export default async function AccountReorderPage({
   const params = await searchParams;
   const query = params.q?.trim() ?? '';
   const quickResults = query ? await getProductList({ keyword: query, page: 1, pageSize: 6 }) : null;
+  const reorderProducts = await Promise.all(accountReorderCandidates.map((candidate) => getProductBySlug(candidate.productSlug)));
+  const productBySlug = new Map(reorderProducts.filter((item): item is NonNullable<typeof item> => Boolean(item)).map((item) => [item.slug, item]));
 
   return (
     <div className="account-panel-stack">
@@ -65,7 +66,7 @@ export default async function AccountReorderPage({
           <span>Action</span>
         </div>
         {accountReorderCandidates.map((candidate) => {
-          const product = getSeedProductBySlug(candidate.productSlug);
+          const product = productBySlug.get(candidate.productSlug) ?? null;
           return (
             <div key={`${candidate.orderNumber}-${candidate.sku}`} className="account-table-row">
               <div>

@@ -8,7 +8,7 @@ import { getSolutionIndustry, solutionIndustries } from '@/lib/solutions';
 import { withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
-import { getSeedCategories, getSeedProductsResult } from '@/server/storefront/seed';
+import { getCategories, getProductList } from '@/server/storefront';
 
 type SolutionDetailPageProps = {
   params: Promise<{ industry: string }>;
@@ -41,8 +41,8 @@ export default async function SolutionDetailPage({ params }: SolutionDetailPageP
   const [{ locale }, { industry }, categories, productsResult] = await Promise.all([
     getServerSitePreferences(),
     params,
-    Promise.resolve(getSeedCategories()),
-    Promise.resolve(getSeedProductsResult({ pageSize: 96, sort: 'featured' })),
+    getCategories(),
+    getProductList({ pageSize: 96, sort: 'featured' }),
   ]);
   const solution = getSolutionIndustry(industry);
 

@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { AddToCartButton } from '@/components/storefront/add-to-cart-button';
 import { accountDashboardTodos, accountQuoteRecords, accountRecommendedProductSlugs, accountSavedLists } from '@/lib/account-portal';
-import { getSeedProductBySlug } from '@/server/storefront/seed';
+import { getProductBySlug } from '@/server/storefront';
 
 type AccountDashboardProps = {
   summary: {
@@ -28,11 +28,11 @@ type AccountDashboardProps = {
   highlightPending?: boolean;
 };
 
-export function AccountDashboard({ summary, profile, recentOrders, highlightPending = false }: AccountDashboardProps) {
+export async function AccountDashboard({ summary, profile, recentOrders, highlightPending = false }: AccountDashboardProps) {
   const pendingQuotes = accountQuoteRecords.filter((quote) => quote.status === 'Submitted' || quote.status === 'Quoted' || quote.status === 'Negotiating');
-  const recommendedProducts = accountRecommendedProductSlugs
-    .map((slug) => getSeedProductBySlug(slug))
-    .filter((product): product is NonNullable<ReturnType<typeof getSeedProductBySlug>> => product !== null);
+  const recommendedProducts = (await Promise.all(accountRecommendedProductSlugs.map((slug) => getProductBySlug(slug)))).filter(
+    (product): product is NonNullable<Awaited<ReturnType<typeof getProductBySlug>>> => product !== null,
+  );
 
   return (
     <div className="account-panel-stack">
