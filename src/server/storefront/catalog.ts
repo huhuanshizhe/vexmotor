@@ -61,8 +61,7 @@ export async function getHomeData(): Promise<HomeData> {
 
   try {
     const seedHome = getSeedHomeData();
-    const [dbCategories, dbProducts] = await Promise.all([
-      db.select().from(categories).where(eq(categories.status, 'active')).orderBy(asc(categories.sortOrder)).limit(4),
+    const [featuredProducts, categoryRows] = await Promise.all([
       db.select({
         id: products.id,
         name: products.name,
@@ -83,7 +82,33 @@ export async function getHomeData(): Promise<HomeData> {
         .where(and(eq(products.status, 'active'), eq(products.featured, true)))
         .orderBy(desc(products.publishedAt), desc(products.createdAt))
         .limit(6),
+      getCategories(),
     ]);
+
+    const dbProducts =
+      featuredProducts.length > 0
+        ? featuredProducts
+        : await db
+            .select({
+              id: products.id,
+              name: products.name,
+              slug: products.slug,
+              sku: products.sku,
+              shortDescription: products.shortDescription,
+              purchaseMode: products.purchaseMode,
+              stockQuantity: products.stockQuantity,
+              price: products.price,
+              compareAtPrice: products.compareAtPrice,
+              currencyCode: products.currencyCode,
+              brandId: products.brandId,
+              brandName: brands.name,
+              brandSlug: brands.slug,
+            })
+            .from(products)
+            .leftJoin(brands, eq(products.brandId, brands.id))
+            .where(eq(products.status, 'active'))
+            .orderBy(desc(products.publishedAt), desc(products.createdAt))
+            .limit(6);
 
     const imageRows = dbProducts.length
       ? await db
@@ -159,13 +184,10 @@ export async function getHomeData(): Promise<HomeData> {
 
     return {
       ...seedHome,
-      featuredCategories: dbCategories.map((item) => ({
-        id: item.id,
-        name: item.name,
-        slug: item.slug,
-        description: item.description,
-        parentId: item.parentId,
-      })),
+      featuredCategories: categoryRows
+        .filter((item) => (item.productCount ?? 0) > 0)
+        .sort((left, right) => (right.productCount ?? 0) - (left.productCount ?? 0))
+        .slice(0, 8),
       hotSale: dynamicCards.slice(0, 4),
       newRelease: dynamicCards.slice(0, 3),
       featuredShelves: dynamicShelves,
@@ -190,10 +212,19 @@ export async function getCategories(): Promise<StorefrontCategory[]> {
   }
 
   try {
-    const rows = await db.select().from(categories).where(eq(categories.status, 'active')).orderBy(asc(categories.sortOrder), asc(categories.name));
+    const [rows, countRows] = await Promise.all([
+      db.select().from(categories).where(eq(categories.status, 'active')).orderBy(asc(categories.sortOrder), asc(categories.name)),
+      db
+        .select({ categoryId: products.defaultCategoryId, total: count() })
+        .from(products)
+        .where(and(eq(products.status, 'active'), drizzleSql`${products.defaultCategoryId} is not null`))
+        .groupBy(products.defaultCategoryId),
+    ]);
     if (!rows.length) {
       return getSeedCategories();
     }
+
+    const productCountByCategoryId = new Map(countRows.map((item) => [item.categoryId, Number(item.total)]));
 
     return rows.map((item) => ({
       id: item.id,
@@ -201,6 +232,7 @@ export async function getCategories(): Promise<StorefrontCategory[]> {
       slug: item.slug,
       description: item.description,
       parentId: item.parentId,
+      productCount: productCountByCategoryId.get(item.id) ?? 0,
       image: item.imageUrl ? { id: `${item.id}-img`, url: item.imageUrl, alt: item.name } : null,
     }));
   } catch {

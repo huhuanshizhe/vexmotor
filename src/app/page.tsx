@@ -69,7 +69,10 @@ export default async function HomePage() {
     getBlogCatalog(locale),
   ]);
 
-  const categoryTiles = categories.slice(0, 9);
+  const categoryTiles = categories
+    .filter((category) => (category.productCount ?? 0) > 0)
+    .sort((left, right) => (right.productCount ?? 0) - (left.productCount ?? 0))
+    .slice(0, 9);
   const featuredIndustries = solutionIndustries.slice(0, 6);
   const featuredProducts = featuredResult.items.slice(0, 8);
   const latestArticles = [...blogCatalog.posts]
