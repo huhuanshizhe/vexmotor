@@ -7,7 +7,7 @@ import { AddToCartButton } from '@/components/storefront/add-to-cart-button';
 import { NewsletterSignupForm } from '@/components/storefront/newsletter-signup-form';
 import { withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
-import { buildMetadata, buildOrganizationJsonLd, buildWebsiteJsonLd } from '@/lib/seo';
+import { buildMetadata, buildWebsiteJsonLd } from '@/lib/seo';
 import { solutionIndustries } from '@/lib/solutions';
 import { getBlogCatalog } from '@/server/content/blog';
 import { getCategories, getHomeData, getProductList } from '@/server/storefront';
@@ -82,7 +82,6 @@ export default async function HomePage() {
 
   return (
     <StorefrontFrame>
-      <JsonLdScript id="organization-jsonld" data={buildOrganizationJsonLd()} />
       <JsonLdScript id="website-jsonld" data={buildWebsiteJsonLd()} />
 
       {/* 2. Hero */}

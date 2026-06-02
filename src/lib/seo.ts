@@ -101,11 +101,6 @@ export function buildWebsiteJsonLd() {
     '@type': 'WebSite',
     name: SITE_NAME,
     url: SITE_URL,
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: `${SITE_URL}/search?keyword={search_term_string}`,
-      'query-input': 'required name=search_term_string',
-    },
   };
 }
 

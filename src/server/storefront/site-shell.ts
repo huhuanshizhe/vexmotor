@@ -33,7 +33,7 @@ export const homeHeroSlides = [
   },
   {
     label: 'From $2.99',
-    href: '/search?keyword=2.99',
+    href: '/products',
     imageSrc: 'https://www.vexmotor.com/modules/cz_imageslider/views/img/3928a24e97861950ddd72a252316edb60e506c6b_banner606-1.jpg',
     alt: 'Low-price starter products banner',
     description: 'Jump to the legacy low-price search route used on the original storefront.',
@@ -47,7 +47,7 @@ export const homeHeroSlides = [
   },
   {
     label: 'Stepper Motor',
-    href: '/search?keyword=Stepper%20Motor',
+    href: '/products',
     imageSrc: 'https://www.vexmotor.com/modules/cz_imageslider/views/img/02145fae0050168397ddc8a9d5076d0a263887d1_banner-slid1.png',
     alt: 'Stepper motor catalog banner',
     description: 'Browse the main motor family highlighted in the original homepage navigation area.',
@@ -55,16 +55,16 @@ export const homeHeroSlides = [
 ];
 
 export const homeReleaseCategories = [
-  { label: 'Nema 24 Stepper Motor', href: '/search?keyword=Nema%2024%20Stepper%20Motor', productCount: 6 },
-  { label: 'Nema 23 Stepper Motor', href: '/search?keyword=Nema%2023%20Stepper%20Motor', productCount: 35 },
-  { label: 'Nema 11 Stepper Motor', href: '/search?keyword=Nema%2011%20Stepper%20Motor', productCount: 6 },
-  { label: 'Nema 17 Stepper Motor', href: '/search?keyword=Nema%2017%20Stepper%20Motor', productCount: 59 },
-  { label: 'Nema 14 Stepper Motor', href: '/search?keyword=Nema%2014%20Stepper%20Motor', productCount: 14 },
-  { label: 'Nema 8 Stepper Motor', href: '/search?keyword=Nema%208%20Stepper%20Motor', productCount: 6 },
-  { label: 'Nema 34 Stepper Motor', href: '/search?keyword=Nema%2034%20Stepper%20Motor', productCount: 13 },
-  { label: 'Nema 16 Stepper Motor', href: '/search?keyword=Nema%2016%20Stepper%20Motor', productCount: 8 },
-  { label: 'Power Supply', href: '/search?keyword=Power%20Supply', productCount: 10 },
-  { label: 'Stepper Motor Driver', href: '/search?keyword=Stepper%20Motor%20Driver', productCount: 4 },
+  { label: 'Nema 24 Stepper Motor', href: '/c/nema-24-stepper-motor', productCount: 6 },
+  { label: 'Nema 23 Stepper Motor', href: '/c/nema-23-stepper-motor', productCount: 35 },
+  { label: 'Nema 11 Stepper Motor', href: '/c/nema-11-stepper-motor', productCount: 6 },
+  { label: 'Nema 17 Stepper Motor', href: '/c/nema-17-stepper-motor', productCount: 59 },
+  { label: 'Nema 14 Stepper Motor', href: '/c/nema-14-stepper-motor', productCount: 14 },
+  { label: 'Nema 8 Stepper Motor', href: '/c/nema-8-stepper-motor', productCount: 6 },
+  { label: 'Nema 34 Stepper Motor', href: '/c/nema-34-stepper-motor', productCount: 13 },
+  { label: 'Nema 16 Stepper Motor', href: '/c/nema-16-stepper-motor', productCount: 8 },
+  { label: 'Power Supply', href: '/c/power-supply', productCount: 10 },
+  { label: 'Stepper Motor Driver', href: '/c/stepper-motor-driver', productCount: 4 },
 ];
 
 export const storefrontNavigationBase: Omit<NavigationData, 'categories'> = {
@@ -110,7 +110,7 @@ export const storefrontNavigationBase: Omit<NavigationData, 'categories'> = {
     { label: 'About us', href: '/company/about' },
     { label: 'FAQ', href: '/faq' },
     { label: 'Contact', href: '/contact' },
-    { label: 'NEW Product', href: '/products?keyword=New%20Product' },
+    { label: 'NEW Product', href: '/products' },
     { label: 'Free Shipping', href: '/support/free-shipping' },
   ],
 };

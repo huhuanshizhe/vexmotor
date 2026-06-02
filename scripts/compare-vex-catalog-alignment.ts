@@ -180,7 +180,7 @@ async function main() {
       expectedName: expected?.expectedName ?? null,
       expectedProductCount: expected?.expectedProductCount ?? 0,
       actualProductCount,
-      matches: Boolean(expected) && actualProductCount === expected.expectedProductCount,
+      matches: expected ? actualProductCount === expected.expectedProductCount : false,
     };
   });
 

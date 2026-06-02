@@ -16,7 +16,7 @@ function toAbsoluteUrl(pathname: string) {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [categories, products, blogPosts, supportCatalog] = await Promise.all([
     getCategories(),
-    getProductList({ page: 1, pageSize: 200 }),
+    getProductList({ page: 1, pageSize: 1000 }),
     getPublishedBlogPosts(),
     getSupportCatalog(),
   ]);
@@ -24,6 +24,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     '/',
     '/products',
+    '/support',
+    '/solutions',
+    '/selector',
+    '/custom',
+    '/volume-pricing',
     '/contact',
     '/faq',
     '/tech-faq',
@@ -73,7 +78,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.4,
     })),
     ...categories.map((category) => ({
-      url: toAbsoluteUrl(`/products?category=${category.slug}`),
+      url: toAbsoluteUrl(`/c/${category.slug}`),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     })),

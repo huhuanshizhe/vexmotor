@@ -187,7 +187,7 @@ export async function getHomeData(): Promise<HomeData> {
     }
 
     if (!dbProducts.length) {
-      return seedHome;
+      return defaultHomeData;
     }
 
     const dynamicCards = dbProducts.map((item) => ({
@@ -221,7 +221,7 @@ export async function getHomeData(): Promise<HomeData> {
       },
       {
         id: 'new-products',
-        ...defaultHomeData,
+        title: 'New Products',
         items: cycleItems(dynamicCards, 1, 4).map((item, index) => ({ ...item, tag: index < 2 ? 'New' : null, note: item.shortDescription ?? null })),
       },
       {
@@ -237,7 +237,7 @@ export async function getHomeData(): Promise<HomeData> {
     ];
 
     return {
-      ...seedHome,
+      ...defaultHomeData,
       featuredCategories: categoryRows
         .filter((item) => (item.productCount ?? 0) > 0)
         .sort((left, right) => (right.productCount ?? 0) - (left.productCount ?? 0))

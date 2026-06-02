@@ -41,10 +41,6 @@ function formatSpecValue(value: string, unit?: string | null) {
   return unit ? `${value} ${unit}` : value;
 }
 
-function buildSearchHref(keyword: string, locale: Locale) {
-  return `${withLocalePath('/search', locale)}?keyword=${encodeURIComponent(keyword)}`;
-}
-
 function buildSpecGroups(product: StorefrontProductDetail): DetailSpecGroup[] {
   const featureRows = product.features.map((feature) => ({
     label: feature.key,
@@ -179,11 +175,10 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const contactPath = withLocalePath('/contact', locale);
   const categoryPath = category ? withLocalePath(`/c/${category.slug}`, locale) : productsPath;
   const productUrl = `${SITE_URL}${productPath}`;
+  const documentsHref = `${productPath}#detail-documents`;
   const specGroups = buildSpecGroups(product);
   const topSpecs = specGroups.flatMap((group) => group.rows).slice(0, 5);
   const datasheetAttachment = product.attachments.find((attachment) => /pdf|datasheet|spec/i.test(`${attachment.name} ${attachment.mimeType}`));
-  const ratingValue = product.purchaseMode === 'buy' ? 4.8 : 4.6;
-  const reviewCount = Math.max(8, Math.min(84, Math.round(product.stockQuantity / 3) + topSpecs.length * 4));
   const priceHeadline = product.purchaseMode === 'buy' ? product.price.formatted : 'Request Quote';
   const queryForQuote = new URLSearchParams({ topic: 'quote', product: product.sku }).toString();
   const queryForSample = new URLSearchParams({ topic: 'sample', product: product.sku }).toString();
@@ -286,7 +281,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     { id: 'detail-documents', label: 'CAD & Docs' },
     { id: 'detail-compatible', label: 'Compatible' },
     { id: 'detail-applications', label: 'Applications' },
-    { id: 'detail-reviews', label: 'Reviews' },
     { id: 'detail-faq', label: 'FAQ' },
   ];
   const breadcrumbJsonLd = buildBreadcrumbJsonLd(
@@ -312,26 +306,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       name: product.brand?.name ?? SITE_NAME,
     },
     category: product.categories.map((item) => item.name).join(', '),
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue,
-      reviewCount,
-    },
-    review: [
-      {
-        '@type': 'Review',
-        reviewBody: `${product.name} is presented with direct-buy and documentation cues so engineering teams can validate fit, stock posture, and support options quickly.`,
-        reviewRating: {
-          '@type': 'Rating',
-          ratingValue,
-          bestRating: 5,
-        },
-        author: {
-          '@type': 'Organization',
-          name: 'STEPMOTECH Engineering Review',
-        },
-      },
-    ],
     additionalProperty: specGroups.flatMap((group) => group.rows).slice(0, 24).map((row) => ({
       '@type': 'PropertyValue',
       name: row.label,
@@ -628,8 +602,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                   toastTitle="Specification JSON copied"
                   className="button-secondary"
                 />
-                <Link href={buildSearchHref(topSpecs[0]?.value ?? product.sku, locale)} className="button-secondary">
-                  Search matching docs
+                <Link href={documentsHref} className="button-secondary">
+                  View matching docs
                 </Link>
               </div>
             </div>
@@ -731,28 +705,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                   <Link href={quoteHref}>Discuss this use case</Link>
                 </article>
               ))}
-            </div>
-          </article>
-
-          <article id="detail-reviews" className="info-card detail-anchor-card">
-            <div className="section-header detail-section-header">
-              <div>
-                <h2 className="section-title">Reviews & Q&A</h2>
-                <p className="section-description">The storefront can render without public reviews, while still surfacing a strong summary and a next-step path for technical questions.</p>
-              </div>
-            </div>
-
-            <div className="detail-review-card">
-              <strong className="detail-review-score">{ratingValue.toFixed(1)} / 5</strong>
-              <p className="section-description">{reviewCount} modeled review signals are used today for merchandising continuity. Public review collection can slot in later without changing the PDP structure.</p>
-              <div className="pdp-secondary-actions">
-                <Link href={quoteHref} className="button-secondary">
-                  Ask a technical question
-                </Link>
-                <Link href={contactPath} className="button-secondary">
-                  Be the first to review
-                </Link>
-              </div>
             </div>
           </article>
 

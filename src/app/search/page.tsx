@@ -12,7 +12,7 @@ import { buildMetadata } from '@/lib/seo';
 import { getPublishedBlogPosts } from '@/server/content/blog';
 import { getKnowledgeCatalog } from '@/server/content/knowledge';
 import { getSupportCatalog } from '@/server/content/support';
-import { getProductBySlug, getProductList } from '@/server/storefront';
+import { getCategories, getProductBySlug, getProductList } from '@/server/storefront';
 
 function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -64,7 +64,8 @@ export default async function SearchPage({
   const query = params.q ?? params.keyword ?? '';
   const selectedType = params.type ?? 'all';
   const page = Number(params.page ?? '1');
-  const [listing, blogPosts, knowledgeCatalog, supportCatalog] = await Promise.all([
+  const [categories, listing, blogPosts, knowledgeCatalog, supportCatalog] = await Promise.all([
+    getCategories(),
     getProductList({
       keyword: query,
       page: Number.isNaN(page) ? 1 : page,
@@ -367,7 +368,7 @@ export default async function SearchPage({
                 <Link href={withLocalePath('/selector', preferences.locale)} className="section-link">
                   Try Selector Path
                 </Link>
-                {homeData.featuredCategories.slice(0, 3).map((category) => (
+                {categories.slice(0, 3).map((category) => (
                   <Link key={category.id} href={withLocalePath(`/c/${category.slug}`, preferences.locale)} className="section-link">
                     {category.name}
                   </Link>

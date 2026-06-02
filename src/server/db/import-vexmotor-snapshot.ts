@@ -374,7 +374,7 @@ async function main() {
     const rawCategorySlug = categorySlugFromPath(url.pathname);
     const inferredCategorySlug = inferCategorySlugFromProduct(item);
     const categorySlug = categoryBySlug.has(rawCategorySlug) ? rawCategorySlug : inferredCategorySlug;
-    const categoryId = categoryBySlug.get(categorySlug) ?? null;
+    const categoryId = categorySlug ? (categoryBySlug.get(categorySlug) ?? null) : null;
 
     if (!slug) {
       continue;
