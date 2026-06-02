@@ -6,6 +6,7 @@ import type { ReactNode } from 'react';
 import { HeaderUtilityStrip } from '@/components/layout/header-utility-strip';
 import { CookieConsentBar, COOKIE_CONSENT_COOKIE_NAME } from '@/components/layout/cookie-consent-bar';
 import { NotificationBar } from '@/components/layout/notification-bar';
+import { StorefrontNav } from '@/components/layout/storefront-nav';
 import type { Locale } from '@/lib/i18n';
 import type { SitePreferences } from '@/lib/i18n';
 import { withLocalePath } from '@/lib/i18n';
@@ -98,51 +99,7 @@ export async function StorefrontFrame({ title, description, eyebrow, actions, ch
         </div>
 
         <div className="storefront-nav-band">
-          <nav className="storefront-nav">
-            {navigation.mainLinks.map((item) => {
-              const hasNestedChildren = item.children?.some((child) => child.children?.length);
-
-              return item.children?.length ? (
-                <div key={item.label} className={`nav-dropdown${hasNestedChildren ? ' nav-dropdown-mega' : ''}`}>
-                  <FrameLink href={item.href} className="storefront-nav-link nav-link-inverse nav-dropdown-trigger" external={item.external} locale={preferences.locale}>
-                    {item.label}
-                  </FrameLink>
-                  {hasNestedChildren ? (
-                    <div className="nav-mega-panel">
-                      {item.children.map((child) => (
-                        <article key={`${item.label}-${child.label}`} className={`nav-mega-column${child.children?.length ? ' is-primary' : ''}`}>
-                          <FrameLink href={child.href} className="nav-mega-heading" external={child.external} locale={preferences.locale}>
-                            {child.label}
-                          </FrameLink>
-                          {child.children?.length ? (
-                            <div className="nav-mega-links">
-                              {child.children.map((grandchild) => (
-                                <FrameLink key={`${child.label}-${grandchild.label}`} href={grandchild.href} className="nav-mega-link" external={grandchild.external} locale={preferences.locale}>
-                                  {grandchild.label}
-                                </FrameLink>
-                              ))}
-                            </div>
-                          ) : null}
-                        </article>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="nav-dropdown-panel">
-                      {item.children.map((child) => (
-                        <FrameLink key={`${item.label}-${child.label}`} href={child.href} className="nav-dropdown-link" external={child.external} locale={preferences.locale}>
-                          {child.label}
-                        </FrameLink>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <FrameLink key={item.label} href={item.href} className="storefront-nav-link nav-link-inverse" external={item.external} locale={preferences.locale}>
-                  {item.label}
-                </FrameLink>
-              );
-            })}
-          </nav>
+          <StorefrontNav items={navigation.mainLinks} locale={preferences.locale} />
         </div>
       </header>
 

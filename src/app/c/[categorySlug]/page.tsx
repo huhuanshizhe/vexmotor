@@ -15,6 +15,9 @@ import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 import { getCategories, getProductList, type ProductListSort } from '@/server/storefront';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 type CategoryPageSearchParams = Promise<{
   keyword?: string;
   page?: string;

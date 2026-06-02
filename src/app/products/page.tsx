@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 import { StorefrontFrame } from '@/components/layout/storefront-frame';
 import { JsonLdScript } from '@/components/seo/json-ld';
@@ -48,9 +49,39 @@ export const metadata = buildMetadata({
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ keyword?: string; sort?: string; industry?: string }>;
+  searchParams: Promise<{ keyword?: string; sort?: string; industry?: string; category?: string }>;
 }) {
   const [{ locale }, categories, params] = await Promise.all([getServerSitePreferences(), getCategories(), searchParams]);
+  const legacyCategoryAliases: Record<string, string> = {
+    'power-supplies': 'power-supply',
+    'stepper-drivers': 'stepper-motor-driver',
+  };
+  const keywordCategoryAliases: Record<string, string> = {
+    'nema 8 stepper motor': 'nema-8-stepper-motor',
+    'nema 11 stepper motor': 'nema-11-stepper-motor',
+    'nema 14 stepper motor': 'nema-14-stepper-motor',
+    'nema 16 stepper motor': 'nema-16-stepper-motor',
+    'nema 17 stepper motor': 'nema-17-stepper-motor',
+    'nema 23 stepper motor': 'nema-23-stepper-motor',
+    'nema 24 stepper motor': 'nema-24-stepper-motor',
+    'nema 34 stepper motor': 'nema-34-stepper-motor',
+    'power supply': 'power-supply',
+    'stepper motor driver': 'stepper-motor-driver',
+    'closed loop stepper motor': 'closed-loop-stepper-motor',
+    'brushless spindle motor': 'brushless-spindle-motor',
+    'brushless dc motor': 'brushless-dc-motor',
+    'integrated stepper motor': 'integrated-stepper-motor',
+  };
+  const redirectedCategorySlug = params.category
+    ? legacyCategoryAliases[params.category] ?? params.category
+    : params.keyword
+      ? keywordCategoryAliases[params.keyword.trim().toLowerCase()] ?? null
+      : null;
+
+  if (redirectedCategorySlug && categories.some((category) => category.slug === redirectedCategorySlug)) {
+    redirect(withLocalePath(`/c/${redirectedCategorySlug}`, locale));
+  }
+
   const activeIndustries = new Set((params.industry ?? '').split(',').map((value) => value.trim()).filter(Boolean));
   const sort = params.sort === 'name-asc' ? 'name-asc' : 'popular';
   const keyword = params.keyword?.trim().toLowerCase() ?? '';

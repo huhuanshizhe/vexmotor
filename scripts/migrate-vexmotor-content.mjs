@@ -150,6 +150,23 @@ function rewriteUrlHost(rawUrl, fromHosts, toHost) {
   }
 }
 
+function normalizeSourceUrl(rawUrl, fromHosts, toHost) {
+  const normalized = normalizeUrl(rewriteUrlHost(rawUrl, fromHosts, toHost));
+  if (!normalized) {
+    return null;
+  }
+
+  try {
+    const url = new URL(normalized);
+    if (url.pathname.toLowerCase().endsWith('.html')) {
+      url.pathname = url.pathname.replace(/\/(\d+)-\d+-([^/]+\.html)$/i, '/$1-$2');
+    }
+    return url.toString();
+  } catch {
+    return normalized;
+  }
+}
+
 function classifyUrl(rawUrl) {
   const url = new URL(rawUrl);
   const pathname = url.pathname.toLowerCase();
@@ -607,7 +624,9 @@ async function main() {
       mergedUrlSet.add(normalized);
     }
   });
-  const mergedUrls = [...mergedUrlSet].map((url) => normalizeUrl(url)).filter(Boolean);
+  const mergedUrls = [
+    ...new Set([...mergedUrlSet].map((url) => normalizeSourceUrl(url, args.rewriteHostFrom, args.rewriteHostTo)).filter(Boolean)),
+  ];
 
   const grouped = {
     product: [],
@@ -661,7 +680,27 @@ async function main() {
     mapLimit(pageUrls, args.concurrency, (url) => scrapePage(url, 'page')),
   ]);
 
-  const products = productPages.map((item) => {
+  const discoveredCategoryProductUrls = trimByLimit(
+    [
+      ...new Set(
+        categoryPages.flatMap((item) => {
+          if (item.error || !item.html) {
+            return [];
+          }
+
+          return extractAnchorUrls(item.html, origin)
+            .map((url) => normalizeSourceUrl(url, args.rewriteHostFrom, args.rewriteHostTo))
+            .filter((url) => url && classifyUrl(url) === 'product');
+        }),
+      ),
+    ],
+    args.maxProducts,
+  );
+  const missingCategoryProductUrls = discoveredCategoryProductUrls.filter((url) => !productUrls.includes(url));
+  const discoveredProductPages = await mapLimit(missingCategoryProductUrls, args.concurrency, (url) => scrapePage(url, 'product'));
+  const allProductPages = [...productPages, ...discoveredProductPages];
+
+  const rawProducts = allProductPages.map((item) => {
     if (item.error) {
       return {
         url: item.url,
@@ -689,6 +728,21 @@ async function main() {
       technicalSpecs,
     };
   });
+
+  const products = [];
+  const seenProductKeys = new Set();
+
+  for (const item of rawProducts) {
+    const candidateUrl = item.canonical ?? item.url ?? item.fetchUrl ?? '';
+    const identity = normalizeSourceUrl(candidateUrl, args.rewriteHostFrom, args.rewriteHostTo) ?? candidateUrl;
+
+    if (seenProductKeys.has(identity)) {
+      continue;
+    }
+
+    seenProductKeys.add(identity);
+    products.push(item);
+  }
 
   const categories = categoryPages.map((item) => {
     if (item.error) {
@@ -769,12 +823,13 @@ async function main() {
       discoveredFromHome: discoveredFromHome.length,
       mergedUrls: mergedUrls.length,
       productsFound: grouped.product.length,
+      categoryDiscoveredProductUrls: discoveredCategoryProductUrls.length,
       categoriesFound: grouped.category.length,
       articlesFound: grouped.article.length,
       pagesFound: grouped.page.length,
     },
     sampled: {
-      products: productUrls.length,
+      products: products.length,
       categories: categoryUrls.length,
       articles: articleUrls.length,
       pages: pageUrls.length,
