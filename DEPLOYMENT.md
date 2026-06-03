@@ -25,7 +25,7 @@ DATABASE_URL=postgresql://user:password@host:5432/dbname
 
 # 认证
 AUTH_SECRET=your-secret-key-here
-NEXTAUTH_URL=https://stepmotech.com
+NEXTAUTH_URL=https://stepmotech.online
 
 # 邮件服务（Resend）
 RESEND_API_KEY=re_your-api-key-here
@@ -41,7 +41,7 @@ ALI_OSS_BUCKET=your-bucket-name
 ALI_OSS_REGION=oss-cn-hangzhou
 
 # 站点配置
-NEXT_PUBLIC_SITE_URL=https://stepmotech.com
+NEXT_PUBLIC_SITE_URL=https://stepmotech.online
 NEXT_PUBLIC_SITE_NAME=STEPMOTECH
 
 # 分析（GA4）
@@ -123,33 +123,33 @@ vercel --prod
 
 ```bash
 # 访问首页
-curl -I https://stepmotech.com
+curl -I https://stepmotech.online
 
 # 访问多语言页面
-curl -I https://stepmotech.com/de
-curl -I https://stepmotech.com/fr
-curl -I https://stepmotech.com/es
+curl -I https://stepmotech.online/de
+curl -I https://stepmotech.online/fr
+curl -I https://stepmotech.online/es
 
 # 测试产品列表
-curl -I https://stepmotech.com/products
+curl -I https://stepmotech.online/products
 
 # 测试产品详情
-curl -I https://stepmotech.com/products/nema-17-bipolar-stepper-motor
+curl -I https://stepmotech.online/products/nema-17-bipolar-stepper-motor
 
 # 测试搜索
-curl -I https://stepmotech.com/search?keyword=stepper
+curl -I https://stepmotech.online/search?keyword=stepper
 
 # 测试 Sitemap
-curl https://stepmotech.com/sitemap.xml
+curl https://stepmotech.online/sitemap.xml
 
 # 测试 Robots
-curl https://stepmotech.com/robots.txt
+curl https://stepmotech.online/robots.txt
 ```
 
 ### 2. SEO 验证
 
-- [ ] 访问 https://stepmotech.com，检查 `<link rel="alternate" hreflang="...">` 标签
-- [ ] 访问 https://stepmotech.com/sitemap.xml，确认包含所有语言版本
+- [ ] 访问 https://stepmotech.online，检查 `<link rel="alternate" hreflang="...">` 标签
+- [ ] 访问 https://stepmotech.online/sitemap.xml，确认包含所有语言版本
 - [ ] 使用 Google Search Console 测试结构化数据
 - [ ] 验证 Open Graph 和 Twitter Card 元数据
 
@@ -157,7 +157,7 @@ curl https://stepmotech.com/robots.txt
 
 ```bash
 # 使用 Lighthouse CLI
-npx lighthouse https://stepmotech.com --output html --output-path ./lighthouse-report.html
+npx lighthouse https://stepmotech.online --output html --output-path ./lighthouse-report.html
 
 # 关键指标目标：
 # - Performance: >= 90

@@ -64,7 +64,7 @@ export async function sendWelcomeEmail(params: WelcomeEmailParams) {
   const footer = t('welcome.footer', { locale });
   
   return resend.emails.send({
-    from: 'STEPMOTECH <noreply@stepmotech.com>',
+    from: 'STEPMOTECH <noreply@stepmotech.online>',
     to,
     subject,
     html: renderEmailTemplate({
@@ -72,7 +72,7 @@ export async function sendWelcomeEmail(params: WelcomeEmailParams) {
       greeting,
       body,
       ctaText: cta,
-      ctaUrl: 'https://stepmotech.com/products',
+      ctaUrl: 'https://stepmotech.online/products',
       support,
       footer,
     }),
@@ -106,7 +106,7 @@ export async function sendOrderConfirmationEmail(params: OrderEmailParams) {
   };
   
   return resend.emails.send({
-    from: 'STEPMOTECH <noreply@stepmotech.com>',
+    from: 'STEPMOTECH <noreply@stepmotech.online>',
     to,
     subject,
     html: renderEmailTemplate({
@@ -141,7 +141,7 @@ export async function sendOrderConfirmationEmail(params: OrderEmailParams) {
         </div>
       `,
       ctaText: cta,
-      ctaUrl: `https://stepmotech.com/account/orders/${orderNumber}`,
+      ctaUrl: `https://stepmotech.online/account/orders/${orderNumber}`,
       support,
     }),
   });
@@ -162,7 +162,7 @@ export async function sendPasswordResetEmail(params: PasswordResetEmailParams) {
   const support = t('passwordReset.support', { locale });
   
   return resend.emails.send({
-    from: 'STEPMOTECH <noreply@stepmotech.com>',
+    from: 'STEPMOTECH <noreply@stepmotech.online>',
     to,
     subject,
     html: renderEmailTemplate({
