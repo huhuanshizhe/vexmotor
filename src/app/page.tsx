@@ -19,6 +19,9 @@ export const metadata = buildMetadata({
   path: '/',
 });
 
+// Revalidate homepage every 60 seconds (ISR)
+export const revalidate = 60;
+
 const heroTrustStats = [
   { value: '10,000+', label: 'SKUs in catalog' },
   { value: '3', label: 'Global warehouses' },

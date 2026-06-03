@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Stripe SDK not available' }, { status: 500 });
   }
 
-  const stripe = new Stripe.default(process.env.STRIPE_SECRET_KEY ?? '', { apiVersion: '2025-04-30.basil' });
+  const stripe = new Stripe.default(process.env.STRIPE_SECRET_KEY ?? '', { apiVersion: '2025-02-24.acacia' });
   const signature = request.headers.get('stripe-signature');
 
   if (!signature) {

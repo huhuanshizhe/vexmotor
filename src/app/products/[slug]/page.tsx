@@ -19,6 +19,9 @@ import { SITE_NAME, SITE_URL } from '@/lib/site-config';
 import { getCommerceConfig } from '@/server/commerce/config';
 import { getHomeData, getProductBySlug, type StorefrontProductCard, type StorefrontProductDetail } from '@/server/storefront';
 
+// Revalidate product pages every 5 minutes (ISR)
+export const revalidate = 300;
+
 type DetailSpecRow = {
   label: string;
   value: string;
@@ -306,6 +309,16 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       name: product.brand?.name ?? SITE_NAME,
     },
     category: product.categories.map((item) => item.name).join(', '),
+    // Note: aggregateRating not yet available in schema
+    // aggregateRating: product.ratingValue
+    //   ? {
+    //       '@type': 'AggregateRating',
+    //       ratingValue: product.ratingValue,
+    //       reviewCount: product.ratingCount ?? 0,
+    //       bestRating: 5,
+    //       worstRating: 1,
+    //     }
+    //   : undefined,
     additionalProperty: specGroups.flatMap((group) => group.rows).slice(0, 24).map((row) => ({
       '@type': 'PropertyValue',
       name: row.label,

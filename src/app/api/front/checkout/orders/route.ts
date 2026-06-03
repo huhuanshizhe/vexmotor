@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
       to: recipientEmail,
       orderNumber: order.orderNumber,
       totalAmount: Number(order.totalAmount ?? 0),
-      currency: order.currency ?? 'USD',
+      currency: (order as any).currencyCode ?? 'USD',
     }).catch((err) => console.error('[checkout] Order email error:', err));
   }
 

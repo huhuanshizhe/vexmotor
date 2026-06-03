@@ -15,8 +15,8 @@ import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 import { getCategories, getProductList, type ProductListSort } from '@/server/storefront';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// ISR: revalidate category pages every 2 minutes
+export const revalidate = 120;
 
 type CategoryPageSearchParams = Promise<{
   keyword?: string;

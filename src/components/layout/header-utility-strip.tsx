@@ -5,7 +5,8 @@ import { useEffect, useState, useTransition } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { COMPARE_ITEMS_UPDATED_EVENT, readCompareItems } from '@/lib/compare-items';
-import { CURRENCY_COOKIE_NAME, LOCALE_COOKIE_NAME, PREFERENCE_COOKIE_MAX_AGE, type SitePreferences, UNIT_SYSTEM_COOKIE_NAME, getLocaleLabel, getMarketDefaults, withLocalePath, parseLocaleFromPathname } from '@/lib/i18n';
+import { CURRENCY_COOKIE_NAME, LOCALE_COOKIE_NAME, PREFERENCE_COOKIE_MAX_AGE, type SitePreferences, UNIT_SYSTEM_COOKIE_NAME, getMarketDefaults, withLocalePath, parseLocaleFromPathname } from '@/lib/i18n';
+import { LanguageSwitcher } from '@/components/storefront/language-switcher';
 import type { StorefrontUtilityLink } from '@/server/storefront';
 
 type HeaderUtilityStripProps = {
@@ -83,15 +84,8 @@ export function HeaderUtilityStrip({ links, initialCartCount, preferences }: Hea
   return (
     <div className="header-utility-strip">
       <div className="header-market-group" aria-label="Site preferences">
-        <label className="header-language-chip">
-          <span className="sr-only">Language</span>
-          <select className="header-market-select" value={locale} onChange={(event) => applyLocale(event.target.value as SitePreferences['locale'])} disabled={isPending}>
-            <option value="en">{getLocaleLabel('en')}</option>
-            <option value="de">{getLocaleLabel('de')}</option>
-            <option value="fr">{getLocaleLabel('fr')}</option>
-            <option value="es">{getLocaleLabel('es')}</option>
-          </select>
-        </label>
+        {/* Language Switcher Component */}
+        <LanguageSwitcher />
 
         <label className="header-language-chip">
           <span className="sr-only">Currency</span>

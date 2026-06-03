@@ -8,6 +8,9 @@ import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 import { getCategories } from '@/server/storefront';
 
+// ISR: revalidate product list every 2 minutes
+export const revalidate = 120;
+
 const industryDefinitions = [
   { id: 'automation', label: 'Factory Automation', categories: ['nema-17-stepper-motor', 'stepper-drivers', 'power-supplies'] },
   { id: 'cnc', label: 'CNC & Tooling', categories: ['nema-23-stepper-motor', 'gearboxes', 'linear-motion'] },

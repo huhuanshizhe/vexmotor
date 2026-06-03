@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ code: 'STRIPE_SDK_ERROR', message: 'Stripe SDK not available' }, { status: 500 });
   }
 
-  const stripe = new Stripe.default(stripeSecretKey, { apiVersion: '2025-04-30.basil' });
+  const stripe = new Stripe.default(stripeSecretKey, { apiVersion: '2025-02-24.acacia' });
   const userId = await getCurrentUserId();
   const body = await request.json();
   const { orderNumber } = body;

@@ -136,6 +136,9 @@ export function CheckoutClient({
   const [exportComplianceConfirmed, setExportComplianceConfirmed] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [showQuickSignup, setShowQuickSignup] = useState(false);
+  const [quickSignupFields, setQuickSignupFields] = useState({ firstName: '', lastName: '', email: '', password: '' });
+  const [signupMessage, setSignupMessage] = useState<string | null>(null);
 
   const paymentOptions = [
     {
@@ -320,6 +323,58 @@ export function CheckoutClient({
           {guestMode ? (
             <div className="checkout-account-actions">
               <a href="/login?callbackUrl=/checkout" className="button-secondary">Sign in for saved addresses</a>
+              <button type="button" className="nav-link" onClick={() => setShowQuickSignup(!showQuickSignup)}>
+                {showQuickSignup ? 'Hide quick signup' : 'Create account in 30 seconds'}
+              </button>
+              {showQuickSignup ? (
+                <div className="checkout-quick-signup">
+                  <p className="section-description">Quick signup saves your details for order tracking and faster checkout next time.</p>
+                  <div className="inquiry-form-grid checkout-reference-grid">
+                    <label className="form-field">
+                      <span>First Name</span>
+                      <input className="form-input" value={quickSignupFields.firstName} onChange={(e) => setQuickSignupFields({ ...quickSignupFields, firstName: e.target.value })} placeholder="First name" />
+                    </label>
+                    <label className="form-field">
+                      <span>Last Name</span>
+                      <input className="form-input" value={quickSignupFields.lastName} onChange={(e) => setQuickSignupFields({ ...quickSignupFields, lastName: e.target.value })} placeholder="Last name" />
+                    </label>
+                    <label className="form-field">
+                      <span>Email</span>
+                      <input className="form-input" type="email" value={quickSignupFields.email || contactEmail} onChange={(e) => setQuickSignupFields({ ...quickSignupFields, email: e.target.value })} placeholder="name@company.com" />
+                    </label>
+                    <label className="form-field">
+                      <span>Password</span>
+                      <input className="form-input" type="password" value={quickSignupFields.password} onChange={(e) => setQuickSignupFields({ ...quickSignupFields, password: e.target.value })} placeholder="At least 8 characters" />
+                    </label>
+                  </div>
+                  <button type="button" className="button-secondary" onClick={() => {
+                    startTransition(async () => {
+                      setSignupMessage(null);
+                      const resp = await fetch('/api/auth/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          _quick: true,
+                          email: quickSignupFields.email || contactEmail,
+                          password: quickSignupFields.password,
+                          firstName: quickSignupFields.firstName,
+                          lastName: quickSignupFields.lastName,
+                        }),
+                      });
+                      if (!resp.ok) {
+                        const err = await resp.json().catch(() => null);
+                        setSignupMessage(err?.message ?? 'Unable to create account.');
+                        return;
+                      }
+                      setSignupMessage('Account created! Sign in to save your address.');
+                      setShowQuickSignup(false);
+                    });
+                  }} disabled={isPending}>
+                    {isPending ? 'Creating...' : 'Create Account'}
+                  </button>
+                  {signupMessage ? <p className="form-feedback form-feedback-error">{signupMessage}</p> : null}
+                </div>
+              ) : null}
               <span className="section-description">Guest checkout stays available for first-time buyers.</span>
             </div>
           ) : (

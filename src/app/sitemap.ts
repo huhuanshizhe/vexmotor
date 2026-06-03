@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 
 import { applicationCaseStudies } from '@/lib/applications';
 import { careerRoles } from '@/lib/careers';
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE, withLocalePath } from '@/lib/i18n';
 import { legalPages } from '@/lib/legal-content';
 import { resourceSections } from '@/lib/resources';
 import { SITE_URL } from '@/lib/site-config';
@@ -46,12 +47,39 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...resourceSections.map((section) => `/resources/${section.slug}`),
   ];
 
+  // Helper function to create multilingual sitemap entries
+  const createMultilingualEntry = (path: string, changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'], priority: number) => {
+    const entries: MetadataRoute.Sitemap = [];
+    
+    // Add entry for each supported locale
+    SUPPORTED_LOCALES.forEach((locale) => {
+      const localizedPath = withLocalePath(path, locale);
+      const url = toAbsoluteUrl(localizedPath);
+      
+      entries.push({
+        url,
+        changeFrequency,
+        priority,
+        // Add alternate URLs for hreflang
+        alternates: {
+          languages: Object.fromEntries(
+            SUPPORTED_LOCALES.map((altLocale) => [
+              altLocale,
+              toAbsoluteUrl(withLocalePath(path, altLocale)),
+            ])
+          ),
+        },
+      });
+    });
+    
+    return entries;
+  };
+
   return [
-    ...staticRoutes.map((path) => ({
-      url: toAbsoluteUrl(path),
-      changeFrequency: path === '/' ? ('daily' as const) : ('weekly' as const),
-      priority: path === '/' ? 1 : 0.7,
-    })),
+    // Static routes with multilingual support
+    ...staticRoutes.flatMap((path) => 
+      createMultilingualEntry(path, path === '/' ? 'daily' : 'weekly', path === '/' ? 1 : 0.7)
+    ),
     ...careerRoles.map((role) => ({
       url: toAbsoluteUrl(`/company/careers/${role.slug}`),
       changeFrequency: 'weekly' as const,
@@ -77,15 +105,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'yearly' as const,
       priority: 0.4,
     })),
-    ...categories.map((category) => ({
-      url: toAbsoluteUrl(`/c/${category.slug}`),
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
-    })),
-    ...products.items.map((product) => ({
-      url: toAbsoluteUrl(`/products/${product.slug}`),
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
-    })),
+    // Categories with multilingual support
+    ...categories.flatMap((category) => 
+      createMultilingualEntry(`/c/${category.slug}`, 'weekly', 0.8)
+    ),
+    // Products with multilingual support
+    ...products.items.flatMap((product) => 
+      createMultilingualEntry(`/products/${product.slug}`, 'weekly', 0.8)
+    ),
   ];
 }

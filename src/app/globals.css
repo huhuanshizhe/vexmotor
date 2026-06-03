@@ -1,18 +1,16 @@
 :root {
-  --font-body: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --font-display: 'Bahnschrift', 'Helvetica Neue', 'Arial Nova Cond', 'Arial Narrow', Arial, sans-serif;
-  --font-light: 'Segoe UI Light', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --color-ink: #111927;
-  --color-muted: #5e6d7d;
-  --color-surface: #f1f4f7;
-  --color-panel: #fffdf9;
-  --color-border: #d8dfe8;
-  --color-primary: #d65b22;
-  --color-primary-dark: #ab3f0f;
-  --color-accent: #102942;
-  --color-success: #177245;
-  --shadow-panel: 0 20px 46px rgba(16, 41, 66, 0.1);
+  /* Use design system variables */
   --max-width: 1240px;
+  --color-ink: var(--gray-900, #0f172a);
+  --color-muted: var(--gray-500, #64748b);
+  --color-surface: var(--gray-50, #f8fafc);
+  --color-panel: var(--gray-0, #ffffff);
+  --color-border: var(--gray-300, #cbd5e1);
+  --color-primary: var(--accent-500, #e67e22);
+  --color-primary-dark: var(--accent-600, #cc6700);
+  --color-accent: var(--brand-800, #0f2847);
+  --color-success: var(--success-600, #16a34a);
+  --shadow-panel: var(--shadow-lg, 0 10px 15px rgba(15, 23, 42, 0.08));
 }
 
 * {
@@ -961,6 +959,30 @@ main {
 .add-to-cart-stack {
   display: grid;
   gap: 8px;
+}
+
+.buy-now-button {
+  width: 100%;
+  text-align: center;
+  font-weight: 600;
+  border-color: rgba(16, 41, 66, 0.3);
+  background: linear-gradient(135deg, #ff6b35, #e85d26);
+  color: #fff;
+  border-color: transparent;
+}
+
+.buy-now-button:hover {
+  background: linear-gradient(135deg, #e85d26, #d04e1d);
+}
+
+.checkout-quick-signup {
+  margin-top: 12px;
+  padding: 16px;
+  background: rgba(16, 41, 66, 0.04);
+  border: 1px solid rgba(16, 41, 66, 0.1);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
 }
 
 .quantity-cart-row,
