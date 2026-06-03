@@ -4510,6 +4510,11 @@ main {
   gap: 8px;
 }
 
+.footer-newsletter-copy .section-description,
+.footer-brand-description {
+  color: #334155;
+}
+
 .footer-columns {
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.1fr);
   align-items: start;
