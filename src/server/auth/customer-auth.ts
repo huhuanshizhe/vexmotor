@@ -5,6 +5,7 @@ import { and, eq, gt } from 'drizzle-orm';
 import { md5Hash } from '@/lib/auth/password';
 import { db } from '@/server/db';
 import { products, users, verificationTokens } from '@/server/db/schema';
+import { sendWelcomeEmail, sendPasswordResetEmail } from '@/server/email';
 import { createStorefrontInquiry } from '@/server/storefront/inquiries';
 
 type AuthUserRecord = {
@@ -250,6 +251,14 @@ export async function registerBusinessAccount(input: RegisterBusinessAccountInpu
 
     await createRegistrationReview(input, created.id);
 
+    // Fire welcome email (non-blocking)
+    sendWelcomeEmail({
+      to: normalizedEmail,
+      firstName: created.firstName,
+      companyName: created.company,
+      accountStatus: created.status,
+    }).catch((err) => console.error('[auth] Welcome email error:', err));
+
     return {
       ok: true,
       user: created,
@@ -267,6 +276,13 @@ export async function registerBusinessAccount(input: RegisterBusinessAccountInpu
 
     getMemoryAuthStore().users.unshift(created);
     await createRegistrationReview(input, created.id);
+
+    sendWelcomeEmail({
+      to: normalizedEmail,
+      firstName: created.firstName,
+      companyName: created.company,
+      accountStatus: created.status,
+    }).catch((err) => console.error('[auth] Welcome email error:', err));
 
     return {
       ok: true,
@@ -292,6 +308,12 @@ export async function createPasswordResetRequest(email: string): Promise<Passwor
 
   const token = randomUUID();
   const expires = new Date(Date.now() + 1000 * 60 * 60);
+  const appUrl = process.env.APP_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:4000';
+  const fullResetUrl = `${appUrl}/password-reset?token=${encodeURIComponent(token)}`;
+
+  // Send reset email (non-blocking)
+  sendPasswordResetEmail({ to: normalizedEmail, resetUrl: fullResetUrl })
+    .catch((err) => console.error('[auth] Password reset email error:', err));
 
   if (!db) {
     const store = getMemoryAuthStore();
@@ -299,7 +321,7 @@ export async function createPasswordResetRequest(email: string): Promise<Passwor
     store.resetTokens.unshift({ identifier: normalizedEmail, token, expires });
     return {
       ok: true,
-      resetUrl: process.env.NODE_ENV === 'production' ? null : `/password-reset?token=${encodeURIComponent(token)}`,
+      resetUrl: process.env.NODE_ENV === 'production' ? null : fullResetUrl,
     };
   }
 
@@ -313,7 +335,7 @@ export async function createPasswordResetRequest(email: string): Promise<Passwor
 
     return {
       ok: true,
-      resetUrl: process.env.NODE_ENV === 'production' ? null : `/password-reset?token=${encodeURIComponent(token)}`,
+      resetUrl: process.env.NODE_ENV === 'production' ? null : fullResetUrl,
     };
   } catch {
     const store = getMemoryAuthStore();
@@ -321,7 +343,7 @@ export async function createPasswordResetRequest(email: string): Promise<Passwor
     store.resetTokens.unshift({ identifier: normalizedEmail, token, expires });
     return {
       ok: true,
-      resetUrl: process.env.NODE_ENV === 'production' ? null : `/password-reset?token=${encodeURIComponent(token)}`,
+      resetUrl: process.env.NODE_ENV === 'production' ? null : fullResetUrl,
     };
   }
 }

@@ -470,7 +470,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
               <div className="product-action-stack">
                 {product.purchaseMode === 'buy' ? (
-                  <AddToCartButton productId={product.id} showQuantitySelector />
+                  <AddToCartButton productId={product.id} showQuantitySelector showBuyNow />
                 ) : (
                   <div className="inquiry-form-wrap">
                     <ProductInquiryForm productId={product.id} productName={product.name} />

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { getCurrentUserId } from '@/server/auth/session';
+import { sendOrderConfirmationEmail } from '@/server/email';
 import { createOrderFromCart, getOrCreateCart } from '@/server/storefront/cart';
 
 const addressSnapshotSchema = z.object({
@@ -99,6 +100,17 @@ export async function POST(request: NextRequest) {
 
   if (!userId && 'guestAccessToken' in order && order.guestAccessToken) {
     response.cookies.set('guest_order_access_token', order.guestAccessToken, { httpOnly: true, sameSite: 'lax', path: '/' });
+  }
+
+  // Fire order confirmation email (non-blocking)
+  const recipientEmail = parsed.data.contactEmail ?? (userId ? null : null);
+  if (recipientEmail) {
+    sendOrderConfirmationEmail({
+      to: recipientEmail,
+      orderNumber: order.orderNumber,
+      totalAmount: Number(order.totalAmount ?? 0),
+      currency: order.currency ?? 'USD',
+    }).catch((err) => console.error('[checkout] Order email error:', err));
   }
 
   return response;

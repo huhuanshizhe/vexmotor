@@ -252,6 +252,34 @@ export function CheckoutClient({
       }
 
       const order = (await response.json()) as { orderNumber: string; redirectPath?: string };
+
+      // For Credit Card / PayPal, redirect to Stripe Checkout
+      const stripePaymentMethods = ['Credit Card', 'PayPal'];
+      if (stripePaymentMethods.includes(paymentMethod)) {
+        try {
+          const stripeResponse = await fetch('/api/front/checkout/stripe-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              orderNumber: order.orderNumber,
+              customerEmail: guestMode ? contactEmail.trim().toLowerCase() : undefined,
+            }),
+          });
+
+          if (stripeResponse.ok) {
+            const stripeData = (await stripeResponse.json()) as { sessionUrl?: string };
+            if (stripeData.sessionUrl) {
+              window.location.href = stripeData.sessionUrl;
+              return;
+            }
+          }
+          // If Stripe session creation fails, fall through to confirmation page
+          console.warn('Stripe session creation failed, redirecting to confirmation page');
+        } catch (stripeError) {
+          console.warn('Stripe redirect error:', stripeError);
+        }
+      }
+
       router.push(order.redirectPath ?? `/account/orders/${order.orderNumber}`);
       router.refresh();
     });

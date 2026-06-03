@@ -23,8 +23,10 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
+    "@types/ali-oss": "^6.23.3",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
+    "ali-oss": "^6.23.0",
     "antd": "6.4.3",
     "dotenv": "^16.6.1",
     "drizzle-orm": "^0.44.5",
@@ -33,6 +35,8 @@
     "postgres": "^3.4.7",
     "react": "19.2.6",
     "react-dom": "19.2.6",
+    "resend": "^6.12.4",
+    "stripe": "^17.7.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {

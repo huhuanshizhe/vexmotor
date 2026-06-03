@@ -10,9 +10,10 @@ type AddToCartButtonProps = {
   productId: string;
   showQuantitySelector?: boolean;
   redirectToCart?: boolean;
+  showBuyNow?: boolean;
 };
 
-export function AddToCartButton({ productId, showQuantitySelector = false, redirectToCart = true }: AddToCartButtonProps) {
+export function AddToCartButton({ productId, showQuantitySelector = false, redirectToCart = true, showBuyNow = false }: AddToCartButtonProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { pushToast } = useToast();
@@ -54,6 +55,26 @@ export function AddToCartButton({ productId, showQuantitySelector = false, redir
     });
   }
 
+  function handleBuyNow() {
+    startTransition(async () => {
+      setMessage(null);
+      const response = await fetch('/api/front/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId, quantity }),
+      });
+
+      if (!response.ok) {
+        setMessage('Unable to add this product to cart.');
+        return;
+      }
+
+      const locale = parseLocaleFromPathname(pathname).locale;
+      router.push(withLocalePath('/checkout', locale));
+      router.refresh();
+    });
+  }
+
   return (
     <div className="add-to-cart-stack">
       {showQuantitySelector ? (
@@ -91,6 +112,12 @@ export function AddToCartButton({ productId, showQuantitySelector = false, redir
       )}
 
       {message ? <span className="section-description">{message}</span> : null}
+
+      {showBuyNow ? (
+        <button type="button" className="button-secondary buy-now-button" onClick={handleBuyNow} disabled={isPending}>
+          {isPending ? 'Redirecting...' : 'Buy Now'}
+        </button>
+      ) : null}
     </div>
   );
 }
