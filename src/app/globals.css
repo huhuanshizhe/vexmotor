@@ -4511,8 +4511,10 @@ main {
 }
 
 .footer-newsletter-copy .section-description,
-.footer-brand-description {
-  color: #334155;
+.footer-brand-description,
+.storefront-footer .footer-newsletter-panel .section-description {
+  color: #1e293b !important;
+  font-weight: 500;
 }
 
 .footer-columns {
