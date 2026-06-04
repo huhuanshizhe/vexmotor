@@ -12,7 +12,7 @@ import {
   productVariants,
 } from '@/server/db/schema';
 
-import { storefrontNavigationBase } from './site-shell';
+import { storefrontNavigationBase, footerContactBlocks, footerPaymentMethods, footerCopyright } from './site-shell';
 import type { HomeData, NavigationData, ProductListResult, ProductListSort, StorefrontCategory, StorefrontImage, StorefrontProductCard, StorefrontProductDetail } from './types';
 
 const defaultHomeData: HomeData = {
@@ -46,14 +46,9 @@ const defaultHomeData: HomeData = {
     { id: 'catalog', title: 'Catalog', links: [{ label: 'Products', href: '/products' }, { label: 'Categories', href: '/products' }] },
     { id: 'support', title: 'Support', links: [{ label: 'FAQ', href: '/faq' }, { label: 'Contact', href: '/contact' }] },
   ],
-  footerContact: [
-    { title: 'Phone', lines: ['WhatsApp: +86-19952400441', 'Global Support: +1-518-722-7315'] },
-    { title: 'Email', lines: ['susy@stepmotech.com'], href: 'mailto:susy@stepmotech.com' },
-    { title: 'Sales', lines: ['sales@stepmotech.com'], href: 'mailto:sales@stepmotech.com' },
-    { title: 'Service Window', lines: ['Mon-Fri 09:00-18:00 (UTC+8)'] },
-  ],
-  paymentMethods: ['Visa', 'Mastercard', 'PayPal'],
-  copyright: `Copyright ${new Date().getFullYear()} STEPMOTECH. All rights reserved.`,
+  footerContact: footerContactBlocks,
+  paymentMethods: footerPaymentMethods,
+  copyright: footerCopyright,
 };
 
 function emptyProductListResult(page: number, pageSize: number): ProductListResult {
