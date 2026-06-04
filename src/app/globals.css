@@ -4444,6 +4444,20 @@ main {
   border-top: 1px solid rgba(16, 41, 66, 0.1);
 }
 
+/* Ensure all footer text is visible on both light and dark backgrounds */
+.storefront-footer .footer-column-title,
+.storefront-footer .footer-service-title,
+.storefront-footer .footer-contact-title,
+.storefront-footer .footer-product-price,
+.storefront-footer .footer-contact-list span,
+.storefront-footer .footer-contact-list a,
+.storefront-footer .footer-link-item,
+.storefront-footer .footer-product-link,
+.storefront-footer .footer-note,
+.storefront-footer .footer-payment-badge {
+  color: #0f172a !important;
+}
+
 .footer-note {
   margin: 0;
   color: var(--color-muted);
