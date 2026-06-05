@@ -121,6 +121,7 @@ export async function StorefrontFrame({ title, description, eyebrow, actions, ch
       {children}
 
       <footer className="storefront-footer">
+        {/* SERVICE HIGHLIGHTS */}
         <div className="footer-inner footer-service-strip">
           {homeData.trustHighlights.map((item) => (
             <article key={item.title} className="footer-service-card">
@@ -130,6 +131,7 @@ export async function StorefrontFrame({ title, description, eyebrow, actions, ch
           ))}
         </div>
 
+        {/* NEWSLETTER - FULL WIDTH */}
         <div className="footer-inner">
           <article className="newsletter-card footer-newsletter-panel">
             <div className="footer-newsletter-copy">
@@ -140,7 +142,29 @@ export async function StorefrontFrame({ title, description, eyebrow, actions, ch
           </article>
         </div>
 
+        {/* MAIN COLUMNS */}
         <div className="footer-inner footer-columns">
+          {/* Column 1: Company Info (Wider) */}
+          <article className="footer-column footer-brand-column">
+            <h3 className="footer-column-title">{homeData.brandStory.title}</h3>
+            <p className="section-description compact-copy footer-brand-description">{homeData.brandStory.description}</p>
+          </article>
+
+          {/* Column 2-3: Footer Sections (Catalog, Support, etc.) */}
+          {homeData.footerSections.map((section) => (
+            <article key={section.id} className="footer-column">
+              <h3 className="footer-column-title">{section.title}</h3>
+              <div className="footer-link-list">
+                {section.links.map((link) => (
+                  <FrameLink key={`${section.id}-${link.label}`} href={link.href} className="footer-link-item" external={link.external} locale={preferences.locale}>
+                    {link.label}
+                  </FrameLink>
+                ))}
+              </div>
+            </article>
+          ))}
+
+          {/* Column 4: Most Viewed Products */}
           <article className="footer-column footer-most-viewed">
             <h3 className="footer-column-title">Most Viewed</h3>
             <div className="footer-product-list">
@@ -162,24 +186,7 @@ export async function StorefrontFrame({ title, description, eyebrow, actions, ch
             </div>
           </article>
 
-          <article className="footer-column footer-brand-column">
-            <h3 className="footer-column-title">{homeData.brandStory.title}</h3>
-            <p className="section-description compact-copy footer-brand-description">{homeData.brandStory.description}</p>
-          </article>
-
-          {homeData.footerSections.map((section) => (
-            <article key={section.id} className="footer-column">
-              <h3 className="footer-column-title">{section.title}</h3>
-              <div className="footer-link-list">
-                {section.links.map((link) => (
-                  <FrameLink key={`${section.id}-${link.label}`} href={link.href} className="footer-link-item" external={link.external} locale={preferences.locale}>
-                    {link.label}
-                  </FrameLink>
-                ))}
-              </div>
-            </article>
-          ))}
-
+          {/* Column 5: Contact Info (Rightmost) */}
           <article className="footer-column footer-contact-column">
             <h3 className="footer-column-title">CONTACT</h3>
             <div className="footer-contact-list">
@@ -200,6 +207,7 @@ export async function StorefrontFrame({ title, description, eyebrow, actions, ch
           </article>
         </div>
 
+        {/* BOTTOM BAR */}
         <div className="footer-inner footer-note-row">
           <div className="footer-payment-strip">
             {homeData.paymentMethods.map((item) => (
