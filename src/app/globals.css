@@ -6012,3 +6012,196 @@ main {
     height: 180px;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   PROFESSIONAL FOOTER DESIGN - Industrial E-commerce Standard
+   Complete redesign inspired by vexmotor.com
+   ═══════════════════════════════════════════════════════════ */
+
+.storefront-footer {
+  background: #0a1929 !important;
+  color: #cbd5e1 !important;
+  padding: 60px 0 0 !important;
+  margin-top: 80px;
+}
+
+.storefront-footer * {
+  box-sizing: border-box;
+}
+
+.footer-service-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-bottom: 50px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 50px;
+}
+
+.footer-service-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 20px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footer-service-card:last-child {
+  border-right: none;
+}
+
+.footer-service-title {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  margin: 0 0 8px 0 !important;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.footer-service-description {
+  font-size: 0.85rem !important;
+  line-height: 1.5 !important;
+  color: #94a3b8 !important;
+  margin: 0 !important;
+}
+
+.footer-columns {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
+  gap: 40px;
+  margin-bottom: 50px;
+}
+
+.footer-column-title {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  margin: 0 0 20px 0 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: relative;
+  padding-bottom: 12px;
+}
+
+.footer-column-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: #e67e22;
+  border-radius: 2px;
+}
+
+.footer-brand-description {
+  font-size: 0.9rem !important;
+  line-height: 1.8 !important;
+  color: #94a3b8 !important;
+  margin-bottom: 24px;
+}
+
+.footer-link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-link-item {
+  font-size: 0.9rem !important;
+  color: #94a3b8 !important;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-block;
+  position: relative;
+  padding-left: 0;
+}
+
+.footer-link-item:hover {
+  color: #e67e22 !important;
+  padding-left: 8px;
+}
+
+.footer-contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.footer-contact-title {
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  color: #64748b !important;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.footer-contact-link {
+  font-size: 0.9rem !important;
+  color: #cbd5e1 !important;
+}
+
+.footer-contact-link:hover {
+  color: #e67e22 !important;
+}
+
+.footer-contact-item span {
+  font-size: 0.9rem !important;
+  color: #cbd5e1 !important;
+  line-height: 1.6 !important;
+}
+
+.footer-newsletter-panel {
+  background: rgba(230, 126, 34, 0.08) !important;
+  border: 1px solid rgba(230, 126, 34, 0.2) !important;
+  border-radius: 8px !important;
+  padding: 32px !important;
+}
+
+.footer-newsletter-copy .section-description {
+  font-size: 0.9rem !important;
+  color: #cbd5e1 !important;
+}
+
+.footer-payment-badge {
+  padding: 8px 16px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 4px !important;
+  font-size: 0.8rem !important;
+  color: #94a3b8 !important;
+}
+
+.footer-note {
+  font-size: 0.85rem !important;
+  color: #64748b !important;
+}
+
+@media (max-width: 1024px) {
+  .footer-service-strip {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+  
+  .footer-service-card {
+    border-right: none;
+    padding: 0;
+  }
+  
+  .footer-columns {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .footer-service-strip {
+    grid-template-columns: 1fr;
+  }
+  
+  .footer-columns {
+    grid-template-columns: 1fr;
+  }
+}
