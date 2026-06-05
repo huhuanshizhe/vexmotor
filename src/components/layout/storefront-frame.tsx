@@ -120,103 +120,126 @@ export async function StorefrontFrame({ title, description, eyebrow, actions, ch
 
       {children}
 
-      <footer className="storefront-footer">
-        {/* SERVICE HIGHLIGHTS */}
-        <div className="footer-inner footer-service-strip">
-          {homeData.trustHighlights.map((item) => (
-            <article key={item.title} className="footer-service-card">
-              <strong className="footer-service-title">{item.title}</strong>
-              <p className="footer-service-description">{item.description}</p>
-            </article>
-          ))}
-        </div>
-
-        {/* NEWSLETTER - FULL WIDTH */}
-        <div className="footer-inner">
-          <article className="newsletter-card footer-newsletter-panel">
-            <div className="footer-newsletter-copy">
-              <h3 className="footer-column-title">{homeData.newsletter.title}</h3>
-              <p className="section-description compact-copy">{homeData.newsletter.description}</p>
+      {/* ═══════════════════════════════════════════════════════════
+          PROFESSIONAL FOOTER - Industrial E-commerce Standard
+          Clean, Professional, User-Friendly
+          ═══════════════════════════════════════════════════════════ */}
+      <footer className="pro-footer">
+        {/* TRUST BADGES */}
+        <div className="pro-footer-trust">
+          <div className="pro-footer-container">
+            <div className="pro-footer-trust-grid">
+              {homeData.trustHighlights.map((item) => (
+                <div key={item.title} className="pro-footer-trust-item">
+                  <div className="pro-footer-trust-title">{item.title}</div>
+                  <div className="pro-footer-trust-desc">{item.description}</div>
+                </div>
+              ))}
             </div>
-            <NewsletterSignupForm placeholder={homeData.newsletter.placeholder} buttonLabel={homeData.newsletter.buttonLabel} />
-          </article>
+          </div>
         </div>
 
-        {/* MAIN COLUMNS */}
-        <div className="footer-inner footer-columns">
-          {/* Column 1: Company Info (Wider) */}
-          <article className="footer-column footer-brand-column">
-            <h3 className="footer-column-title">{homeData.brandStory.title}</h3>
-            <p className="section-description compact-copy footer-brand-description">{homeData.brandStory.description}</p>
-          </article>
-
-          {/* Column 2-3: Footer Sections (Catalog, Support, etc.) */}
-          {homeData.footerSections.map((section) => (
-            <article key={section.id} className="footer-column">
-              <h3 className="footer-column-title">{section.title}</h3>
-              <div className="footer-link-list">
-                {section.links.map((link) => (
-                  <FrameLink key={`${section.id}-${link.label}`} href={link.href} className="footer-link-item" external={link.external} locale={preferences.locale}>
-                    {link.label}
-                  </FrameLink>
-                ))}
+        {/* NEWSLETTER */}
+        <div className="pro-footer-newsletter">
+          <div className="pro-footer-container">
+            <div className="pro-footer-newsletter-inner">
+              <div className="pro-footer-newsletter-content">
+                <h3 className="pro-footer-newsletter-title">{homeData.newsletter.title}</h3>
+                <p className="pro-footer-newsletter-desc">{homeData.newsletter.description}</p>
               </div>
-            </article>
-          ))}
-
-          {/* Column 4: Most Viewed Products */}
-          <article className="footer-column footer-most-viewed">
-            <h3 className="footer-column-title">Most Viewed</h3>
-            <div className="footer-product-list">
-              {homeData.mostViewedProducts.map((product) => (
-                <article key={product.id} className="footer-product-card">
-                  {product.coverImage ? (
-                    <Link href={withLocalePath(`/products/${product.slug}`, preferences.locale)} className="footer-product-image-wrap">
-                      <Image src={product.coverImage.url} alt={product.coverImage.alt || product.name} fill sizes="84px" unoptimized className="footer-product-image" />
-                    </Link>
-                  ) : null}
-                  <div className="footer-product-copy">
-                    <Link href={withLocalePath(`/products/${product.slug}`, preferences.locale)} className="footer-product-link">
-                      {product.name}
-                    </Link>
-                    <strong className="footer-product-price">{product.purchaseMode === 'buy' ? product.price.formatted : 'Request Quote'}</strong>
-                  </div>
-                </article>
-              ))}
+              <NewsletterSignupForm placeholder={homeData.newsletter.placeholder} buttonLabel={homeData.newsletter.buttonLabel} />
             </div>
-          </article>
+          </div>
+        </div>
 
-          {/* Column 5: Contact Info (Rightmost) */}
-          <article className="footer-column footer-contact-column">
-            <h3 className="footer-column-title">CONTACT</h3>
-            <div className="footer-contact-list">
-              {homeData.footerContact.map((item) => (
-                <article key={item.title} className="footer-contact-item">
-                  <strong className="footer-contact-title">{item.title}</strong>
-                  {item.href ? (
-                    <a href={item.href} className="footer-contact-link">
-                      {item.lines[0]}
-                    </a>
-                  ) : null}
-                  {item.lines.filter((_, index) => !item.href || index > 0).map((line) => (
-                    <span key={`${item.title}-${line}`}>{line}</span>
+        {/* MAIN CONTENT */}
+        <div className="pro-footer-main">
+          <div className="pro-footer-container">
+            <div className="pro-footer-grid">
+              {/* Column 1: About Company */}
+              <div className="pro-footer-col pro-footer-col-wide">
+                <h4 className="pro-footer-heading">{homeData.brandStory.title}</h4>
+                <p className="pro-footer-text">{homeData.brandStory.description}</p>
+              </div>
+
+              {/* Column 2-3: Quick Links */}
+              {homeData.footerSections.map((section) => (
+                <div key={section.id} className="pro-footer-col">
+                  <h4 className="pro-footer-heading">{section.title}</h4>
+                  <ul className="pro-footer-links">
+                    {section.links.map((link) => (
+                      <li key={`${section.id}-${link.label}`}>
+                        <FrameLink href={link.href} className="pro-footer-link" external={link.external} locale={preferences.locale}>
+                          {link.label}
+                        </FrameLink>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+
+              {/* Column 4: Featured Products */}
+              <div className="pro-footer-col">
+                <h4 className="pro-footer-heading">Featured Products</h4>
+                <div className="pro-footer-products">
+                  {homeData.mostViewedProducts.slice(0, 3).map((product) => (
+                    <Link key={product.id} href={withLocalePath(`/products/${product.slug}`, preferences.locale)} className="pro-footer-product">
+                      {product.coverImage ? (
+                        <div className="pro-footer-product-img">
+                          <Image src={product.coverImage.url} alt={product.coverImage.alt || product.name} fill sizes="60px" unoptimized />
+                        </div>
+                      ) : null}
+                      <div className="pro-footer-product-info">
+                        <div className="pro-footer-product-name">{product.name}</div>
+                        <div className="pro-footer-product-price">
+                          {product.purchaseMode === 'buy' ? product.price.formatted : 'Quote'}
+                        </div>
+                      </div>
+                    </Link>
                   ))}
-                </article>
-              ))}
+                </div>
+              </div>
+
+              {/* Column 5: Contact Info */}
+              <div className="pro-footer-col pro-footer-col-contact">
+                <h4 className="pro-footer-heading">Contact Us</h4>
+                <div className="pro-footer-contact">
+                  {homeData.footerContact.map((item) => (
+                    <div key={item.title} className="pro-footer-contact-item">
+                      <div className="pro-footer-contact-label">{item.title}</div>
+                      {item.href ? (
+                        <a href={item.href} className="pro-footer-contact-value pro-footer-contact-link">
+                          {item.lines[0]}
+                        </a>
+                      ) : (
+                        <div className="pro-footer-contact-value">
+                          {item.lines.map((line, i) => (
+                            <div key={i}>{line}</div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-          </article>
+          </div>
         </div>
 
         {/* BOTTOM BAR */}
-        <div className="footer-inner footer-note-row">
-          <div className="footer-payment-strip">
-            {homeData.paymentMethods.map((item) => (
-              <span key={item} className="footer-payment-badge">
-                {item}
-              </span>
-            ))}
+        <div className="pro-footer-bottom">
+          <div className="pro-footer-container">
+            <div className="pro-footer-bottom-inner">
+              <div className="pro-footer-payments">
+                {homeData.paymentMethods.map((method) => (
+                  <span key={method} className="pro-footer-payment">
+                    {method}
+                  </span>
+                ))}
+              </div>
+              <div className="pro-footer-copyright">{homeData.copyright}</div>
+            </div>
           </div>
-          <p className="footer-note">{homeData.copyright}</p>
         </div>
       </footer>
 
