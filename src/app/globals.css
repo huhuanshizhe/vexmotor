@@ -1,4 +1,7 @@
 :root {
+  /* Import professional footer */
+  @import url('./pro-footer.css');
+  
   /* Use design system variables */
   --max-width: 1240px;
   --color-ink: var(--gray-900, #0f172a);
