@@ -148,6 +148,16 @@ export default async function HomePage() {
             {categoryTiles.map((category) => (
               <li key={category.id}>
                 <Link href={withLocalePath(`/c/${category.slug}`, locale)} className="home-category-tile">
+                  <div className="home-category-image">
+                    <Image
+                      src={`/categories/${category.slug}.png`}
+                      alt={category.name}
+                      width={200}
+                      height={200}
+                      sizes="(max-width: 768px) 150px, 200px"
+                      unoptimized
+                    />
+                  </div>
                   <span className="home-category-name">{category.name}</span>
                   {typeof category.productCount === 'number' ? (
                     <span className="home-category-count">{category.productCount} products</span>
