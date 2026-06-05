@@ -139,19 +139,6 @@ export async function StorefrontFrame({ title, description, eyebrow, actions, ch
           </div>
         </div>
 
-        {/* NEWSLETTER */}
-        <div className="pro-footer-newsletter">
-          <div className="pro-footer-container">
-            <div className="pro-footer-newsletter-inner">
-              <div className="pro-footer-newsletter-content">
-                <h3 className="pro-footer-newsletter-title">{homeData.newsletter.title}</h3>
-                <p className="pro-footer-newsletter-desc">{homeData.newsletter.description}</p>
-              </div>
-              <NewsletterSignupForm placeholder={homeData.newsletter.placeholder} buttonLabel={homeData.newsletter.buttonLabel} />
-            </div>
-          </div>
-        </div>
-
         {/* MAIN CONTENT */}
         <div className="pro-footer-main">
           <div className="pro-footer-container">

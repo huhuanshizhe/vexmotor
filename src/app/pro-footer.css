@@ -5,7 +5,7 @@
 
 /* Container */
 .pro-footer {
-  background: #1a1a1a;
+  background: #0a2540;
   color: #e5e5e5;
   margin-top: 80px;
 }
@@ -21,8 +21,8 @@
    ═══════════════════════════════════════════════════════════ */
 
 .pro-footer-trust {
-  background: #0f0f0f;
-  border-bottom: 1px solid #333;
+  background: #082035;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding: 32px 0;
 }
 
@@ -35,7 +35,7 @@
 .pro-footer-trust-item {
   text-align: center;
   padding: 0 20px;
-  border-right: 1px solid #333;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .pro-footer-trust-item:last-child {
@@ -183,7 +183,7 @@
 }
 
 .pro-footer-product:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .pro-footer-product-img {
@@ -191,7 +191,7 @@
   height: 60px;
   border-radius: 4px;
   overflow: hidden;
-  background: #2a2a2a;
+  background: rgba(255, 255, 255, 0.05);
   flex-shrink: 0;
   position: relative;
 }
@@ -264,8 +264,8 @@
    ═══════════════════════════════════════════════════════════ */
 
 .pro-footer-bottom {
-  background: #0f0f0f;
-  border-top: 1px solid #333;
+  background: #082035;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: 20px 0;
 }
 
@@ -282,8 +282,8 @@
 
 .pro-footer-payment {
   padding: 8px 16px;
-  background: #2a2a2a;
-  border: 1px solid #444;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 4px;
   font-size: 12px;
   font-weight: 600;
