@@ -13,6 +13,7 @@ import {
 } from '@/server/db/schema';
 
 import { storefrontNavigationBase, footerContactBlocks, footerPaymentMethods, footerCopyright } from './site-shell';
+import { getSeedCategories } from './seed';
 import type { HomeData, NavigationData, ProductListResult, ProductListSort, StorefrontCategory, StorefrontImage, StorefrontProductCard, StorefrontProductDetail } from './types';
 
 const defaultHomeData: HomeData = {
@@ -259,7 +260,8 @@ export async function getNavigationData(): Promise<NavigationData> {
 
 export async function getCategories(): Promise<StorefrontCategory[]> {
   if (!db) {
-    return [];
+    // Fallback to seed data when no database
+    return getSeedCategories();
   }
 
   try {
@@ -272,7 +274,8 @@ export async function getCategories(): Promise<StorefrontCategory[]> {
         .groupBy(products.defaultCategoryId),
     ]);
     if (!rows.length) {
-      return [];
+      // Fallback to seed data when database is empty
+      return getSeedCategories();
     }
 
     const productCountByCategoryId = new Map(countRows.map((item) => [item.categoryId, Number(item.total)]));
@@ -289,7 +292,8 @@ export async function getCategories(): Promise<StorefrontCategory[]> {
       featuredOrder: item.featuredOrder,
     }));
   } catch {
-    return [];
+    // Fallback to seed data on error
+    return getSeedCategories();
   }
 }
 
