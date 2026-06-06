@@ -75,7 +75,7 @@ export default async function HomePage() {
   const categoryTiles = categories
     .filter((category) => category.isFeatured && (category.productCount ?? 0) > 0)
     .sort((left, right) => (left.featuredOrder ?? 0) - (right.featuredOrder ?? 0))
-    .slice(0, 18); // 3 排 x 6 列 = 18 个
+    .slice(0, 15); // 3 排 x 5 列 = 15 个
   const featuredIndustries = solutionIndustries.slice(0, 6);
   const featuredProducts = featuredResult.items.slice(0, 8);
   const latestArticles = [...blogCatalog.posts]
