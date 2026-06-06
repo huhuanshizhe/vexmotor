@@ -45,11 +45,11 @@ function formatSpecValue(value: string, unit?: string | null) {
 }
 
 function buildSpecGroups(product: StorefrontProductDetail): DetailSpecGroup[] {
-  // Group features by category
+  // Group features by category (matching old site structure)
   const categoryMap: Record<string, DetailSpecRow[]> = {
-    performance: [],
+    product_type: [],
     electrical: [],
-    mechanical: [],
+    physical: [],
     environmental: [],
     general: [],
   };
@@ -85,38 +85,38 @@ function buildSpecGroups(product: StorefrontProductDetail): DetailSpecGroup[] {
 
   const groups: DetailSpecGroup[] = [];
 
-  // Performance specs first (most important for engineers)
-  if (categoryMap.performance.length) {
+  // Product Type (if exists)
+  if (categoryMap.product_type.length) {
     groups.push({
-      title: 'Performance',
-      description: 'Core performance parameters including torque, speed, and precision metrics.',
-      rows: categoryMap.performance,
+      title: 'Product Type',
+      description: 'Product classification and type information.',
+      rows: categoryMap.product_type,
     });
   }
 
-  // Electrical specs
+  // Electrical Specification
   if (categoryMap.electrical.length) {
     groups.push({
-      title: 'Electrical',
-      description: 'Voltage, current, and electrical characteristics for driver compatibility.',
+      title: 'Electrical Specification',
+      description: 'Electrical characteristics and ratings.',
       rows: categoryMap.electrical,
     });
   }
 
-  // Mechanical specs
-  if (categoryMap.mechanical.length) {
+  // Physical Specification
+  if (categoryMap.physical.length) {
     groups.push({
-      title: 'Mechanical',
-      description: 'Physical dimensions, mounting, and mechanical interface details.',
-      rows: categoryMap.mechanical,
+      title: 'Physical Specification',
+      description: 'Physical dimensions and mechanical properties.',
+      rows: categoryMap.physical,
     });
   }
 
   // Environmental specs
   if (categoryMap.environmental.length) {
     groups.push({
-      title: 'Environmental',
-      description: 'Operating conditions, protection ratings, and environmental compliance.',
+      title: 'Environmental Specification',
+      description: 'Operating conditions and environmental ratings.',
       rows: categoryMap.environmental,
     });
   }
@@ -125,7 +125,7 @@ function buildSpecGroups(product: StorefrontProductDetail): DetailSpecGroup[] {
   if (categoryMap.general.length) {
     groups.push({
       title: 'General',
-      description: 'Additional specifications and catalog attributes.',
+      description: 'Additional specifications.',
       rows: categoryMap.general,
     });
   }
@@ -133,14 +133,14 @@ function buildSpecGroups(product: StorefrontProductDetail): DetailSpecGroup[] {
   if (attributeRows.length) {
     groups.push({
       title: 'Catalog attributes',
-      description: 'Structured metadata carried with this SKU from the catalog and content systems.',
+      description: 'Structured metadata carried with this SKU.',
       rows: attributeRows,
     });
   }
 
   groups.push({
     title: 'Commercial & support',
-    description: 'Fulfillment and support facts currently available in the storefront contract.',
+    description: 'Fulfillment and support information.',
     rows: commercialRows,
   });
 

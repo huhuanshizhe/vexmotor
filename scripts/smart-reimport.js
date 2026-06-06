@@ -19,23 +19,23 @@ try {
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
-// Smart spec categorization
+// Smart spec categorization (matching old site structure)
 function categorizeSpec(key) {
   const lower = key.toLowerCase();
   
-  // Performance specs
-  if (/torque|speed|step|angle|resolution|frequency|holding|detent|inertia/i.test(lower)) {
-    return 'performance';
+  // Product Type
+  if (/product.type|motor.type|type/i.test(lower)) {
+    return 'product_type';
   }
   
-  // Electrical specs
-  if (/voltage|current|resistance|inductance|power|phase|wire|rating|electrical/i.test(lower)) {
+  // Electrical Specification
+  if (/current|voltage|resistance|inductance|power|phase|wire|bipolar|unipolar|rating|electrical/i.test(lower)) {
     return 'electrical';
   }
   
-  // Mechanical specs
-  if (/shaft|body|frame|length|width|height|diameter|weight|mounting|flange|size|dimension/i.test(lower)) {
-    return 'mechanical';
+  // Physical/Mechanical Specification
+  if (/shaft|body|frame|length|width|height|diameter|weight|mounting|flange|size|dimension|backlash|gear|ratio|holding.torque|step.angle|resolution/i.test(lower)) {
+    return 'physical';
   }
   
   // Environmental specs
