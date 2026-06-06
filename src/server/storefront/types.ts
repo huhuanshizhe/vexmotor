@@ -21,6 +21,8 @@ export type StorefrontCategory = {
   image?: StorefrontImage | null;
   parentId?: string | null;
   productCount?: number;
+  isFeatured?: boolean;
+  featuredOrder?: number;
 };
 
 export type StorefrontProductCard = {

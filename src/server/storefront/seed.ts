@@ -13,75 +13,194 @@ function money(amount: number) {
 }
 
 const categories: StorefrontCategory[] = [
+  // Nema 8 系列（2 个子类目）
   {
     id: 'cat-1',
     name: 'Nema 8 Stepper Motor',
     slug: 'nema-8-stepper-motor',
     description: 'Ultra-compact 20mm frame stepper motors for precision micro-devices and small automation.',
     productCount: 6,
+    isFeatured: true,
+    featuredOrder: 1,
   },
+  {
+    id: 'cat-1-1',
+    name: 'Nema 8 Bipolar',
+    slug: 'nema-8-bipolar',
+    description: '4-wire bipolar Nema 8 motors for precise positioning.',
+    productCount: 4,
+    parentId: 'cat-1',
+    isFeatured: true,
+    featuredOrder: 2,
+  },
+  
+  // Nema 11 系列（2 个子类目）
   {
     id: 'cat-2',
     name: 'Nema 11 Stepper Motor',
     slug: 'nema-11-stepper-motor',
     description: 'Compact 28mm frame stepper motors for light-duty positioning and feeder systems.',
     productCount: 6,
+    isFeatured: true,
+    featuredOrder: 3,
   },
+  {
+    id: 'cat-2-1',
+    name: 'Nema 11 Unipolar',
+    slug: 'nema-11-unipolar',
+    description: '6-wire unipolar Nema 11 motors for easy control.',
+    productCount: 2,
+    parentId: 'cat-2',
+    isFeatured: true,
+    featuredOrder: 4,
+  },
+  
+  // Nema 14 系列（2 个子类目）
   {
     id: 'cat-3',
     name: 'Nema 14 Stepper Motor',
     slug: 'nema-14-stepper-motor',
     description: '35mm frame stepper motors balancing size and torque for desktop CNC and 3D printers.',
     productCount: 14,
+    isFeatured: true,
+    featuredOrder: 5,
   },
+  {
+    id: 'cat-3-1',
+    name: 'Nema 14 Bipolar',
+    slug: 'nema-14-bipolar',
+    description: 'High-performance bipolar Nema 14 motors.',
+    productCount: 10,
+    parentId: 'cat-3',
+    isFeatured: true,
+    featuredOrder: 6,
+  },
+  
+  // Nema 16 系列（1 个）
   {
     id: 'cat-4',
     name: 'Nema 16 Stepper Motor',
     slug: 'nema-16-stepper-motor',
     description: '39mm frame stepper motors for mid-range automation and precision equipment.',
     productCount: 8,
+    isFeatured: true,
+    featuredOrder: 7,
   },
+  
+  // Nema 17 系列（3 个子类目）
   {
     id: 'cat-5',
     name: 'Nema 17 Stepper Motor',
     slug: 'nema-17-stepper-motor',
     description: '42mm frame stepper motors - the industry standard for 3D printers, CNC, and robotics.',
     productCount: 59,
+    isFeatured: true,
+    featuredOrder: 8,
   },
+  {
+    id: 'cat-5-1',
+    name: 'Nema 17 Bipolar',
+    slug: 'nema-17-bipolar',
+    description: 'Standard 4-wire bipolar Nema 17 motors.',
+    productCount: 35,
+    parentId: 'cat-5',
+    isFeatured: true,
+    featuredOrder: 9,
+  },
+  {
+    id: 'cat-5-2',
+    name: 'Nema 17 Unipolar',
+    slug: 'nema-17-unipolar',
+    description: '5/6-wire unipolar Nema 17 motors.',
+    productCount: 15,
+    parentId: 'cat-5',
+    isFeatured: true,
+    featuredOrder: 10,
+  },
+  {
+    id: 'cat-5-3',
+    name: 'Nema 17 High Torque',
+    slug: 'nema-17-high-torque',
+    description: 'Heavy-duty Nema 17 motors with enhanced torque.',
+    productCount: 9,
+    parentId: 'cat-5',
+    isFeatured: true,
+    featuredOrder: 11,
+  },
+  
+  // Nema 23 系列（2 个子类目）
   {
     id: 'cat-6',
     name: 'Nema 23 Stepper Motor',
     slug: 'nema-23-stepper-motor',
     description: '57mm frame high-torque stepper motors for CNC routers, milling, and heavy automation.',
     productCount: 35,
+    isFeatured: true,
+    featuredOrder: 12,
   },
+  {
+    id: 'cat-6-1',
+    name: 'Nema 23 Bipolar',
+    slug: 'nema-23-bipolar',
+    description: 'High-torque bipolar Nema 23 motors.',
+    productCount: 25,
+    parentId: 'cat-6',
+    isFeatured: true,
+    featuredOrder: 13,
+  },
+  
+  // Nema 24 系列（1 个）
   {
     id: 'cat-7',
     name: 'Nema 24 Stepper Motor',
     slug: 'nema-24-stepper-motor',
     description: '60mm frame stepper motors with enhanced torque for industrial motion systems.',
     productCount: 6,
+    isFeatured: true,
+    featuredOrder: 14,
   },
+  
+  // Nema 34 系列（1 个）
   {
     id: 'cat-8',
     name: 'Nema 34 Stepper Motor',
     slug: 'nema-34-stepper-motor',
     description: '86mm frame heavy-duty stepper motors for maximum torque industrial applications.',
     productCount: 13,
+    isFeatured: true,
+    featuredOrder: 15,
   },
+  
+  // 驱动器（2 个子类目）
   {
     id: 'cat-9',
     name: 'Stepper Motor Driver',
     slug: 'stepper-motor-driver',
     description: 'Matched driver modules for smooth microstepping control and reliable motor operation.',
     productCount: 4,
+    isFeatured: true,
+    featuredOrder: 16,
   },
+  {
+    id: 'cat-9-1',
+    name: 'Digital Stepper Driver',
+    slug: 'digital-stepper-driver',
+    description: 'Advanced digital drivers with microstepping.',
+    productCount: 3,
+    parentId: 'cat-9',
+    isFeatured: true,
+    featuredOrder: 17,
+  },
+  
+  // 电源（1 个）
   {
     id: 'cat-10',
     name: 'Power Supply',
     slug: 'power-supply',
     description: 'Industrial-grade power supplies optimized for stepper motor and driver systems.',
     productCount: 10,
+    isFeatured: true,
+    featuredOrder: 18,
   },
 ];
 

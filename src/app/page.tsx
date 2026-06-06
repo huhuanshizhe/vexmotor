@@ -73,9 +73,9 @@ export default async function HomePage() {
   ]);
 
   const categoryTiles = categories
-    .filter((category) => (category.productCount ?? 0) > 0)
-    .sort((left, right) => (right.productCount ?? 0) - (left.productCount ?? 0))
-    .slice(0, 9);
+    .filter((category) => category.isFeatured && (category.productCount ?? 0) > 0)
+    .sort((left, right) => (left.featuredOrder ?? 0) - (right.featuredOrder ?? 0))
+    .slice(0, 18); // 3 排 x 6 列 = 18 个
   const featuredIndustries = solutionIndustries.slice(0, 6);
   const featuredProducts = featuredResult.items.slice(0, 8);
   const latestArticles = [...blogCatalog.posts]
@@ -131,7 +131,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 3. Shop by Category 九宫格 */}
+      {/* 3. Shop by Category 三排六列 */}
       <section className="section">
         <div className="section-inner">
           <div className="section-header">
@@ -144,10 +144,10 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <ul className="home-category-grid">
+          <ul className="home-category-grid-18">
             {categoryTiles.map((category) => (
               <li key={category.id}>
-                <Link href={withLocalePath(`/c/${category.slug}`, locale)} className="home-category-tile">
+                <Link href={withLocalePath(`/c/${category.slug}`, locale)} className="home-category-card">
                   <div className="home-category-image">
                     <Image
                       src={`/categories/${category.slug}.png`}
