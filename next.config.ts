@@ -33,6 +33,15 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
+  // Turbopack configuration (silences warning and applies same exclusions)
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
+  },
 };
 
 export default nextConfig;
