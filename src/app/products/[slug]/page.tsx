@@ -258,6 +258,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const productUrl = `${SITE_URL}${productPath}`;
   const datasheetAttachment = product.attachments.find((attachment) => /pdf|datasheet|spec/i.test(`${attachment.name} ${attachment.mimeType}`));
   const specGroups = buildSpecGroups(product);
+  const topSpecs = specGroups.flatMap((group) => group.rows).slice(0, 5);
   const priceHeadline = product.purchaseMode === 'buy' ? product.price.formatted : 'Request Quote';
   const queryForQuote = new URLSearchParams({ topic: 'quote', product: product.sku }).toString();
   const queryForSample = new URLSearchParams({ topic: 'sample', product: product.sku }).toString();
