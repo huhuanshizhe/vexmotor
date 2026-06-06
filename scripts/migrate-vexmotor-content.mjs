@@ -288,7 +288,143 @@ function extractProductFromJsonLd(jsonLdItems) {
   };
 }
 
+function extractBodyHtml(html) {
+  const match = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  return match?.[1] ?? html;
+}
+
+function extractProductDetailHtml(html) {
+  const bodyHtml = extractBodyHtml(html)
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ');
+
+  const cutoffMarkers = [/Related Products/i, /Subscribe To Our Newsletter/i, /Additional Links/i];
+  let cutoffIndex = bodyHtml.length;
+
+  for (const marker of cutoffMarkers) {
+    const index = bodyHtml.search(marker);
+    if (index >= 0) {
+      cutoffIndex = Math.min(cutoffIndex, index);
+    }
+  }
+
+  return bodyHtml.slice(0, cutoffIndex);
+}
+
+function stripTagsPreserveBreaks(value) {
+  return decodeXmlText(
+    value
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/p>/gi, '\n\n')
+      .replace(/<\/div>/gi, '\n')
+      .replace(/<\/section>/gi, '\n')
+      .replace(/<\/article>/gi, '\n')
+      .replace(/<\/h[1-6]>/gi, '\n')
+      .replace(/<li[^>]*>/gi, '\n• ')
+      .replace(/<\/li>/gi, '\n')
+      .replace(/<\/tr>/gi, '\n')
+      .replace(/<\/td>/gi, ' ')
+      .replace(/✅/g, '\n')
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/&nbsp;/gi, ' '),
+  )
+    .replace(/\r/g, '')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n[ \t]+/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .replace(/[ \t]{2,}/g, ' ')
+    .trim();
+}
+
+function extractProductDescriptionLong(html, fallbackText = '') {
+  const detailText = stripTagsPreserveBreaks(extractProductDetailHtml(html));
+  if (!detailText) {
+    return fallbackText || null;
+  }
+
+  const lines = detailText
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  let startIndex = 0;
+  lines.forEach((line, index) => {
+    if (/(add to cart|add to wishlist|add to compare|question|share|reference:|need more\?|\$\d)/i.test(line)) {
+      startIndex = index + 1;
+    }
+  });
+
+  let contentLines = lines.slice(startIndex).filter((line) => {
+    if (line.length < 2) {
+      return false;
+    }
+
+    return !/^(home|products|categories|cart|wishlist|login|register|menu|support|contact|facebook|pinterest|whatsapp|subscribe to our newsletter|catalog|description|specifications|dimensions|torque curves|custom design|downloads|rviews|reviews)$/i.test(line);
+  });
+
+  const preferredStart = contentLines.findIndex((line) => /^(description|overview|applications|ideal for|why pick|key |this |precision )/i.test(line));
+  if (preferredStart > 0) {
+    contentLines = contentLines.slice(preferredStart);
+  }
+
+  const preferredEnd = contentLines.findIndex((line) => /^(reference|file|comments \(\d+\)|write your review|your review appreciation|your review cannot be sent|report comment|review sent|download)$/i.test(line));
+  if (preferredEnd > 0) {
+    contentLines = contentLines.slice(0, preferredEnd);
+  }
+
+  const normalized = contentLines
+    .join('\n')
+    .replace(/([a-z0-9)])([A-Z][A-Za-z][A-Za-z0-9 /()%-]+:)/g, '$1\n$2')
+    .replace(/\n•\s*/g, '\n• ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+
+  if (normalized.length < 80) {
+    return fallbackText || null;
+  }
+
+  return normalized.slice(0, 6000);
+}
+
+function normalizeSpecKey(value) {
+  const key = value.replace(/[•✅]/g, '').replace(/\s+/g, ' ').trim();
+  const lower = key.toLowerCase();
+
+  if (lower === 'rated current/phase') return 'Rated Current';
+  if (lower === 'motor length') return 'Body Length';
+  if (lower === 'lead wires') return 'Wire Count';
+  if (lower === 'lead length') return 'Lead Length';
+  if (lower === 'frame size') return 'Frame Size';
+  if (lower === 'shaft diameter') return 'Shaft Diameter';
+  if (lower === 'shaft length') return 'Shaft Length';
+  if (lower === 'd-cut length') return 'D-cut Length';
+  if (lower === 'phase resistance') return 'Phase Resistance';
+  if (lower === 'step angle') return 'Step Angle';
+  if (lower === 'holding torque') return 'Holding Torque';
+
+  return key;
+}
+
+function splitSpecValueAndUnit(rawValue) {
+  const value = rawValue.replace(/\s+/g, ' ').trim();
+  const simpleMatch = value.match(/^(-?\d+(?:\.\d+)?)(?:\s*)([A-Za-z°Ω·/._%-]{1,40})$/);
+
+  if (!simpleMatch) {
+    return { value, unit: null };
+  }
+
+  return {
+    value: simpleMatch[1],
+    unit: simpleMatch[2],
+  };
+}
+
+function isNoiseImage(url) {
+  return /logo|icon|banner|sprite|paypal|visa|master|discover|american_express|question-mark|newsletter|social|flag|favicon|ets_megamenu|free-shipping|\/img\/l\/|\/img\/m\/|\/img\/su\/|\/img\/co\/|\/img\/st\/|\/img\/home\//i.test(url);
+}
+
 function extractProductGalleryImages(html, origin, ldImages = []) {
+  const productHtml = extractProductDetailHtml(html);
   const values = [];
 
   for (const value of ldImages) {
@@ -302,17 +438,15 @@ function extractProductGalleryImages(html, origin, ldImages = []) {
     }
   }
 
-  const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/gi;
-  for (const match of html.matchAll(imgRegex)) {
+  const imageAttributeRegex = /(?:src|data-src|data-image-large-src|data-zoom-image|href)=["']([^"']+\.(?:jpg|jpeg|png|gif|webp)(?:\?[^"']*)?)["']/gi;
+  for (const match of productHtml.matchAll(imageAttributeRegex)) {
     const src = (match[1] ?? '').trim();
     if (!src) {
       continue;
     }
 
     const marker = src.toLowerCase();
-    const looksLikeProduct = marker.includes('product') || marker.includes('gallery') || marker.includes('detail') || marker.includes('zoom') || marker.includes('thumb');
-    const looksLikeNoise = marker.includes('logo') || marker.includes('icon') || marker.includes('banner') || marker.includes('sprite');
-    if (!looksLikeProduct || looksLikeNoise) {
+    if (isNoiseImage(marker)) {
       continue;
     }
 
@@ -350,11 +484,12 @@ function guessMimeTypeFromUrl(url) {
 }
 
 function extractDownloadAssets(html, origin) {
+  const productHtml = extractProductDetailHtml(html);
   const values = [];
   const linkRegex = /<a[^>]+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
   const allowedExtensions = ['.pdf', '.step', '.stp', '.dxf', '.dwg', '.igs', '.iges', '.zip'];
 
-  for (const match of html.matchAll(linkRegex)) {
+  for (const match of productHtml.matchAll(linkRegex)) {
     const hrefRaw = (match[1] ?? '').trim();
     const label = stripTags(match[2] ?? '').trim();
     if (!hrefRaw) {
@@ -398,7 +533,7 @@ function extractTechnicalSpecs(text) {
     return [];
   }
 
-  const source = text.replace(/_/g, ' ').replace(/[，,]+/g, ' ');
+  const source = text.replace(/_/g, ' ').replace(/[，]+/g, ' ').replace(/✅/g, '\n');
   const specs = [];
   const rules = [
     { key: 'Step Angle', regex: /(\d+(?:\.\d+)?)\s*°\s*step/i, unit: 'deg' },
@@ -416,11 +551,31 @@ function extractTechnicalSpecs(text) {
     specs.push({ key: rule.key, value: match[1], unit: rule.unit });
   }
 
+  const normalizedLines = source
+    .replace(/([a-z0-9)])([A-Z][A-Za-z][A-Za-z0-9 /()%-]+:)/g, '$1\n$2')
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  for (const line of normalizedLines) {
+    const match = line.match(/^([A-Za-z][A-Za-z0-9 /().%-]{1,60}):\s*(.+)$/);
+    if (!match) {
+      continue;
+    }
+
+    const key = normalizeSpecKey(match[1]);
+    const rawValue = match[2].trim();
+    if (!key || !rawValue || /(add to cart|wishlist|compare|related products)/i.test(rawValue)) {
+      continue;
+    }
+
+    const parsedValue = splitSpecValueAndUnit(rawValue);
+    specs.push({ key, value: parsedValue.value, unit: parsedValue.unit });
+  }
+
   const dedup = new Map();
   for (const spec of specs) {
-    if (!dedup.has(spec.key)) {
-      dedup.set(spec.key, spec);
-    }
+    dedup.set(spec.key, spec);
   }
   return [...dedup.values()];
 }
@@ -710,9 +865,10 @@ async function main() {
     }
 
     const ldProduct = extractProductFromJsonLd(item.jsonLd ?? []);
+    const descriptionLong = extractProductDescriptionLong(item.html ?? '', ldProduct?.description ?? item.seoDescription ?? '');
     const galleryImages = extractProductGalleryImages(item.html ?? '', origin, ldProduct?.images ?? []);
     const downloads = extractDownloadAssets(item.html ?? '', origin);
-    const technicalSpecs = extractTechnicalSpecs(`${item.heading ?? ''} ${item.title ?? ''} ${ldProduct?.description ?? ''}`);
+    const technicalSpecs = extractTechnicalSpecs(`${item.heading ?? ''}\n${item.title ?? ''}\n${descriptionLong ?? ''}\n${ldProduct?.description ?? ''}`);
 
     return {
       url: item.url,
@@ -723,6 +879,7 @@ async function main() {
       seoDescription: item.seoDescription,
       canonical: item.canonical,
       ldProduct,
+      descriptionLong,
       galleryImages,
       downloads,
       technicalSpecs,

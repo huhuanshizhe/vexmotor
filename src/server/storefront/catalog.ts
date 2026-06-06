@@ -98,13 +98,23 @@ function asMoney(amount: string | number | null | undefined, currencyCode = 'USD
   };
 }
 
-function toImage(row: { id: string; url: string; alt: string; width: number | null; height: number | null }): StorefrontImage {
+function toImage(row: {
+  id: string;
+  url: string;
+  alt: string;
+  width: number | null;
+  height: number | null;
+  isDimension?: boolean | null;
+  imageType?: string | null;
+}): StorefrontImage {
   return {
     id: row.id,
     url: row.url,
     alt: row.alt,
     width: row.width,
     height: row.height,
+    isDimension: row.isDimension ?? undefined,
+    imageType: row.imageType ?? undefined,
   };
 }
 

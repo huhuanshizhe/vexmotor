@@ -41,6 +41,10 @@ type DetailCompatibleGroup = {
   items: StorefrontProductCard[];
 };
 
+function matchesAttachmentAsset(attachment: StorefrontProductDetail['attachments'][number], pattern: RegExp) {
+  return pattern.test(`${attachment.name} ${attachment.url}`);
+}
+
 function formatSpecValue(value: string, unit?: string | null) {
   return unit ? `${value} ${unit}` : value;
 }
@@ -257,7 +261,17 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const contactPath = withLocalePath('/contact', locale);
   const categoryPath = category ? withLocalePath(`/c/${category.slug}`, locale) : productsPath;
   const productUrl = `${SITE_URL}${productPath}`;
-  const datasheetAttachment = product.attachments.find((attachment) => /pdf|datasheet|spec/i.test(`${attachment.name} ${attachment.mimeType}`));
+  const fullDatasheetAttachment =
+    product.attachments.find(
+      (attachment) =>
+        matchesAttachmentAsset(attachment, /full[\s_-]*datasheet|datasheet/i) && !matchesAttachmentAsset(attachment, /torque[\s_-]*curve|curve|graph/i),
+    ) ?? null;
+  const genericSpecAttachment = product.attachments.find((attachment) => /pdf|datasheet|spec/i.test(`${attachment.name} ${attachment.mimeType} ${attachment.url}`)) ?? null;
+  const datasheetAttachment = fullDatasheetAttachment ?? genericSpecAttachment;
+  const torqueCurveAttachment =
+    product.attachments.find((attachment) => matchesAttachmentAsset(attachment, /torque[\s_-]*curve|speed[\s_-]*curve|performance[\s_-]*curve|graph/i)) ?? datasheetAttachment;
+  const dimensionDocumentAttachment =
+    product.attachments.find((attachment) => matchesAttachmentAsset(attachment, /dimension|drawing|outline|mechanical/i)) ?? fullDatasheetAttachment;
   const specGroups = buildSpecGroups(product);
   const topSpecs = specGroups.flatMap((group) => group.rows).slice(0, 5);
   const priceHeadline = product.purchaseMode === 'buy' ? product.price.formatted : 'Request Quote';
@@ -429,8 +443,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     })),
   };
   const dimensionImages = galleryImages.filter((image) => {
-    const altText = image.alt?.toLowerCase() ?? '';
-    return altText.includes('dimension') || altText.includes('diagram');
+    const marker = `${image.alt ?? ''} ${image.url ?? ''} ${image.imageType ?? ''}`.toLowerCase();
+    return image.isDimension || image.imageType === 'dimension' || /dimension|diagram|size|drawing|outline|mechanical/i.test(marker);
+  });
+  const torqueCurveImages = galleryImages.filter((image) => {
+    const marker = `${image.alt ?? ''} ${image.url ?? ''} ${image.imageType ?? ''}`.toLowerCase();
+    return /torque|curve|performance|graph/i.test(marker) && !dimensionImages.some((dimensionImage) => dimensionImage.url === image.url);
   });
 
   return (
@@ -619,13 +637,34 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             description={product.descriptionLong || product.description}
             specGroups={specGroups}
             dimensionImages={dimensionImages}
+            torqueCurveImages={torqueCurveImages}
+            dimensionDocumentHref={dimensionDocumentAttachment?.url}
+            torqueCurveDocumentHref={torqueCurveAttachment?.url}
             datasheetUrl={datasheetAttachment?.url}
             quoteHref={quoteHref}
             customHref={customHref}
             contactPath={contactPath}
             documentCards={documentCards}
-            faqItems={faqItems}
           />
+
+          <div id="detail-faq" className="tab-content-wrapper">
+            <article className="info-card">
+              <div className="section-header">
+                <h2 className="section-title">Frequently Asked Questions</h2>
+                <p className="section-description">Common questions about this product and how we can help.</p>
+              </div>
+              <div className="pdp-faq-list">
+                {faqItems.map((item, index) => (
+                  <details key={`${item.question}-${index}`} className="faq-item">
+                    <summary className="faq-question">{item.question}</summary>
+                    <div className="faq-answer">
+                      <p>{item.answer}</p>
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </article>
+          </div>
 
           <RecentlyViewedProducts currentProduct={product} fallbackProducts={[...relatedCandidates, ...peopleAlsoBought]} locale={locale} />
         </div>

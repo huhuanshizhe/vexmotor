@@ -4,6 +4,8 @@ export type StorefrontImage = {
   alt: string;
   width?: number | null;
   height?: number | null;
+  isDimension?: boolean;
+  imageType?: string | null;
 };
 
 export type StorefrontBrand = {

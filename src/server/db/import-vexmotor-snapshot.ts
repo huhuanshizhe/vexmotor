@@ -25,6 +25,7 @@ type ProductSnapshot = {
   heading?: string | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
+  descriptionLong?: string | null;
   ldProduct?: {
     name?: string | null;
     sku?: string | null;
@@ -65,6 +66,28 @@ type FooterSnapshot = {
 type BannerSnapshot = {
   images?: string[];
 };
+
+function categorizeSpec(key: string) {
+  const lower = key.toLowerCase();
+
+  if (/product type|motor type|model type|type/i.test(lower)) {
+    return 'product_type';
+  }
+
+  if (/current|voltage|resistance|inductance|power|phase|wire|bipolar|unipolar|rating|electrical/i.test(lower)) {
+    return 'electrical';
+  }
+
+  if (/torque|step angle|shaft|body|frame|length|width|height|diameter|weight|mounting|flange|size|dimension|gear|ratio/i.test(lower)) {
+    return 'physical';
+  }
+
+  if (/temperature|humidity|protection|insulation|class|ip rating|environment/i.test(lower)) {
+    return 'environmental';
+  }
+
+  return 'general';
+}
 
 function normalizeSlug(value: string) {
   return value
@@ -383,6 +406,7 @@ async function main() {
     const name = item.ldProduct.name.trim();
     const sku = await resolveUniqueSku(item.ldProduct.sku || slug, slug);
     const description = (item.ldProduct.description || item.seoDescription || '').trim();
+    const descriptionLong = item.descriptionLong?.trim() || null;
     const shortDescription = (item.heading || item.seoDescription || '').trim();
     const price = Number(item.ldProduct.price ?? 0);
     const safePrice = Number.isFinite(price) ? price.toFixed(2) : '0.00';
@@ -397,6 +421,7 @@ async function main() {
         sku,
         shortDescription: shortDescription || null,
         description: description || null,
+        descriptionLong,
         purchaseMode: 'buy',
         status: 'active',
         price: safePrice,
@@ -416,6 +441,7 @@ async function main() {
           sku,
           shortDescription: shortDescription || null,
           description: description || null,
+          descriptionLong,
           status: 'active',
           price: safePrice,
           currencyCode: item.ldProduct.currency || 'USD',
@@ -449,8 +475,9 @@ async function main() {
     
     if (allImages.length) {
       const imageRows = allImages.map((imageUrl, index) => {
-        // 判断是否为尺寸图（URL 包含 dimension/diagram/size 等关键词）
-        const isDimension = /dimension|diagram|size|drawing|outline/i.test(imageUrl);
+        const marker = imageUrl.toLowerCase();
+        const isDimension = /dimension|diagram|size|drawing|outline|mechanical/i.test(marker);
+        const isDetailImage = /torque|curve|performance|graph|detail/i.test(marker) && !isDimension;
         return {
           productId: saved.id,
           url: imageUrl,
@@ -458,7 +485,7 @@ async function main() {
           sortOrder: index + 1,
           isPrimary: index === 0,
           isDimension: isDimension,
-          imageType: isDimension ? 'dimension' : 'gallery',
+          imageType: isDimension ? 'dimension' : isDetailImage ? 'detail' : 'gallery',
         };
       });
       await db!.insert(productImages).values(imageRows);
@@ -468,12 +495,13 @@ async function main() {
     await db!.delete(productFeatures).where(eq(productFeatures.productId, saved.id));
     const specRows = (item.technicalSpecs || [])
       .filter((spec) => spec.key && spec.value)
-      .slice(0, 24)
+      .slice(0, 32)
       .map((spec, index) => ({
         productId: saved.id,
         featureKey: spec.key.trim(),
         featureValue: String(spec.value).trim(),
         unit: spec.unit || null,
+        specCategory: categorizeSpec(spec.key),
         sortOrder: index + 1,
       }));
     if (specRows.length) {

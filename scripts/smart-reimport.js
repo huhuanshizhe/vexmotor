@@ -119,7 +119,7 @@ async function run() {
       
       // Generate professional description
       const specs = (item.technicalSpecs || []).filter(s => s.key && s.value);
-      const longDescription = generateDescription(name, specs, item);
+      const longDescription = (item.descriptionLong || '').trim() || generateDescription(name, specs, item);
 
       // Update product with long description
       await sql`

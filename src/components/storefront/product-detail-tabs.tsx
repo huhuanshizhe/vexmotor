@@ -10,8 +10,7 @@ type ProductDetailTabKey =
   | 'torque-curves'
   | 'custom-design'
   | 'downloads'
-  | 'reviews'
-  | 'faq';
+  | 'reviews';
 
 type ProductDetailSpecGroup = {
   title: string;
@@ -25,6 +24,8 @@ type ProductDetailSpecGroup = {
 type ProductDetailImage = {
   url: string;
   alt?: string | null;
+  imageType?: string | null;
+  isDimension?: boolean;
 };
 
 type ProductDocumentCard = {
@@ -35,21 +36,18 @@ type ProductDocumentCard = {
   external?: boolean;
 };
 
-type ProductFaqItem = {
-  question: string;
-  answer: string;
-};
-
 type ProductDetailTabsProps = {
   description: string;
   specGroups: ProductDetailSpecGroup[];
   dimensionImages: ProductDetailImage[];
+  torqueCurveImages: ProductDetailImage[];
+  dimensionDocumentHref?: string;
+  torqueCurveDocumentHref?: string;
   datasheetUrl?: string;
   quoteHref: string;
   customHref: string;
   contactPath: string;
   documentCards: ProductDocumentCard[];
-  faqItems: ProductFaqItem[];
 };
 
 const TAB_DEFINITIONS: Array<{
@@ -65,7 +63,6 @@ const TAB_DEFINITIONS: Array<{
   { key: 'custom-design', label: 'CUSTOM DESIGN', panelId: 'detail-custom-design', legacyHash: 'tab-custom-design' },
   { key: 'downloads', label: 'Downloads', panelId: 'detail-downloads', legacyHash: 'tab-downloads' },
   { key: 'reviews', label: 'Reviews', panelId: 'detail-reviews', legacyHash: 'tab-reviews' },
-  { key: 'faq', label: 'FAQ', panelId: 'detail-faq', legacyHash: 'tab-faq' },
 ];
 
 const HASH_TO_TAB = TAB_DEFINITIONS.reduce<Record<string, ProductDetailTabKey>>((hashToTab, tab) => {
@@ -83,12 +80,14 @@ export function ProductDetailTabs({
   description,
   specGroups,
   dimensionImages,
+  torqueCurveImages,
+  dimensionDocumentHref,
+  torqueCurveDocumentHref,
   datasheetUrl,
   quoteHref,
   customHref,
   contactPath,
   documentCards,
-  faqItems,
 }: ProductDetailTabsProps) {
   const [activeTab, setActiveTab] = useState<ProductDetailTabKey>('description');
 
@@ -213,6 +212,13 @@ export function ProductDetailTabs({
                     <img src={image.url} alt={image.alt || 'Dimension drawing'} />
                   </div>
                 ))
+              ) : dimensionDocumentHref ? (
+                <div className="dimension-placeholder">
+                  <p>Legacy dimension drawings are available in the original technical file package.</p>
+                  <a href={dimensionDocumentHref} target="_blank" rel="noreferrer" className="button-secondary">
+                    Open dimension reference
+                  </a>
+                </div>
               ) : (
                 <div className="dimension-placeholder">
                   <p>Dimensional drawings will be available upon request.</p>
@@ -238,10 +244,16 @@ export function ProductDetailTabs({
               <p className="section-description">Performance characteristics showing torque output across operating speeds.</p>
             </div>
             <div className="torque-curves-gallery">
-              {datasheetUrl ? (
+              {torqueCurveImages.length ? (
+                torqueCurveImages.map((image, index) => (
+                  <div key={`${image.url}-${index}`} className="dimension-image">
+                    <img src={image.url} alt={image.alt || 'Torque-speed curve'} />
+                  </div>
+                ))
+              ) : torqueCurveDocumentHref || datasheetUrl ? (
                 <div className="torque-curve-content">
                   <p>Complete torque-speed curves are available in the product datasheet.</p>
-                  <a href={datasheetUrl} target="_blank" rel="noreferrer" className="button-secondary">
+                  <a href={torqueCurveDocumentHref || datasheetUrl} target="_blank" rel="noreferrer" className="button-secondary">
                     Download Datasheet with Curves
                   </a>
                 </div>
@@ -348,30 +360,6 @@ export function ProductDetailTabs({
           </article>
         </div>
 
-        <div
-          id="detail-faq"
-          className={activeTab === 'faq' ? 'product-tab-content active' : 'product-tab-content'}
-          role="tabpanel"
-          aria-labelledby="detail-faq-tab"
-          hidden={activeTab !== 'faq'}
-        >
-          <article className="info-card">
-            <div className="section-header">
-              <h2 className="section-title">Frequently Asked Questions</h2>
-              <p className="section-description">Common questions about this product and how we can help.</p>
-            </div>
-            <div className="pdp-faq-list">
-              {faqItems.map((item, index) => (
-                <details key={`${item.question}-${index}`} className="faq-item">
-                  <summary className="faq-question">{item.question}</summary>
-                  <div className="faq-answer">
-                    <p>{item.answer}</p>
-                  </div>
-                </details>
-              ))}
-            </div>
-          </article>
-        </div>
       </div>
     </>
   );
