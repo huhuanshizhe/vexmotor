@@ -285,6 +285,8 @@ export async function getCategories(): Promise<StorefrontCategory[]> {
       parentId: item.parentId,
       productCount: productCountByCategoryId.get(item.id) ?? 0,
       image: item.imageUrl ? { id: `${item.id}-img`, url: item.imageUrl, alt: item.name } : null,
+      isFeatured: item.isFeatured,
+      featuredOrder: item.featuredOrder,
     }));
   } catch {
     return [];
