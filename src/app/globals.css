@@ -340,7 +340,7 @@ main {
   display: block;
   padding: 8px 10px;
   border-radius: 12px;
-  color: var(--color-ink);
+  color: #0f172a !important;
   font-weight: 600;
 }
 
@@ -377,7 +377,7 @@ main {
 }
 
 .nav-mega-link {
-  color: var(--color-ink);
+  color: #0f172a !important;
   font-weight: 600;
   line-height: 1.35;
 }
