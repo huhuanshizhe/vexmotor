@@ -53,6 +53,7 @@ export type StorefrontFeature = {
   key: string;
   value: string;
   unit?: string | null;
+  category?: string; // electrical, mechanical, performance, environmental, general
 };
 
 export type StorefrontAttachment = {
@@ -70,6 +71,7 @@ export type StorefrontCompatibleGroup = {
 
 export type StorefrontProductDetail = StorefrontProductCard & {
   description: string;
+  descriptionLong?: string | null; // Full detailed product description
   gallery: StorefrontImage[];
   categories: StorefrontCategory[];
   attributes: Array<{ group: string; value: string }>;

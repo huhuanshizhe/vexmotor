@@ -45,14 +45,34 @@ function formatSpecValue(value: string, unit?: string | null) {
 }
 
 function buildSpecGroups(product: StorefrontProductDetail): DetailSpecGroup[] {
-  const featureRows = product.features.map((feature) => ({
-    label: feature.key,
-    value: formatSpecValue(feature.value, feature.unit),
-  }));
+  // Group features by category
+  const categoryMap: Record<string, DetailSpecRow[]> = {
+    performance: [],
+    electrical: [],
+    mechanical: [],
+    environmental: [],
+    general: [],
+  };
+
+  product.features.forEach((feature) => {
+    const category = feature.category || 'general';
+    const row = {
+      label: feature.key,
+      value: formatSpecValue(feature.value, feature.unit),
+    };
+    
+    if (categoryMap[category]) {
+      categoryMap[category].push(row);
+    } else {
+      categoryMap.general.push(row);
+    }
+  });
+
   const attributeRows = product.attributes.map((attribute) => ({
     label: attribute.group,
     value: attribute.value,
   }));
+  
   const commercialRows = [
     { label: 'SKU', value: product.sku },
     { label: 'Purchase mode', value: product.purchaseMode === 'buy' ? 'Direct buy' : 'Engineering RFQ' },
@@ -65,11 +85,48 @@ function buildSpecGroups(product: StorefrontProductDetail): DetailSpecGroup[] {
 
   const groups: DetailSpecGroup[] = [];
 
-  if (featureRows.length) {
+  // Performance specs first (most important for engineers)
+  if (categoryMap.performance.length) {
     groups.push({
-      title: 'Electrical & motion',
-      description: 'Key selection parameters surfaced first so an engineer can validate fit in under a minute.',
-      rows: featureRows,
+      title: 'Performance',
+      description: 'Core performance parameters including torque, speed, and precision metrics.',
+      rows: categoryMap.performance,
+    });
+  }
+
+  // Electrical specs
+  if (categoryMap.electrical.length) {
+    groups.push({
+      title: 'Electrical',
+      description: 'Voltage, current, and electrical characteristics for driver compatibility.',
+      rows: categoryMap.electrical,
+    });
+  }
+
+  // Mechanical specs
+  if (categoryMap.mechanical.length) {
+    groups.push({
+      title: 'Mechanical',
+      description: 'Physical dimensions, mounting, and mechanical interface details.',
+      rows: categoryMap.mechanical,
+    });
+  }
+
+  // Environmental specs
+  if (categoryMap.environmental.length) {
+    groups.push({
+      title: 'Environmental',
+      description: 'Operating conditions, protection ratings, and environmental compliance.',
+      rows: categoryMap.environmental,
+    });
+  }
+
+  // General/uncategorized specs
+  if (categoryMap.general.length) {
+    groups.push({
+      title: 'General',
+      description: 'Additional specifications and catalog attributes.',
+      rows: categoryMap.general,
     });
   }
 
@@ -580,7 +637,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
             <div className="pdp-overview-grid">
               <div className="detail-inline-meta">
-                <p className="section-description">{product.description}</p>
+                {/* Use descriptionLong if available, fallback to description */}
+                <div className="product-long-description">
+                  <p className="section-description" style={{ whiteSpace: 'pre-line' }}>
+                    {product.descriptionLong || product.description}
+                  </p>
+                </div>
                 {product.brand ? (
                   <div className="detail-inline-meta">
                     <span className="card-kicker">Brand</span>

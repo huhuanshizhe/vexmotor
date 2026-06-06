@@ -579,7 +579,9 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
         key: item.featureKey,
         value: item.featureValue,
         unit: item.unit,
+        category: item.specCategory || 'general',
       })),
+      descriptionLong: product.descriptionLong || null,
     };
   } catch {
     return null;

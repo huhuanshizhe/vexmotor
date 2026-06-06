@@ -169,6 +169,7 @@ export const products = pgTable(
     sku: varchar('sku', { length: 100 }).notNull(),
     shortDescription: text('short_description'),
     description: text('description'),
+    descriptionLong: text('description_long'), // Full detailed product description
     purchaseMode: purchaseModeEnum('purchase_mode').notNull().default('buy'),
     status: productStatusEnum('status').notNull().default('draft'),
     price: numeric('price', { precision: 12, scale: 2 }).notNull().default('0'),
@@ -282,6 +283,7 @@ export const productFeatures = pgTable('product_features', {
   featureKey: varchar('feature_key', { length: 100 }).notNull(),
   featureValue: varchar('feature_value', { length: 255 }).notNull(),
   unit: varchar('unit', { length: 50 }),
+  specCategory: varchar('spec_category', { length: 50 }).notNull().default('general'), // electrical, mechanical, performance, environmental, general
   sortOrder: integer('sort_order').notNull().default(0),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
