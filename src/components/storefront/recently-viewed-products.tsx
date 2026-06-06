@@ -17,6 +17,22 @@ type RecentlyViewedProductsProps = {
   locale: Locale;
 };
 
+function normalizeComparableText(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+function buildRecentSummary(item: RecentProduct) {
+  const description = item.shortDescription?.trim();
+
+  if (description && normalizeComparableText(description) !== normalizeComparableText(item.name)) {
+    return description;
+  }
+
+  return item.purchaseMode === 'buy'
+    ? 'Saved to your comparison trail for a fast return to pricing, drawings and documents.'
+    : 'Saved to your shortlist so the RFQ flow and engineering files stay one click away.';
+}
+
 function toRecentProduct(product: StorefrontProductCard): RecentProduct {
   return {
     id: product.id,
@@ -48,7 +64,7 @@ function readRecentlyViewed() {
 }
 
 export function RecentlyViewedProducts({ currentProduct, fallbackProducts, locale }: RecentlyViewedProductsProps) {
-  const [items, setItems] = useState<RecentProduct[]>(fallbackProducts.map(toRecentProduct).filter((item) => item.id !== currentProduct.id).slice(0, 4));
+  const [items, setItems] = useState<RecentProduct[]>(fallbackProducts.map(toRecentProduct).filter((item) => item.id !== currentProduct.id).slice(0, 3));
 
   useEffect(() => {
     const stored = readRecentlyViewed();
@@ -56,13 +72,13 @@ export function RecentlyViewedProducts({ currentProduct, fallbackProducts, local
 
     window.localStorage.setItem(RECENTLY_VIEWED_STORAGE_KEY, JSON.stringify(nextStored));
 
-    const visibleItems = nextStored.filter((item) => item.id !== currentProduct.id).slice(0, 4);
+    const visibleItems = nextStored.filter((item) => item.id !== currentProduct.id).slice(0, 3);
     if (visibleItems.length) {
       setItems(visibleItems);
       return;
     }
 
-    setItems(fallbackProducts.map(toRecentProduct).filter((item) => item.id !== currentProduct.id).slice(0, 4));
+    setItems(fallbackProducts.map(toRecentProduct).filter((item) => item.id !== currentProduct.id).slice(0, 3));
   }, [currentProduct, fallbackProducts]);
 
   if (!items.length) {
@@ -70,22 +86,27 @@ export function RecentlyViewedProducts({ currentProduct, fallbackProducts, local
   }
 
   return (
-    <article className="info-card detail-recent-card">
-      <div className="section-header detail-section-header">
-        <div>
-          <h2 className="section-title">Recently viewed</h2>
-          <p className="section-description">Keep fast access to the products you checked while comparing motion families and accessories.</p>
+    <article className="info-card detail-panel-card detail-recent-card detail-shortlist-card">
+      <div className="detail-panel-heading">
+        <div className="detail-panel-copy">
+          <span className="card-kicker">Shortlist trail</span>
+          <h2 className="detail-panel-title">Recently viewed products from this session.</h2>
+        </div>
+        <div className="detail-panel-badges">
+          <span className="detail-panel-badge">{items.length} items</span>
         </div>
       </div>
 
-      <div className="detail-related-grid">
+      <div className="detail-shortlist-list">
         {items.map((item) => (
-          <Link key={item.id} href={withLocalePath(`/products/${item.slug}`, locale)} className="detail-related-card">
-            <span className="product-badge">Recently viewed</span>
+          <Link key={item.id} href={withLocalePath(`/products/${item.slug}`, locale)} className="detail-shortlist-item">
+            <div className="detail-shortlist-meta">
+              <span className="product-meta">SKU {item.sku}</span>
+              <span className="detail-shortlist-price">{item.purchaseMode === 'buy' ? item.price.formatted : 'Request Quote'}</span>
+            </div>
             <strong>{item.name}</strong>
-            <span className="product-meta">SKU {item.sku}</span>
-            <p className="section-description compact-copy">{item.shortDescription ?? 'Stored locally from your latest product-detail browsing session.'}</p>
-            <span className="card-kicker">{item.purchaseMode === 'buy' ? item.price.formatted : 'Request Quote'}</span>
+            <p className="section-description compact-copy">{buildRecentSummary(item)}</p>
+            <span className="card-kicker">{item.purchaseMode === 'buy' ? 'Direct buy ready' : 'RFQ workflow'}</span>
           </Link>
         ))}
       </div>

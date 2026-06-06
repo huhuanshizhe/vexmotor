@@ -693,16 +693,26 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             documentCards={documentCards}
           />
 
-          <div id="detail-faq" className="tab-content-wrapper">
-            <article className="info-card">
-              <div className="section-header">
-                <h2 className="section-title">Frequently Asked Questions</h2>
-                <p className="section-description">Common questions about this product and how we can help.</p>
+          <div id="detail-faq" className="tab-content-wrapper detail-bottom-grid">
+            <article className="info-card detail-panel-card detail-faq-card">
+              <div className="detail-panel-heading">
+                <div className="detail-panel-copy">
+                  <span className="card-kicker">Support briefing</span>
+                  <h2 className="detail-panel-title">Quick answers on ordering, documents and fulfillment.</h2>
+                </div>
+                <div className="detail-panel-badges">
+                  <span className="detail-panel-badge">{faqItems.length} answers</span>
+                </div>
               </div>
+
               <div className="pdp-faq-list">
                 {faqItems.map((item, index) => (
                   <details key={`${item.question}-${index}`} className="faq-item">
-                    <summary className="faq-question">{item.question}</summary>
+                    <summary className="faq-question">
+                      <span className="faq-question-index">{String(index + 1).padStart(2, '0')}</span>
+                      <span className="faq-question-text">{item.question}</span>
+                      <span className="faq-toggle-marker" aria-hidden="true" />
+                    </summary>
                     <div className="faq-answer">
                       <p>{item.answer}</p>
                     </div>
@@ -710,9 +720,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 ))}
               </div>
             </article>
-          </div>
 
-          <RecentlyViewedProducts currentProduct={product} fallbackProducts={[...relatedCandidates, ...peopleAlsoBought]} locale={locale} />
+            <RecentlyViewedProducts currentProduct={product} fallbackProducts={[...relatedCandidates, ...peopleAlsoBought]} locale={locale} />
+          </div>
         </div>
       </section>
     </StorefrontFrame>
