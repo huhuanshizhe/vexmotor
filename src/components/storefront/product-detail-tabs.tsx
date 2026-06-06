@@ -208,9 +208,9 @@ export function ProductDetailTabs({
             <div className="dimensions-gallery">
               {dimensionImages.length ? (
                 dimensionImages.map((image, index) => (
-                  <div key={`${image.url}-${index}`} className="dimension-image">
-                    <img src={image.url} alt={image.alt || 'Dimension drawing'} />
-                  </div>
+                  <figure key={`${image.url}-${index}`} className="detail-media-card">
+                    <img src={image.url} alt={image.alt || 'Dimension drawing'} className="detail-media-image" loading="lazy" />
+                  </figure>
                 ))
               ) : dimensionDocumentHref ? (
                 <div className="dimension-placeholder">
@@ -246,9 +246,9 @@ export function ProductDetailTabs({
             <div className="torque-curves-gallery">
               {torqueCurveImages.length ? (
                 torqueCurveImages.map((image, index) => (
-                  <div key={`${image.url}-${index}`} className="dimension-image">
-                    <img src={image.url} alt={image.alt || 'Torque-speed curve'} />
-                  </div>
+                  <figure key={`${image.url}-${index}`} className="detail-media-card">
+                    <img src={image.url} alt={image.alt || 'Torque-speed curve'} className="detail-media-image" loading="lazy" />
+                  </figure>
                 ))
               ) : torqueCurveDocumentHref || datasheetUrl ? (
                 <div className="torque-curve-content">

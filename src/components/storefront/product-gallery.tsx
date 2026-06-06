@@ -42,7 +42,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
           unoptimized
         />
         <div className="product-gallery-stage-meta">
-          <span className="product-badge">Factory media</span>
+          <span className="product-badge">Engineering media</span>
           <span className="product-status">
             Image {activeIndex + 1} / {sanitizedImages.length}
           </span>

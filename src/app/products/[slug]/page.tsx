@@ -274,6 +274,10 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     product.attachments.find((attachment) => matchesAttachmentAsset(attachment, /dimension|drawing|outline|mechanical/i)) ?? fullDatasheetAttachment;
   const specGroups = buildSpecGroups(product);
   const topSpecs = specGroups.flatMap((group) => group.rows).slice(0, 5);
+  const heroSpecs = topSpecs.slice(0, 4);
+  const summaryEyebrow = category ? category.name : 'Catalog product';
+  const procurementLabel = product.purchaseMode === 'buy' ? 'Direct Buy' : 'RFQ Project';
+  const availabilityLabel = product.inStock ? 'Stock program active' : 'Build-to-order review';
   const priceHeadline = product.purchaseMode === 'buy' ? product.price.formatted : 'Request Quote';
   const queryForQuote = new URLSearchParams({ topic: 'quote', product: product.sku }).toString();
   const queryForSample = new URLSearchParams({ topic: 'sample', product: product.sku }).toString();
@@ -494,39 +498,56 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             </div>
 
             <article className="info-card product-summary-card pdp-buybox-card">
-              <div className="pdp-category-trail">
-                <Link href={productsPath}>Products</Link>
-                {product.categories.slice(0, 2).map((item) => (
-                  <Link key={item.id} href={withLocalePath(`/c/${item.slug}`, locale)}>
-                    {item.name}
-                  </Link>
-                ))}
-              </div>
-
-              <div className="product-card-top">
-                <span className="product-badge">{product.purchaseMode === 'buy' ? 'Direct Buy' : 'RFQ Project'}</span>
-                <span className="product-status">{product.purchaseMode === 'buy' ? (product.inStock ? 'Warehouse stock available' : 'Production scheduling') : 'Engineering review workflow'}</span>
-              </div>
-
-              <div className="card-kicker">{category ? `${category.name} product detail` : 'Industrial motion catalog'}</div>
-              <h1 className="section-title">{product.name}</h1>
-
-              <div className="pdp-sku-row">
-                <p className="product-meta">SKU {product.sku}</p>
-                <div className="pdp-sku-actions">
-                  <CopyActionButton value={product.sku} idleLabel="Copy SKU" copiedLabel="SKU copied" toastTitle="SKU copied" className="button-secondary" />
-                  {datasheetAttachment ? (
-                    <a href={datasheetAttachment.url} target="_blank" rel="noreferrer" className="button-secondary">
-                      View datasheet
-                    </a>
-                  ) : null}
+              <div className="pdp-header-stack">
+                <div className="pdp-header-meta">
+                  <span className="pdp-header-chip">{summaryEyebrow}</span>
+                  <span className="pdp-header-chip is-muted">{procurementLabel}</span>
+                  <span className="pdp-header-chip is-muted">{availabilityLabel}</span>
                 </div>
+
+                <h1 className="section-title pdp-hero-title">{product.name}</h1>
+
+                <div className="pdp-sku-row">
+                  <p className="product-meta">SKU {product.sku}</p>
+                  <div className="pdp-sku-actions">
+                    <CopyActionButton value={product.sku} idleLabel="Copy SKU" copiedLabel="SKU copied" toastTitle="SKU copied" className="button-secondary" />
+                    {datasheetAttachment ? (
+                      <a href={datasheetAttachment.url} target="_blank" rel="noreferrer" className="button-secondary">
+                        View datasheet
+                      </a>
+                    ) : null}
+                  </div>
+                </div>
+
+                <p className="pdp-lead-copy">{product.shortDescription ?? product.description}</p>
               </div>
 
-              <p className="section-description">{product.shortDescription ?? product.description}</p>
+              <div className="product-pricing-stack pdp-price-panel">
+                <p className="product-price">{priceHeadline}</p>
+                {product.compareAtPrice ? <p className="comparison-note">Reference price {product.compareAtPrice.formatted}</p> : null}
+                {bulkPrices.length ? (
+                  <>
+                    <details className="pdp-tier-pricing">
+                      <summary>Tier pricing</summary>
+                      <div className="detail-volume-pricing">
+                        {bulkPrices.map((item) => (
+                          <span key={item.label} className="detail-volume-line">
+                            {item.rangeLabel} pcs {item.unitPriceLabel}
+                          </span>
+                        ))}
+                      </div>
+                    </details>
+                    <Link href={volumePricingHref} className="detail-inline-link">
+                      View volume pricing
+                    </Link>
+                  </>
+                ) : (
+                  <p className="section-description compact-copy">Pricing is finalized through the quote workflow once engineering scope and volume are confirmed.</p>
+                )}
+              </div>
 
               <div className="pdp-mini-spec-grid">
-                {topSpecs.map((item) => (
+                {heroSpecs.map((item) => (
                   <article key={`${item.label}-${item.value}`} className="pdp-mini-spec-card">
                     <span className="summary-label">{item.label}</span>
                     <strong>{item.value}</strong>
@@ -549,31 +570,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 </article>
               </div>
 
-              <div className="product-pricing-stack">
-                <p className="product-price">{priceHeadline}</p>
-                {product.compareAtPrice ? <p className="comparison-note">Reference price {product.compareAtPrice.formatted}</p> : null}
-                {bulkPrices.length ? (
-                  <>
-                    <details className="pdp-tier-pricing">
-                    <summary>Tier pricing</summary>
-                    <div className="detail-volume-pricing">
-                      {bulkPrices.map((item) => (
-                        <span key={item.label} className="detail-volume-line">
-                          {item.rangeLabel} pcs {item.unitPriceLabel}
-                        </span>
-                      ))}
-                    </div>
-                    </details>
-                    <Link href={volumePricingHref} className="detail-inline-link">
-                      View volume pricing
-                    </Link>
-                  </>
-                ) : (
-                  <p className="section-description compact-copy">Pricing is finalized through the quote workflow once engineering scope and volume are confirmed.</p>
-                )}
-              </div>
-
-              <div className="product-action-stack">
+              <div className="product-action-stack pdp-action-cluster">
                 {product.purchaseMode === 'buy' ? (
                   <AddToCartButton productId={product.id} showQuantitySelector showBuyNow />
                 ) : (
@@ -582,18 +579,35 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                   </div>
                 )}
 
-                <div className="pdp-secondary-actions">
-                  {product.purchaseMode === 'buy' ? (
-                    <Link href={sampleHref} className="button-secondary">
-                      Request Sample
+                {product.purchaseMode === 'buy' ? (
+                  <div className="pdp-primary-cta">
+                    <Link href={quoteHref} className="button-secondary pdp-quote-button">
+                      Add to Quote
                     </Link>
-                  ) : null}
-                  <Link href={customHref} className="button-secondary">
-                    Need a custom variant?
-                  </Link>
-                  <Link href={quoteHref} className="button-secondary">
-                    {product.purchaseMode === 'buy' ? 'Add to Quote' : 'Request Quote'}
-                  </Link>
+                    <div className="pdp-support-links">
+                      <Link href={sampleHref} className="detail-inline-link">
+                        Request a production sample
+                      </Link>
+                      <Link href={customHref} className="detail-inline-link">
+                        Discuss a custom variant
+                      </Link>
+                      <Link href={contactPath} className="detail-inline-link">
+                        Talk to engineering support
+                      </Link>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="pdp-support-links">
+                    <Link href={customHref} className="detail-inline-link">
+                      Discuss a custom variant
+                    </Link>
+                    <Link href={contactPath} className="detail-inline-link">
+                      Talk to engineering support
+                    </Link>
+                  </div>
+                )}
+
+                <div className="pdp-utility-actions">
                   <AddToCompareButton
                     item={{
                       id: product.id,
@@ -619,7 +633,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 ))}
               </div>
 
-              <article className="summary-stat">
+              <article className="pdp-custom-note">
                 <span className="summary-label">Custom program</span>
                 <strong>Need changes to shaft, winding, gearbox, or environment?</strong>
                 <Link href={customHref} className="section-link">
