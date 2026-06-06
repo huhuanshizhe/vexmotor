@@ -128,11 +128,14 @@ export const categories = pgTable(
     seoDescription: varchar('seo_description', { length: 500 }),
     status: categoryStatusEnum('status').notNull().default('active'),
     sortOrder: integer('sort_order').notNull().default(0),
+    isFeatured: boolean('is_featured').notNull().default(false), // 新增：推荐到首页
+    featuredOrder: integer('featured_order').notNull().default(0), // 新增：首页展示顺序
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => ({
     slugUnique: uniqueIndex('categories_slug_unique').on(table.slug),
+    featuredIdx: index('categories_featured_idx').on(table.isFeatured, table.featuredOrder), // 新增索引
   }),
 );
 
