@@ -694,31 +694,66 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           <article id="detail-compatible" className="info-card detail-anchor-card">
             <div className="section-header detail-section-header">
               <div>
-                <h2 className="section-title">Compatible products</h2>
-                <p className="section-description">System-adjacent items grouped to mimic the design’s driver, accessory, and integration recommendation bands.</p>
+                <h2 className="section-title">Compatible Products</h2>
+                <p className="section-description">Carefully selected accessories, drivers, and integration components that work seamlessly with this product.</p>
               </div>
             </div>
-
+          
             {compatibleGroups.length ? (
-              <div className="pdp-compatible-grid">
+              <div className="compatible-groups-container">
                 {compatibleGroups.map((group) => (
-                  <article key={group.title} className="pdp-compatible-card">
-                    <span className="pdp-doc-card-meta">{group.badge}</span>
-                    <h3>{group.title}</h3>
-                    <p className="section-description compact-copy">{group.description}</p>
-                    <ul className="pdp-compatible-list">
+                  <div key={group.title} className="compatible-group">
+                    <div className="compatible-group-header">
+                      <span className="compatible-badge">{group.badge}</span>
+                      <h3 className="compatible-group-title">{group.title}</h3>
+                      <p className="compatible-group-description">{group.description}</p>
+                    </div>
+                    <div className="compatible-product-list">
                       {group.items.map((item) => (
-                        <li key={item.id}>
-                          <Link href={withLocalePath(`/products/${item.slug}`, locale)}>{item.name}</Link>
-                          <span className="card-kicker">{item.purchaseMode === 'buy' ? item.price.formatted : 'Request Quote'}</span>
-                        </li>
+                        <Link
+                          key={item.id}
+                          href={withLocalePath(`/products/${item.slug}`, locale)}
+                          className="compatible-product-card"
+                        >
+                          <div className="compatible-product-image">
+                            {item.coverImage ? (
+                              <img
+                                src={item.coverImage.url}
+                                alt={item.coverImage.alt || item.name}
+                                loading="lazy"
+                              />
+                            ) : (
+                              <div className="compatible-product-placeholder">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                                  <circle cx="8.5" cy="8.5" r="1.5" />
+                                  <path d="M21 15l-5-5L5 21" />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                          <div className="compatible-product-info">
+                            <h4 className="compatible-product-name">{item.name}</h4>
+                            {item.shortDescription && (
+                              <p className="compatible-product-desc">{item.shortDescription}</p>
+                            )}
+                            <div className="compatible-product-footer">
+                              <span className="compatible-product-price">
+                                {item.purchaseMode === 'buy' ? item.price.formatted : 'Request Quote'}
+                              </span>
+                              <span className="compatible-product-mode">
+                                {item.purchaseMode === 'buy' ? 'Direct Buy' : 'RFQ'}
+                              </span>
+                            </div>
+                          </div>
+                        </Link>
                       ))}
-                    </ul>
-                  </article>
+                    </div>
+                  </div>
                 ))}
               </div>
             ) : (
-              <p className="section-description">Compatible accessories and controls will appear here as more catalog relationships are mapped into the storefront contract.</p>
+              <p className="section-description">Compatible accessories and controls will appear here as more catalog relationships are configured.</p>
             )}
           </article>
 
@@ -759,54 +794,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               ))}
             </div>
           </article>
-
-          <div className="detail-related-block">
-            <div className="section-header detail-section-header">
-              <div>
-                <h2 className="section-title">You may also like</h2>
-                <p className="section-description">Shelf content stays close to the current catalog contract while matching the new PDP pacing and information hierarchy.</p>
-              </div>
-            </div>
-
-            {relatedCandidates.length ? (
-              <div className="detail-related-grid">
-                {relatedCandidates.slice(0, 6).map((item) => (
-                  <Link key={item.id} href={withLocalePath(`/products/${item.slug}`, locale)} className="detail-related-card">
-                    <span className="product-badge">{item.purchaseMode === 'buy' ? 'Related Product' : 'Project Match'}</span>
-                    <strong>{item.name}</strong>
-                    <p className="section-description compact-copy">{item.shortDescription ?? 'A nearby family or accessory often considered in the same sourcing session.'}</p>
-                    <span className="card-kicker">{item.purchaseMode === 'buy' ? item.price.formatted : 'Request Quote'}</span>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <article className="info-card detail-resource-card">
-                <p className="section-description">Related catalog items will appear here after more same-family relationships are published.</p>
-              </article>
-            )}
-
-            {peopleAlsoBought.length ? (
-              <div className="detail-recommendation-block">
-                <div className="section-header detail-section-header">
-                  <div>
-                    <h2 className="section-title">Recently sourced together</h2>
-                    <p className="section-description">A second shelf keeps cross-sell behavior visible without overloading the buy box.</p>
-                  </div>
-                </div>
-
-                <div className="detail-related-grid">
-                  {peopleAlsoBought.map((item) => (
-                    <Link key={item.id} href={withLocalePath(`/products/${item.slug}`, locale)} className="detail-related-card">
-                      <span className="product-badge">Also Bought</span>
-                      <strong>{item.name}</strong>
-                      <p className="section-description compact-copy">{item.shortDescription ?? 'Frequently reviewed in the same buying session for cabinet, control, or assembly fit.'}</p>
-                      <span className="card-kicker">{item.purchaseMode === 'buy' ? item.price.formatted : 'Request Quote'}</span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-          </div>
 
           <RecentlyViewedProducts currentProduct={product} fallbackProducts={[...relatedCandidates, ...peopleAlsoBought]} locale={locale} />
         </div>

@@ -443,22 +443,28 @@ async function main() {
         .onConflictDoNothing();
     }
 
-    const galleryImages = [...new Set([...(item.galleryImages || []), ...(item.ldProduct.images || [])].filter(Boolean))].slice(0, 12);
+    // 迁移所有图片（主图 + 图库 + 尺寸图）
+    const allImages = [...new Set([...(item.galleryImages || []), ...(item.ldProduct.images || [])].filter(Boolean))].slice(0, 12);
     await db!.delete(productImages).where(eq(productImages.productId, saved.id));
-    if (galleryImages.length) {
-      await db!
-        .insert(productImages)
-        .values(
-          galleryImages.map((imageUrl, index) => ({
-            productId: saved.id,
-            url: imageUrl,
-            alt: item.heading || name,
-            sortOrder: index + 1,
-            isPrimary: index === 0,
-          })),
-        );
+    
+    if (allImages.length) {
+      const imageRows = allImages.map((imageUrl, index) => {
+        // 判断是否为尺寸图（URL 包含 dimension/diagram/size 等关键词）
+        const isDimension = /dimension|diagram|size|drawing|outline/i.test(imageUrl);
+        return {
+          productId: saved.id,
+          url: imageUrl,
+          alt: item.heading || name,
+          sortOrder: index + 1,
+          isPrimary: index === 0,
+          isDimension: isDimension,
+          imageType: isDimension ? 'dimension' : 'gallery',
+        };
+      });
+      await db!.insert(productImages).values(imageRows);
     }
 
+    // 迁移技术规格参数
     await db!.delete(productFeatures).where(eq(productFeatures.productId, saved.id));
     const specRows = (item.technicalSpecs || [])
       .filter((spec) => spec.key && spec.value)
@@ -474,15 +480,16 @@ async function main() {
       await db!.insert(productFeatures).values(specRows);
     }
 
+    // 迁移下载文件（PDF 等技术文档）
     await db!.delete(attachments).where(eq(attachments.productId, saved.id));
     const attachmentRows = (item.downloads || [])
-      .filter((asset) => asset.url)
+      .filter((asset) => asset.url && !asset.url.includes('#')) // 过滤掉页面锚点链接
       .slice(0, 10)
       .map((asset, index) => ({
         productId: saved.id,
-        name: (asset.label || `Technical Asset ${index + 1}`).slice(0, 255),
+        name: (asset.label || `Technical Document ${index + 1}`).slice(0, 255),
         url: asset.url,
-        mimeType: asset.mimeType || 'application/octet-stream',
+        mimeType: asset.mimeType || 'application/pdf',
         sortOrder: index + 1,
       }));
     if (attachmentRows.length) {

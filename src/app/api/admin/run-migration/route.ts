@@ -29,6 +29,19 @@ export async function GET() {
       );
     `);
 
+    // 2.1 Add new columns to product_images if they don't exist
+    await db.execute(`
+      DO $$ BEGIN
+        ALTER TABLE "product_images" ADD COLUMN "is_dimension" boolean NOT NULL DEFAULT false;
+      EXCEPTION WHEN duplicate_column THEN null; END $$;
+    `);
+
+    await db.execute(`
+      DO $$ BEGIN
+        ALTER TABLE "product_images" ADD COLUMN "image_type" varchar(50) NOT NULL DEFAULT 'gallery';
+      EXCEPTION WHEN duplicate_column THEN null; END $$;
+    `);
+
     // 3. Add foreign keys
     await db.execute(`
       DO $$ BEGIN

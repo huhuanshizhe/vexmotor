@@ -222,6 +222,8 @@ export const productImages = pgTable('product_images', {
   height: integer('height'),
   sortOrder: integer('sort_order').notNull().default(0),
   isPrimary: boolean('is_primary').notNull().default(false),
+  isDimension: boolean('is_dimension').notNull().default(false), // 是否为尺寸图
+  imageType: varchar('image_type', { length: 50 }).notNull().default('gallery'), // gallery, dimension, detail
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
