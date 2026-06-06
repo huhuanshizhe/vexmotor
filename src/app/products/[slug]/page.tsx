@@ -443,12 +443,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     })),
   };
   const dimensionImages = galleryImages.filter((image) => {
-    const marker = `${image.alt ?? ''} ${image.url ?? ''} ${image.imageType ?? ''}`.toLowerCase();
+    const marker = `${image.url ?? ''} ${image.imageType ?? ''}`.toLowerCase();
     return image.isDimension || image.imageType === 'dimension' || /dimension|diagram|size|drawing|outline|mechanical/i.test(marker);
   });
   const torqueCurveImages = galleryImages.filter((image) => {
-    const marker = `${image.alt ?? ''} ${image.url ?? ''} ${image.imageType ?? ''}`.toLowerCase();
-    return /torque|curve|performance|graph/i.test(marker) && !dimensionImages.some((dimensionImage) => dimensionImage.url === image.url);
+    const marker = `${image.url ?? ''} ${image.imageType ?? ''}`.toLowerCase();
+    return (image.imageType === 'detail' || /torque|curve|performance|graph/i.test(marker)) && !dimensionImages.some((dimensionImage) => dimensionImage.url === image.url);
   });
 
   return (
