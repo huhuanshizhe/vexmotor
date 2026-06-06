@@ -29,7 +29,8 @@ function productSlugFromPath(pathname: string) {
 }
 
 export async function POST() {
-  const sql = postgres(DATABASE_URL, { max: 2 });
+  // DATABASE_URL is guaranteed to be string by the check above
+  const sql = postgres(DATABASE_URL as string, { max: 2 });
 
   try {
     const productsPath = path.resolve(process.cwd(), 'migration/vexmotor/products.json');
