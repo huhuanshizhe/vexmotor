@@ -212,6 +212,8 @@ function buildInitialCategories(): AdminMemoryCategory[] {
     seoDescription: category.description ?? null,
     status: 'active',
     sortOrder: index + 1,
+    isFeatured: category.isFeatured ?? false,
+    featuredOrder: category.featuredOrder ?? 0,
     createdAt: daysAgo(200 - index * 6),
     updatedAt: daysAgo(index + 1),
   }));
