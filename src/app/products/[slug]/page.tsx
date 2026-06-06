@@ -49,28 +49,6 @@ function formatSpecValue(value: string, unit?: string | null) {
   return unit ? `${value} ${unit}` : value;
 }
 
-function normalizeComparableText(value: string) {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, '');
-}
-
-function resolveLeadCopy(product: StorefrontProductDetail) {
-  const candidates = [product.shortDescription, product.descriptionLong, product.description]
-    .map((value) => value?.trim())
-    .filter((value): value is string => Boolean(value));
-  const blockedValues = new Set([
-    normalizeComparableText(product.name),
-    normalizeComparableText(product.sku),
-    normalizeComparableText(`${product.name}${product.sku}`),
-  ]);
-
-  return (
-    candidates.find((candidate) => {
-      const normalized = normalizeComparableText(candidate);
-      return normalized.length > 32 && !blockedValues.has(normalized);
-    }) ?? product.descriptionLong?.trim() ?? product.description.trim()
-  );
-}
-
 function buildSpecGroups(product: StorefrontProductDetail): DetailSpecGroup[] {
   const categoryMap: Record<'product_type' | 'electrical' | 'mechanical' | 'performance' | 'environmental' | 'general', DetailSpecRow[]> = {
     product_type: [],
@@ -306,7 +284,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const specGroups = buildSpecGroups(product);
   const topSpecs = specGroups.flatMap((group) => group.rows).slice(0, 5);
   const heroSpecs = topSpecs.slice(0, 4);
-  const leadCopy = resolveLeadCopy(product);
   const summaryEyebrow = category ? category.name : 'Catalog product';
   const procurementLabel = product.purchaseMode === 'buy' ? 'Direct Buy' : 'RFQ Project';
   const availabilityLabel = product.inStock ? 'Stock program active' : 'Build-to-order review';
@@ -340,6 +317,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     .filter((item) => item.id !== product.id && !relatedCandidates.some((relatedProduct) => relatedProduct.id === item.id))
     .slice(0, 4);
   const compatibleGroups = buildCompatibleGroups(product.compatibleGroups ?? [], [...relatedCandidates, ...peopleAlsoBought]);
+  const visibleCompatibleGroups = compatibleGroups.filter((group) => group.items.length);
+  const compatibleProductCount = visibleCompatibleGroups.reduce((sum, group) => sum + group.items.length, 0);
   const applicationCards = homeData.featuredIndustries.slice(0, 3).map((industry, index) => {
     const highlightedSpec = topSpecs[index] ?? topSpecs[0];
     const specLine = highlightedSpec ? `${highlightedSpec.label.toLowerCase()} ${highlightedSpec.value}` : 'repeatable motion performance';
@@ -550,8 +529,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                     ) : null}
                   </div>
                 </div>
-
-                <p className="pdp-lead-copy">{leadCopy}</p>
               </div>
 
               <div className="product-pricing-stack pdp-price-panel">
@@ -692,6 +669,60 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             contactPath={contactPath}
             documentCards={documentCards}
           />
+
+          {visibleCompatibleGroups.length ? (
+            <article id="detail-compatible" className="info-card detail-panel-card">
+              <div className="detail-panel-heading">
+                <div className="detail-panel-copy">
+                  <span className="card-kicker">Compatible planning</span>
+                  <h2 className="detail-panel-title">Compatible and recommended products already paired with this SKU.</h2>
+                </div>
+                <div className="detail-panel-badges">
+                  <span className="detail-panel-badge">{compatibleProductCount} matches</span>
+                </div>
+              </div>
+
+              <div className="compatible-groups-container">
+                {visibleCompatibleGroups.map((group) => (
+                  <section key={`${group.title}-${group.badge}`} className="compatible-group" aria-label={group.title}>
+                    <div className="compatible-group-header">
+                      <span className="compatible-badge">{group.badge}</span>
+                      <div className="detail-panel-copy">
+                        <h3 className="compatible-group-title">{group.title}</h3>
+                        <p className="compatible-group-description">{group.description}</p>
+                      </div>
+                    </div>
+
+                    <div className="compatible-product-list">
+                      {group.items.map((item) => (
+                        <Link key={item.id} href={withLocalePath(`/products/${item.slug}`, locale)} className="compatible-product-card">
+                          <div className="compatible-product-image">
+                            {item.coverImage ? (
+                              <img src={item.coverImage.url} alt={item.coverImage.alt || item.name} loading="lazy" />
+                            ) : (
+                              <div className="compatible-product-placeholder" aria-hidden="true">No image</div>
+                            )}
+                          </div>
+
+                          <div className="compatible-product-info">
+                            <p className="product-meta">SKU {item.sku}</p>
+                            <h4 className="compatible-product-name">{item.name}</h4>
+
+                            <div className="compatible-product-footer">
+                              <span className="compatible-product-price">{item.purchaseMode === 'buy' ? item.price.formatted : 'Request Quote'}</span>
+                              <span className="compatible-product-mode">
+                                {item.purchaseMode === 'buy' ? (item.inStock ? 'In stock' : 'Lead time') : 'RFQ'}
+                              </span>
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </section>
+                ))}
+              </div>
+            </article>
+          ) : null}
 
           <div id="detail-faq" className="tab-content-wrapper detail-bottom-grid">
             <article className="info-card detail-panel-card detail-faq-card">
