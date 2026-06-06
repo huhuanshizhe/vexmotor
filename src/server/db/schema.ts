@@ -41,6 +41,7 @@ export const cmsStatusEnum = pgEnum('cms_status', ['draft', 'published', 'archiv
 export const newsletterStatusEnum = pgEnum('newsletter_status', ['subscribed', 'unsubscribed']);
 export const accountTypeEnum = pgEnum('account_type', ['oauth', 'oidc', 'email', 'credentials']);
 export const editorialContentTypeEnum = pgEnum('editorial_content_type', ['blog', 'press', 'faq', 'tech-faq', 'glossary', 'support']);
+export const productRelationTypeEnum = pgEnum('product_relation_type', ['drivers', 'mechanical-integration', 'power-control', 'custom']);
 
 export const users = pgTable(
   'users',
@@ -416,6 +417,23 @@ export const productCategories = pgTable(
   },
   (table) => ({
     pk: primaryKey({ columns: [table.productId, table.categoryId], name: 'product_categories_pk' }),
+  }),
+);
+
+export const productRelations = pgTable(
+  'product_relations',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    productId: uuid('product_id').notNull().references(() => products.id, { onDelete: 'cascade' }),
+    relatedProductId: uuid('related_product_id').notNull().references(() => products.id, { onDelete: 'cascade' }),
+    relationType: productRelationTypeEnum('relation_type').notNull().default('custom'),
+    relationLabel: varchar('relation_label', { length: 100 }),
+    sortOrder: integer('sort_order').notNull().default(0),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    uniqueRelation: uniqueIndex('product_relations_unique').on(table.productId, table.relatedProductId),
+    productIdx: index('product_relations_product_idx').on(table.productId, table.sortOrder),
   }),
 );
 

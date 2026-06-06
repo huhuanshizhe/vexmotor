@@ -62,6 +62,12 @@ export type StorefrontAttachment = {
   mimeType: string;
 };
 
+export type StorefrontCompatibleGroup = {
+  relationType: string;
+  title: string;
+  items: StorefrontProductCard[];
+};
+
 export type StorefrontProductDetail = StorefrontProductCard & {
   description: string;
   gallery: StorefrontImage[];
@@ -69,6 +75,7 @@ export type StorefrontProductDetail = StorefrontProductCard & {
   attributes: Array<{ group: string; value: string }>;
   attachments: StorefrontAttachment[];
   relatedProducts: StorefrontProductCard[];
+  compatibleGroups: StorefrontCompatibleGroup[];
   stockQuantity: number;
   seoTitle?: string | null;
   seoDescription?: string | null;

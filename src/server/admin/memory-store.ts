@@ -71,6 +71,15 @@ export type AdminMemoryProduct = {
     url: string;
     mimeType: string;
   }>;
+  compatibleProducts: Array<{
+    id: string;
+    relatedProductId: string;
+    relatedProductName: string;
+    relatedProductSku: string;
+    relationType: 'drivers' | 'mechanical-integration' | 'power-control' | 'custom';
+    relationLabel: string | null;
+    sortOrder: number;
+  }>;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -266,6 +275,7 @@ function buildInitialProducts(): AdminMemoryProduct[] {
         url: attachment.url,
         mimeType: attachment.mimeType,
       })),
+      compatibleProducts: [],
       createdAt: daysAgo(160 - index * 5),
       updatedAt: daysAgo(index + 1),
     };
@@ -509,19 +519,33 @@ export function getMemoryProduct(id: string) {
 }
 
 export function createMemoryProduct(
-  input: Omit<AdminMemoryProduct, 'id' | 'createdAt' | 'updatedAt' | 'images' | 'features' | 'attachments'> & {
+  input: Omit<AdminMemoryProduct, 'id' | 'createdAt' | 'updatedAt' | 'images' | 'features' | 'attachments' | 'compatibleProducts'> & {
     images: Array<Omit<AdminMemoryProduct['images'][number], 'id'>>;
     features: Array<Omit<AdminMemoryProduct['features'][number], 'id'>>;
     attachments: Array<Omit<AdminMemoryProduct['attachments'][number], 'id'>>;
+    compatibleProducts?: Array<Omit<AdminMemoryProduct['compatibleProducts'][number], 'id' | 'relatedProductName' | 'relatedProductSku'>>;
   },
 ) {
   const now = new Date();
+  const store = getAdminMemoryStore();
   const created: AdminMemoryProduct = {
     ...input,
     id: randomUUID(),
     images: input.images.map((item) => ({ ...item, id: randomUUID() })),
     features: input.features.map((item) => ({ ...item, id: randomUUID() })),
     attachments: input.attachments.map((item) => ({ ...item, id: randomUUID() })),
+    compatibleProducts: (input.compatibleProducts ?? []).map((item) => {
+      const related = store.products.find((p) => p.id === item.relatedProductId);
+      return {
+        id: randomUUID(),
+        relatedProductId: item.relatedProductId,
+        relatedProductName: related?.name ?? '',
+        relatedProductSku: related?.sku ?? '',
+        relationType: item.relationType,
+        relationLabel: item.relationLabel,
+        sortOrder: item.sortOrder,
+      };
+    }),
     createdAt: now,
     updatedAt: now,
   };
@@ -532,10 +556,11 @@ export function createMemoryProduct(
 
 export function updateMemoryProduct(
   id: string,
-  input: Partial<Omit<AdminMemoryProduct, 'id' | 'createdAt' | 'updatedAt' | 'images' | 'features' | 'attachments'>> & {
+  input: Partial<Omit<AdminMemoryProduct, 'id' | 'createdAt' | 'updatedAt' | 'images' | 'features' | 'attachments' | 'compatibleProducts'>> & {
     images?: Array<Omit<AdminMemoryProduct['images'][number], 'id'>>;
     features?: Array<Omit<AdminMemoryProduct['features'][number], 'id'>>;
     attachments?: Array<Omit<AdminMemoryProduct['attachments'][number], 'id'>>;
+    compatibleProducts?: Array<Omit<AdminMemoryProduct['compatibleProducts'][number], 'id' | 'relatedProductName' | 'relatedProductSku'>>;
   },
 ) {
   const store = getAdminMemoryStore();
@@ -548,6 +573,20 @@ export function updateMemoryProduct(
     images: input.images ? input.images.map((item) => ({ ...item, id: randomUUID() })) : target.images,
     features: input.features ? input.features.map((item) => ({ ...item, id: randomUUID() })) : target.features,
     attachments: input.attachments ? input.attachments.map((item) => ({ ...item, id: randomUUID() })) : target.attachments,
+    compatibleProducts: input.compatibleProducts
+      ? input.compatibleProducts.map((item) => {
+          const related = store.products.find((p) => p.id === item.relatedProductId);
+          return {
+            id: randomUUID(),
+            relatedProductId: item.relatedProductId,
+            relatedProductName: related?.name ?? '',
+            relatedProductSku: related?.sku ?? '',
+            relationType: item.relationType,
+            relationLabel: item.relationLabel,
+            sortOrder: item.sortOrder,
+          };
+        })
+      : target.compatibleProducts,
     updatedAt: new Date(),
   });
 

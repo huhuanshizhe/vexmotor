@@ -24,6 +24,13 @@ const attachmentSchema = z.object({
   mimeType: z.string().min(1),
 });
 
+const compatibleProductSchema = z.object({
+  relatedProductId: z.string().min(1),
+  relationType: z.enum(['drivers', 'mechanical-integration', 'power-control', 'custom']).default('custom'),
+  relationLabel: z.string().optional().nullable().transform((value) => value ?? null),
+  sortOrder: z.coerce.number().int().min(0).optional(),
+});
+
 const patchSchema = z.object({
   name: z.string().min(1).optional(),
   slug: z.string().min(1).optional(),
@@ -44,6 +51,7 @@ const patchSchema = z.object({
   images: z.array(imageSchema).optional(),
   features: z.array(featureSchema).optional(),
   attachments: z.array(attachmentSchema).optional(),
+  compatibleProducts: z.array(compatibleProductSchema).optional(),
 });
 
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {

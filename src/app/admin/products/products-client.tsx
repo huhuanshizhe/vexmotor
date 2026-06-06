@@ -2,7 +2,7 @@
 
 import { DeleteOutlined, EditOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Card, Divider, Form, Input, InputNumber, Modal, Popconfirm, Select, Space, Switch, Table, Tag, Typography } from 'antd';
-import { useState, useTransition } from 'react';
+import { useCallback, useState, useTransition } from 'react';
 
 import {
   formatAdminMoney,
@@ -35,6 +35,7 @@ const initialValues = {
   images: [] as Array<{ url: string; alt: string; width: number | null; height: number | null; isPrimary: boolean }>,
   features: [] as Array<{ featureKey: string; featureValue: string; unit: string | null }>,
   attachments: [] as Array<{ name: string; url: string; mimeType: string }>,
+  compatibleProducts: [] as Array<{ relatedProductId: string; relationType: string; relationLabel: string | null }>,
 };
 
 type OptionItem = { label: string; value: string };
@@ -54,6 +55,25 @@ export function AdminProductsClient({
   const [search, setSearch] = useState('');
   const [isPending, startTransition] = useTransition();
   const [form] = Form.useForm<typeof initialValues>();
+  const [productSearchOptions, setProductSearchOptions] = useState<OptionItem[]>([]);
+
+  const handleProductSearch = useCallback(
+    async (query: string) => {
+      if (!query || query.length < 2) return;
+      const params = new URLSearchParams({ q: query });
+      if (editingId) params.set('excludeId', editingId);
+      try {
+        const res = await fetch(`/api/admin/products/search?${params}`);
+        const data = (await res.json()) as { items: Array<{ id: string; name: string; sku: string }> };
+        setProductSearchOptions(
+          data.items.map((item) => ({ value: item.id, label: `${item.name} (${item.sku})` })),
+        );
+      } catch {
+        // ignore
+      }
+    },
+    [editingId],
+  );
 
   async function reloadRows(nextSearch = search) {
     const params = new URLSearchParams();
@@ -86,6 +106,7 @@ export function AdminProductsClient({
         images: Array<{ url: string; alt: string; width: number | null; height: number | null; isPrimary: boolean }>;
         features: Array<{ featureKey: string; featureValue: string; unit: string | null }>;
         attachments: Array<{ name: string; url: string; mimeType: string }>;
+        compatibleProducts: Array<{ id: string; relatedProductId: string; relatedProductName: string; relationType: string; relationLabel: string | null }>;
       };
 
       setEditingId(row.id);
@@ -109,6 +130,11 @@ export function AdminProductsClient({
         images: detail.images,
         features: detail.features,
         attachments: detail.attachments,
+        compatibleProducts: (detail.compatibleProducts ?? []).map((item) => ({
+          relatedProductId: item.relatedProductId,
+          relationType: item.relationType,
+          relationLabel: item.relationLabel,
+        })),
       });
       setOpen(true);
     });
@@ -366,6 +392,56 @@ export function AdminProductsClient({
                 ))}
                 <Button icon={<PlusOutlined />} onClick={() => add({ name: '', url: '', mimeType: 'application/pdf' })}>
                   新增附件
+                </Button>
+              </Space>
+            )}
+          </Form.List>
+
+          <Divider>兼容产品 (Compatible Products)</Divider>
+          <Form.List name="compatibleProducts">
+            {(fields, { add, remove }) => (
+              <Space direction="vertical" style={{ width: '100%' }}>
+                {fields.map((field) => (
+                  <Card key={field.key} size="small">
+                    <Space direction="vertical" style={{ width: '100%' }}>
+                      <Form.Item name={[field.name, 'relatedProductId']} label="关联产品" rules={[{ required: true, message: '请选择关联产品' }]}>
+                        <Select
+                          showSearch
+                          filterOption={false}
+                          onSearch={handleProductSearch}
+                          options={productSearchOptions}
+                          placeholder="搜索产品名称或 SKU"
+                          notFoundContent="输入至少 2 个字符搜索"
+                        />
+                      </Form.Item>
+                      <Form.Item name={[field.name, 'relationType']} label="关联类型" rules={[{ required: true }]}>
+                        <Select
+                          options={[
+                            { value: 'drivers', label: 'Drivers (驱动)' },
+                            { value: 'mechanical-integration', label: 'Mechanical Integration (机械集成)' },
+                            { value: 'power-control', label: 'Power & Control (电源与控制)' },
+                            { value: 'custom', label: 'Custom (自定义)' },
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item noStyle shouldUpdate={(prev, cur) => prev.compatibleProducts?.[field.name]?.relationType !== cur.compatibleProducts?.[field.name]?.relationType}>
+                        {({ getFieldValue }) => {
+                          const relationType = getFieldValue(['compatibleProducts', field.name, 'relationType']);
+                          return relationType === 'custom' ? (
+                            <Form.Item name={[field.name, 'relationLabel']} label="自定义标签">
+                              <Input placeholder="例如：推荐配件" />
+                            </Form.Item>
+                          ) : null;
+                        }}
+                      </Form.Item>
+                      <Button danger icon={<MinusCircleOutlined />} onClick={() => remove(field.name)}>
+                        删除兼容产品
+                      </Button>
+                    </Space>
+                  </Card>
+                ))}
+                <Button icon={<PlusOutlined />} onClick={() => add({ relatedProductId: '', relationType: 'mechanical-integration', relationLabel: null })}>
+                  新增兼容产品
                 </Button>
               </Space>
             )}

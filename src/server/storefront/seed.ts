@@ -13,7 +13,7 @@ function money(amount: number) {
 }
 
 const categories: StorefrontCategory[] = [
-  // 旧站真实分类（15 个）
+  // 旧站真实分类�?5 个）
   {
     id: 'cat-1',
     name: 'Nema 8 Stepper Motor',
@@ -208,6 +208,7 @@ const products: StorefrontProductDetail[] = [
       },
     ],
     relatedProducts: [],
+    compatibleGroups: [],
     seoTitle: 'Nema 17 Bipolar Stepper Motor 45Ncm Torque',
     seoDescription: 'Buy a Nema 17 industrial stepper motor with 45Ncm torque and 1.5A rated current.',
     features: [
@@ -258,6 +259,7 @@ const products: StorefrontProductDetail[] = [
     ],
     attachments: [],
     relatedProducts: [],
+    compatibleGroups: [],
     seoTitle: 'Nema 23 Stepper Motor 240Ncm Torque',
     seoDescription: 'Industrial Nema 23 stepper motor for CNC and automation projects.',
     features: [
@@ -303,6 +305,7 @@ const products: StorefrontProductDetail[] = [
     attributes: [{ group: 'Sales Model', value: 'Custom RFQ' }],
     attachments: [],
     relatedProducts: [],
+    compatibleGroups: [],
     seoTitle: 'OEM Motion Assembly RFQ',
     seoDescription: 'Submit an inquiry for a custom integrated motion assembly.',
     features: [{ key: 'Workflow', value: 'Inquiry-first' }],
@@ -349,6 +352,7 @@ const products: StorefrontProductDetail[] = [
     ],
     attachments: [],
     relatedProducts: [],
+    compatibleGroups: [],
     seoTitle: 'Closed Loop Stepper Motor Kit 2.0Nm',
     seoDescription: 'Factory-direct closed loop stepper kit with driver and encoder feedback.',
     features: [
@@ -398,6 +402,7 @@ const products: StorefrontProductDetail[] = [
     ],
     attachments: [],
     relatedProducts: [],
+    compatibleGroups: [],
     seoTitle: 'Digital Stepper Driver 18-50VDC',
     seoDescription: 'Factory-direct digital stepper driver for NEMA 17, 23, and 24 motion systems.',
     features: [
@@ -447,6 +452,7 @@ const products: StorefrontProductDetail[] = [
     ],
     attachments: [],
     relatedProducts: [],
+    compatibleGroups: [],
     seoTitle: '48V 10A Switching Power Supply',
     seoDescription: 'Industrial 48V switching power supply for stepper and servo control cabinets.',
     features: [
@@ -496,6 +502,7 @@ const products: StorefrontProductDetail[] = [
     ],
     attachments: [],
     relatedProducts: [],
+    compatibleGroups: [],
     seoTitle: '57mm Planetary Gearbox 10:1',
     seoDescription: 'Factory-direct 10:1 planetary gearbox for 57mm stepper and servo motors.',
     features: [
@@ -545,6 +552,7 @@ const products: StorefrontProductDetail[] = [
     ],
     attachments: [],
     relatedProducts: [],
+    compatibleGroups: [],
     seoTitle: '24V Electric Linear Actuator 100mm Stroke',
     seoDescription: 'Compact electric linear actuator for fixture and equipment positioning.',
     features: [

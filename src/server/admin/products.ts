@@ -10,7 +10,7 @@ import {
   updateMemoryProduct,
 } from '@/server/admin/memory-store';
 import { db } from '@/server/db';
-import { attachments, brands, categories, productFeatures, productImages, products } from '@/server/db/schema';
+import { attachments, brands, categories, productFeatures, productImages, productRelations, products } from '@/server/db/schema';
 
 export type AdminProductRow = {
   id: string;
@@ -55,6 +55,15 @@ export type AdminProductDetail = AdminProductRow & {
     url: string;
     mimeType: string;
   }>;
+  compatibleProducts: Array<{
+    id: string;
+    relatedProductId: string;
+    relatedProductName: string;
+    relatedProductSku: string;
+    relationType: 'drivers' | 'mechanical-integration' | 'power-control' | 'custom';
+    relationLabel: string | null;
+    sortOrder: number;
+  }>;
 };
 
 export type AdminProductInput = {
@@ -91,6 +100,12 @@ export type AdminProductInput = {
     url: string;
     mimeType: string;
   }>;
+  compatibleProducts?: Array<{
+    relatedProductId: string;
+    relationType: 'drivers' | 'mechanical-integration' | 'power-control' | 'custom';
+    relationLabel?: string | null;
+    sortOrder?: number;
+  }>;
 };
 
 function mapMemoryProductRow(id: string): AdminProductDetail | null {
@@ -125,6 +140,7 @@ function mapMemoryProductRow(id: string): AdminProductDetail | null {
     images: product.images,
     features: product.features,
     attachments: product.attachments,
+    compatibleProducts: product.compatibleProducts ?? [],
   };
 }
 
@@ -162,6 +178,12 @@ function toMemoryProductPayload(input: AdminProductInput) {
       name: item.name,
       url: item.url,
       mimeType: item.mimeType,
+    })),
+    compatibleProducts: (input.compatibleProducts ?? []).map((item, index) => ({
+      relatedProductId: item.relatedProductId,
+      relationType: item.relationType,
+      relationLabel: item.relationLabel ?? null,
+      sortOrder: item.sortOrder ?? index + 1,
     })),
   };
 }
@@ -286,10 +308,24 @@ export async function getAdminProductDetail(id: string): Promise<AdminProductDet
       return null;
     }
 
-    const [imageRows, featureRows, attachmentRows] = await Promise.all([
+    const [imageRows, featureRows, attachmentRows, relationRows] = await Promise.all([
       db.select().from(productImages).where(eq(productImages.productId, id)).orderBy(asc(productImages.sortOrder)),
       db.select().from(productFeatures).where(eq(productFeatures.productId, id)).orderBy(asc(productFeatures.sortOrder)),
       db.select().from(attachments).where(eq(attachments.productId, id)).orderBy(asc(attachments.sortOrder)),
+      db
+        .select({
+          id: productRelations.id,
+          relatedProductId: productRelations.relatedProductId,
+          relatedProductName: products.name,
+          relatedProductSku: products.sku,
+          relationType: productRelations.relationType,
+          relationLabel: productRelations.relationLabel,
+          sortOrder: productRelations.sortOrder,
+        })
+        .from(productRelations)
+        .innerJoin(products, eq(products.id, productRelations.relatedProductId))
+        .where(eq(productRelations.productId, id))
+        .orderBy(asc(productRelations.sortOrder)),
     ]);
 
     return {
@@ -313,6 +349,15 @@ export async function getAdminProductDetail(id: string): Promise<AdminProductDet
         name: item.name,
         url: item.url,
         mimeType: item.mimeType,
+      })),
+      compatibleProducts: relationRows.map((item) => ({
+        id: item.id,
+        relatedProductId: item.relatedProductId,
+        relatedProductName: item.relatedProductName,
+        relatedProductSku: item.relatedProductSku,
+        relationType: item.relationType,
+        relationLabel: item.relationLabel,
+        sortOrder: item.sortOrder,
       })),
     };
   } catch {
@@ -391,6 +436,18 @@ export async function createAdminProduct(input: AdminProductInput) {
         );
       }
 
+      if (input.compatibleProducts?.length) {
+        await tx.insert(productRelations).values(
+          input.compatibleProducts.map((item, index) => ({
+            productId: product.id,
+            relatedProductId: item.relatedProductId,
+            relationType: item.relationType,
+            relationLabel: item.relationLabel ?? null,
+            sortOrder: item.sortOrder ?? index + 1,
+          })),
+        );
+      }
+
       return product;
     });
 
@@ -435,6 +492,12 @@ export async function updateAdminProduct(id: string, input: Partial<AdminProduct
         name: item.name,
         url: item.url,
         mimeType: item.mimeType,
+      })),
+      compatibleProducts: input.compatibleProducts?.map((item, index) => ({
+        relatedProductId: item.relatedProductId,
+        relationType: item.relationType,
+        relationLabel: item.relationLabel ?? null,
+        sortOrder: item.sortOrder ?? index + 1,
       })),
     });
   }
@@ -513,6 +576,21 @@ export async function updateAdminProduct(id: string, input: Partial<AdminProduct
         }
       }
 
+      if (input.compatibleProducts) {
+        await tx.delete(productRelations).where(eq(productRelations.productId, id));
+        if (input.compatibleProducts.length) {
+          await tx.insert(productRelations).values(
+            input.compatibleProducts.map((item, index) => ({
+              productId: id,
+              relatedProductId: item.relatedProductId,
+              relationType: item.relationType,
+              relationLabel: item.relationLabel ?? null,
+              sortOrder: item.sortOrder ?? index + 1,
+            })),
+          );
+        }
+      }
+
       return product;
     });
 
@@ -551,6 +629,12 @@ export async function updateAdminProduct(id: string, input: Partial<AdminProduct
         name: item.name,
         url: item.url,
         mimeType: item.mimeType,
+      })),
+      compatibleProducts: input.compatibleProducts?.map((item, index) => ({
+        relatedProductId: item.relatedProductId,
+        relationType: item.relationType,
+        relationLabel: item.relationLabel ?? null,
+        sortOrder: item.sortOrder ?? index + 1,
       })),
     });
   }

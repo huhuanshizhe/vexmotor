@@ -8,13 +8,14 @@ import {
   productCategories,
   productFeatures,
   productImages,
+  productRelations,
   products,
   productVariants,
 } from '@/server/db/schema';
 
 import { storefrontNavigationBase, footerContactBlocks, footerPaymentMethods, footerCopyright } from './site-shell';
 import { getSeedCategories } from './seed';
-import type { HomeData, NavigationData, ProductListResult, ProductListSort, StorefrontCategory, StorefrontImage, StorefrontProductCard, StorefrontProductDetail } from './types';
+import type { HomeData, NavigationData, ProductListResult, ProductListSort, StorefrontCategory, StorefrontCompatibleGroup, StorefrontImage, StorefrontProductCard, StorefrontProductDetail } from './types';
 
 const defaultHomeData: HomeData = {
   heroBanners: [],
@@ -538,6 +539,7 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
     ]);
 
     const related = await getRelatedProducts(slug, categoryRows[0]?.slug ?? null, product.id);
+    const compatibleGroups = await getCompatibleGroups(product.id);
 
     return {
       id: product.id,
@@ -570,6 +572,7 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
         mimeType: item.mimeType,
       })),
       relatedProducts: related,
+      compatibleGroups,
       seoTitle: product.seoTitle,
       seoDescription: product.seoDescription,
       features: featureRows.map((item) => ({
@@ -652,6 +655,72 @@ export async function getRelatedProducts(slug: string, categorySlug?: string | n
       inStock: item.stockQuantity > 0,
       brand: item.brandId && item.brandName && item.brandSlug ? { id: item.brandId, name: item.brandName, slug: item.brandSlug } : null,
     }));
+  } catch {
+    return [];
+  }
+}
+
+const RELATION_TYPE_LABELS: Record<string, string> = {
+  drivers: 'Drivers',
+  'mechanical-integration': 'Mechanical integration',
+  'power-control': 'Power & control',
+  custom: 'Compatible',
+};
+
+export async function getCompatibleGroups(productId: string): Promise<StorefrontCompatibleGroup[]> {
+  if (!db) return [];
+
+  try {
+    const rows = await db
+      .select({
+        relationType: productRelations.relationType,
+        relationLabel: productRelations.relationLabel,
+        sortOrder: productRelations.sortOrder,
+        id: products.id,
+        name: products.name,
+        slug: products.slug,
+        sku: products.sku,
+        shortDescription: products.shortDescription,
+        purchaseMode: products.purchaseMode,
+        stockQuantity: products.stockQuantity,
+        price: products.price,
+        compareAtPrice: products.compareAtPrice,
+        currencyCode: products.currencyCode,
+        brandId: brands.id,
+        brandName: brands.name,
+        brandSlug: brands.slug,
+      })
+      .from(productRelations)
+      .innerJoin(products, eq(products.id, productRelations.relatedProductId))
+      .leftJoin(brands, eq(products.brandId, brands.id))
+      .where(and(eq(productRelations.productId, productId), eq(products.status, 'active')))
+      .orderBy(asc(productRelations.sortOrder));
+
+    const groupMap = new Map<string, StorefrontCompatibleGroup>();
+    for (const row of rows) {
+      const type = row.relationType;
+      if (!groupMap.has(type)) {
+        groupMap.set(type, {
+          relationType: type,
+          title: row.relationLabel ?? RELATION_TYPE_LABELS[type] ?? type,
+          items: [],
+        });
+      }
+      groupMap.get(type)!.items.push({
+        id: row.id,
+        name: row.name,
+        slug: row.slug,
+        sku: row.sku,
+        shortDescription: row.shortDescription,
+        price: asMoney(row.price, row.currencyCode),
+        compareAtPrice: row.compareAtPrice ? asMoney(row.compareAtPrice, row.currencyCode) : null,
+        purchaseMode: row.purchaseMode,
+        inStock: row.stockQuantity > 0,
+        brand: row.brandId && row.brandName && row.brandSlug ? { id: row.brandId, name: row.brandName, slug: row.brandSlug } : null,
+      });
+    }
+
+    return Array.from(groupMap.values());
   } catch {
     return [];
   }

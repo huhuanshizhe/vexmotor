@@ -23,6 +23,13 @@ const attachmentSchema = z.object({
   mimeType: z.string().min(1),
 });
 
+const compatibleProductSchema = z.object({
+  relatedProductId: z.string().min(1),
+  relationType: z.enum(['drivers', 'mechanical-integration', 'power-control', 'custom']).default('custom'),
+  relationLabel: z.string().optional().nullable().transform((value) => value ?? null),
+  sortOrder: z.coerce.number().int().min(0).optional(),
+});
+
 const productSchema = z.object({
   name: z.string().min(1),
   slug: z.string().min(1),
@@ -43,6 +50,7 @@ const productSchema = z.object({
   images: z.array(imageSchema).default([]),
   features: z.array(featureSchema).default([]),
   attachments: z.array(attachmentSchema).default([]),
+  compatibleProducts: z.array(compatibleProductSchema).default([]),
 });
 
 export async function GET(request: NextRequest) {
