@@ -13,6 +13,8 @@ const categorySchema = z.object({
   seoDescription: z.string().nullable().optional().transform((value) => value ?? null),
   status: z.enum(['active', 'inactive']).default('active'),
   sortOrder: z.coerce.number().int().min(0).default(0),
+  isFeatured: z.boolean().default(false),
+  featuredOrder: z.coerce.number().int().min(0).default(0),
 });
 
 export async function GET(request: NextRequest) {

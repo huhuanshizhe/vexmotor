@@ -13,6 +13,8 @@ const patchSchema = z.object({
   seoDescription: z.string().nullable().optional().transform((value) => value ?? null),
   status: z.enum(['active', 'inactive']).optional(),
   sortOrder: z.coerce.number().int().min(0).optional(),
+  isFeatured: z.boolean().optional(),
+  featuredOrder: z.coerce.number().int().min(0).optional(),
 });
 
 export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {

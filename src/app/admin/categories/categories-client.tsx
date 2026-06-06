@@ -1,7 +1,7 @@
 'use client';
 
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Card, Form, Input, InputNumber, Modal, Popconfirm, Select, Space, Table, Tag, Typography } from 'antd';
+import { Button, Card, Form, Input, InputNumber, Modal, Popconfirm, Select, Space, Switch, Table, Tag, Typography } from 'antd';
 import { useMemo, useState, useTransition } from 'react';
 
 import { categoryStatusColors, categoryStatusLabels, categoryStatusOptions, formatAdminDate } from '@/lib/admin-display';
@@ -17,6 +17,8 @@ type CategoryFormValues = {
   seoDescription: string;
   status: 'active' | 'inactive';
   sortOrder: number;
+  isFeatured: boolean;
+  featuredOrder: number;
 };
 
 const initialValues: CategoryFormValues = {
@@ -29,6 +31,8 @@ const initialValues: CategoryFormValues = {
   seoDescription: '',
   status: 'active',
   sortOrder: 0,
+  isFeatured: false,
+  featuredOrder: 0,
 };
 
 export function AdminCategoriesClient({ initialRows }: { initialRows: AdminCategoryRow[] }) {
@@ -79,6 +83,8 @@ export function AdminCategoriesClient({ initialRows }: { initialRows: AdminCateg
       seoDescription: row.seoDescription ?? '',
       status: row.status,
       sortOrder: row.sortOrder,
+      isFeatured: row.isFeatured ?? false,
+      featuredOrder: row.featuredOrder ?? 0,
     });
     setOpen(true);
   }
@@ -102,6 +108,49 @@ export function AdminCategoriesClient({ initialRows }: { initialRows: AdminCateg
         closeModal();
         await reloadRows();
       }
+    });
+  }
+
+  async function handleGenerateImage() {
+    if (!editingId) {
+      Modal.warning({ title: '请先保存分类' });
+      return;
+    }
+
+    const name = form.getFieldValue('name');
+    if (!name) {
+      Modal.warning({ title: '请先输入分类名称' });
+      return;
+    }
+
+    Modal.confirm({
+      title: 'AI 生成图片',
+      content: `将为「${name}」生成专业产品图片，是否继续？`,
+      onOk: async () => {
+        try {
+          const response = await fetch('/api/admin/categories/generate-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ categoryId: editingId, name }),
+          });
+
+          const result = await response.json();
+          if (response.ok) {
+            Modal.success({
+              title: '生成成功',
+              content: '图片已生成并更新',
+              onOk: () => {
+                form.setFieldValue('imageUrl', result.imageUrl);
+                reloadRows();
+              },
+            });
+          } else {
+            Modal.error({ title: '生成失败', content: result.error || '未知错误' });
+          }
+        } catch (error) {
+          Modal.error({ title: '生成失败', content: String(error) });
+        }
+      },
     });
   }
 
@@ -206,8 +255,14 @@ export function AdminCategoriesClient({ initialRows }: { initialRows: AdminCateg
           <Form.Item name="description" label="分类描述">
             <Input.TextArea rows={3} />
           </Form.Item>
-          <Form.Item name="imageUrl" label="分类图片 URL">
-            <Input />
+          <Form.Item name="imageUrl" label="分类图片 URL" extra={form.getFieldValue('imageUrl') ? <img src={form.getFieldValue('imageUrl')} alt="" style={{ marginTop: 8, maxWidth: 200 }} /> : null}>
+            <Input addonAfter={editingId ? <Button type="link" onClick={handleGenerateImage}>AI 生成</Button> : null} />
+          </Form.Item>
+          <Form.Item name="isFeatured" label="推荐到首页" valuePropName="checked">
+            <Switch />
+          </Form.Item>
+          <Form.Item name="featuredOrder" label="首页展示顺序" extra="数字越小越靠前">
+            <InputNumber min={0} precision={0} style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item name="seoTitle" label="SEO 标题">
             <Input />

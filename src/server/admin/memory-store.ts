@@ -15,6 +15,8 @@ export type AdminMemoryCategory = {
   seoDescription: string | null;
   status: 'active' | 'inactive';
   sortOrder: number;
+  isFeatured: boolean;
+  featuredOrder: number;
   createdAt: Date;
   updatedAt: Date;
 };

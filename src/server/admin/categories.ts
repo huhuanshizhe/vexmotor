@@ -23,6 +23,8 @@ export type AdminCategoryRow = {
   seoDescription: string | null;
   status: 'active' | 'inactive';
   sortOrder: number;
+  isFeatured: boolean;
+  featuredOrder: number;
   productCount: number;
   createdAt: Date;
   updatedAt: Date;
@@ -38,6 +40,8 @@ export type AdminCategoryInput = {
   seoDescription?: string | null;
   status: 'active' | 'inactive';
   sortOrder?: number;
+  isFeatured?: boolean;
+  featuredOrder?: number;
 };
 
 function mapMemoryCategories(): AdminCategoryRow[] {
@@ -83,6 +87,8 @@ export async function getAdminCategories() {
       seoDescription: item.seoDescription,
       status: item.status,
       sortOrder: item.sortOrder,
+      isFeatured: item.isFeatured,
+      featuredOrder: item.featuredOrder,
       productCount: productCountMap.get(item.id) ?? 0,
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
@@ -114,6 +120,8 @@ export async function createAdminCategory(input: AdminCategoryInput) {
       seoDescription: input.seoDescription ?? null,
       status: input.status,
       sortOrder: input.sortOrder ?? 0,
+      isFeatured: input.isFeatured ?? false,
+      featuredOrder: input.featuredOrder ?? 0,
     });
   }
 
@@ -130,6 +138,8 @@ export async function createAdminCategory(input: AdminCategoryInput) {
         seoDescription: input.seoDescription ?? null,
         status: input.status,
         sortOrder: input.sortOrder ?? 0,
+        isFeatured: input.isFeatured ?? false,
+        featuredOrder: input.featuredOrder ?? 0,
       })
       .returning();
 
@@ -145,6 +155,8 @@ export async function createAdminCategory(input: AdminCategoryInput) {
       seoDescription: input.seoDescription ?? null,
       status: input.status,
       sortOrder: input.sortOrder ?? 0,
+      isFeatured: input.isFeatured ?? false,
+      featuredOrder: input.featuredOrder ?? 0,
     });
   }
 }
@@ -161,6 +173,8 @@ export async function updateAdminCategory(id: string, input: Partial<AdminCatego
       seoDescription: input.seoDescription,
       status: input.status,
       sortOrder: input.sortOrder,
+      isFeatured: input.isFeatured,
+      featuredOrder: input.featuredOrder,
     });
   }
 
@@ -177,6 +191,8 @@ export async function updateAdminCategory(id: string, input: Partial<AdminCatego
         seoDescription: input.seoDescription,
         status: input.status,
         sortOrder: input.sortOrder,
+        isFeatured: input.isFeatured,
+        featuredOrder: input.featuredOrder,
         updatedAt: new Date(),
       })
       .where(eq(categories.id, id))
@@ -194,6 +210,8 @@ export async function updateAdminCategory(id: string, input: Partial<AdminCatego
       seoDescription: input.seoDescription,
       status: input.status,
       sortOrder: input.sortOrder,
+      isFeatured: input.isFeatured,
+      featuredOrder: input.featuredOrder,
     });
   }
 }
