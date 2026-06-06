@@ -1829,13 +1829,13 @@ main {
 }
 
 .tab-button:hover {
-  color: var(--color-accent);
-  border-bottom-color: rgba(102, 126, 234, 0.3);
+  color: #F5A623;
+  border-bottom-color: rgba(245, 166, 35, 0.3);
 }
 
 .tab-button.active {
-  color: var(--color-accent);
-  border-bottom-color: var(--color-accent);
+  color: #F5A623;
+  border-bottom-color: #F5A623;
 }
 
 .product-tab-content {
