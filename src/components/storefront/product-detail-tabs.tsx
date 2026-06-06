@@ -50,31 +50,35 @@ type ProductDetailTabsProps = {
   documentCards: ProductDocumentCard[];
 };
 
+function formatStatValue(value: number) {
+  return String(value).padStart(2, '0');
+}
+
 const TAB_DEFINITIONS: Array<{
   key: ProductDetailTabKey;
   label: string;
   panelId: string;
   legacyHash: string;
 }> = [
-  { key: 'description', label: 'Description', panelId: 'detail-overview', legacyHash: 'tab-description' },
+  { key: 'description', label: 'Overview', panelId: 'detail-overview', legacyHash: 'tab-description' },
   { key: 'specifications', label: 'Specifications', panelId: 'detail-specifications', legacyHash: 'tab-specifications' },
   { key: 'dimensions', label: 'Dimensions', panelId: 'detail-dimensions', legacyHash: 'tab-dimensions' },
   { key: 'torque-curves', label: 'Torque Curves', panelId: 'detail-torque-curves', legacyHash: 'tab-torque-curves' },
-  { key: 'custom-design', label: 'CUSTOM DESIGN', panelId: 'detail-custom-design', legacyHash: 'tab-custom-design' },
-  { key: 'downloads', label: 'Downloads', panelId: 'detail-downloads', legacyHash: 'tab-downloads' },
-  { key: 'reviews', label: 'Reviews', panelId: 'detail-reviews', legacyHash: 'tab-reviews' },
+  { key: 'custom-design', label: 'Custom Program', panelId: 'detail-custom-design', legacyHash: 'tab-custom-design' },
+  { key: 'downloads', label: 'Documents', panelId: 'detail-downloads', legacyHash: 'tab-downloads' },
+  { key: 'reviews', label: 'Field Feedback', panelId: 'detail-reviews', legacyHash: 'tab-reviews' },
 ];
 
-const HASH_TO_TAB = TAB_DEFINITIONS.reduce<Record<string, ProductDetailTabKey>>((hashToTab, tab) => {
-  hashToTab[tab.panelId] = tab.key;
-  hashToTab[tab.legacyHash] = tab.key;
-  return hashToTab;
-}, {});
-
-const TAB_BY_KEY = TAB_DEFINITIONS.reduce<Record<ProductDetailTabKey, (typeof TAB_DEFINITIONS)[number]>>((tabsByKey, tab) => {
-  tabsByKey[tab.key] = tab;
-  return tabsByKey;
+const TAB_BY_KEY = TAB_DEFINITIONS.reduce<Record<ProductDetailTabKey, (typeof TAB_DEFINITIONS)[number]>>((accumulator, tab) => {
+  accumulator[tab.key] = tab;
+  return accumulator;
 }, {} as Record<ProductDetailTabKey, (typeof TAB_DEFINITIONS)[number]>);
+
+const HASH_TO_TAB = TAB_DEFINITIONS.reduce<Record<string, ProductDetailTabKey>>((accumulator, tab) => {
+  accumulator[tab.panelId] = tab.key;
+  accumulator[tab.legacyHash] = tab.key;
+  return accumulator;
+}, {});
 
 export function ProductDetailTabs({
   description,
@@ -90,6 +94,36 @@ export function ProductDetailTabs({
   documentCards,
 }: ProductDetailTabsProps) {
   const [activeTab, setActiveTab] = useState<ProductDetailTabKey>('description');
+  const specRowCount = specGroups.reduce((total, group) => total + group.rows.length, 0);
+  const externalDocumentCount = documentCards.filter((item) => item.external).length;
+  const requestDocumentCount = Math.max(documentCards.length - externalDocumentCount, 0);
+  const overviewParagraphs = description
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+  const normalizedOverviewParagraphs = overviewParagraphs.length ? overviewParagraphs : [description.trim()].filter(Boolean);
+  const dossierStats = [
+    {
+      label: 'Spec groups',
+      value: formatStatValue(specGroups.length),
+      note: 'Electrical, mechanical and commercial coverage',
+    },
+    {
+      label: 'Data rows',
+      value: formatStatValue(specRowCount),
+      note: 'Normalized points for engineering and sourcing review',
+    },
+    {
+      label: 'Live files',
+      value: formatStatValue(externalDocumentCount),
+      note: 'Attached PDFs and reference files available now',
+    },
+    {
+      label: 'Visual refs',
+      value: formatStatValue(dimensionImages.length + torqueCurveImages.length),
+      note: 'Drawings and curve visuals surfaced in-page',
+    },
+  ];
 
   useEffect(() => {
     const syncTabFromHash = () => {
@@ -118,8 +152,8 @@ export function ProductDetailTabs({
 
   const handleTabChange = (tabKey: ProductDetailTabKey) => {
     setActiveTab(tabKey);
-    const nextHash = TAB_BY_KEY[tabKey].panelId;
 
+    const nextHash = TAB_BY_KEY[tabKey].panelId;
     if (window.location.hash !== `#${nextHash}`) {
       window.history.replaceState(window.history.state, '', `#${nextHash}`);
     }
@@ -127,6 +161,24 @@ export function ProductDetailTabs({
 
   return (
     <>
+      <div className="detail-dossier-header">
+        <div className="detail-dossier-copy">
+          <span className="card-kicker">Engineering dossier</span>
+          <h2 className="detail-dossier-title">Technical review, drawings and procurement files in one structured flow.</h2>
+          <p className="section-description">Start with the engineering brief, validate fit in the dossier, then move into drawings, curves and file handoff without hunting through cluttered panels.</p>
+        </div>
+
+        <div className="detail-dossier-metrics">
+          {dossierStats.map((item) => (
+            <article key={item.label} className="detail-dossier-metric">
+              <strong>{item.value}</strong>
+              <span>{item.label}</span>
+              <p>{item.note}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+
       <nav className="detail-tab-nav" aria-label="Product details navigation" role="tablist">
         {TAB_DEFINITIONS.map((tab) => {
           const isActive = activeTab === tab.key;
@@ -157,10 +209,52 @@ export function ProductDetailTabs({
           aria-labelledby="detail-overview-tab"
           hidden={activeTab !== 'description'}
         >
-          <div className="info-card">
-            <div className="product-description-content">
-              <p style={{ whiteSpace: 'pre-line' }}>{description}</p>
-            </div>
+          <div className="detail-overview-layout">
+            <article className="info-card detail-panel-card">
+              <div className="detail-panel-heading">
+                <div className="detail-panel-copy">
+                  <span className="card-kicker">Engineering brief</span>
+                  <h3 className="detail-panel-title">Overview of fit, motion behavior and sourcing context.</h3>
+                </div>
+                <div className="detail-panel-badges">
+                  <span className="detail-panel-badge">{specGroups.length} spec groups</span>
+                  <span className="detail-panel-badge">{externalDocumentCount} live files</span>
+                </div>
+              </div>
+
+              <div className="product-description-content detail-copy-stack">
+                {normalizedOverviewParagraphs.map((paragraph, index) => (
+                  <p key={`${paragraph.slice(0, 32)}-${index}`}>{paragraph}</p>
+                ))}
+              </div>
+            </article>
+
+            <aside className="info-card detail-rail-card">
+              <div className="detail-rail-section">
+                <span className="card-kicker">Review priorities</span>
+                <ul className="detail-rail-list">
+                  {specGroups.slice(0, 4).map((group) => (
+                    <li key={group.title}>
+                      <strong>{group.title}</strong>
+                      <span>{group.rows.length} data lines</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="detail-rail-section">
+                <span className="card-kicker">Next step</span>
+                <p className="section-description compact-copy">Use drawings and torque curves to confirm mechanical fit before sending the SKU into procurement or a custom review.</p>
+                <div className="detail-rail-actions">
+                  <Link href={quoteHref} className="button-secondary">
+                    Request technical review
+                  </Link>
+                  <Link href={customHref} className="detail-inline-link">
+                    Open custom program
+                  </Link>
+                </div>
+              </div>
+            </aside>
           </div>
         </div>
 
@@ -171,14 +265,38 @@ export function ProductDetailTabs({
           aria-labelledby="detail-specifications-tab"
           hidden={activeTab !== 'specifications'}
         >
-          <article className="info-card">
+          <article className="info-card detail-panel-card">
+            <div className="detail-panel-heading">
+              <div className="detail-panel-copy">
+                <span className="card-kicker">Specification dossier</span>
+                <h3 className="detail-panel-title">Structured electrical, mechanical and commercial values.</h3>
+              </div>
+              <div className="detail-panel-badges">
+                <span className="detail-panel-badge">{specGroups.length} groups</span>
+                <span className="detail-panel-badge">{specRowCount} rows</span>
+              </div>
+            </div>
+
+            <div className="detail-summary-strip">
+              {dossierStats.slice(0, 3).map((item) => (
+                <article key={item.label} className="detail-summary-tile">
+                  <strong>{item.value}</strong>
+                  <span>{item.label}</span>
+                </article>
+              ))}
+            </div>
+
             <div className="pdp-spec-group-list">
               {specGroups.map((group) => (
-                <section key={group.title} className="pdp-spec-group">
-                  <div className="pdp-spec-group-header">
-                    <h3>{group.title}</h3>
-                    <p className="section-description compact-copy">{group.description}</p>
+                <section key={group.title} className="pdp-spec-group detail-group-card">
+                  <div className="pdp-spec-group-header detail-group-header">
+                    <div>
+                      <h3>{group.title}</h3>
+                      <p className="section-description compact-copy">{group.description}</p>
+                    </div>
+                    <span className="detail-panel-badge">{group.rows.length} rows</span>
                   </div>
+
                   <div className="spec-table">
                     {group.rows.map((row) => (
                       <div key={`${group.title}-${row.label}-${row.value}`} className="spec-row">
@@ -200,11 +318,22 @@ export function ProductDetailTabs({
           aria-labelledby="detail-dimensions-tab"
           hidden={activeTab !== 'dimensions'}
         >
-          <article className="info-card">
-            <div className="section-header">
-              <h2 className="section-title">Dimensional Drawings</h2>
-              <p className="section-description">Technical drawings with precise measurements for integration planning.</p>
+          <article className="info-card detail-panel-card">
+            <div className="detail-panel-heading">
+              <div className="detail-panel-copy">
+                <span className="card-kicker">Mechanical verification</span>
+                <h2 className="detail-panel-title">Dimensional drawings for integration, mounting and enclosure checks.</h2>
+              </div>
+              <div className="detail-panel-badges">
+                <span className="detail-panel-badge">{dimensionImages.length || (dimensionDocumentHref ? 1 : 0)} reference source</span>
+                {dimensionDocumentHref ? (
+                  <a href={dimensionDocumentHref} target="_blank" rel="noreferrer" className="detail-tab-link">
+                    Source PDF
+                  </a>
+                ) : null}
+              </div>
             </div>
+
             <div className="dimensions-gallery">
               {dimensionImages.length ? (
                 dimensionImages.map((image, index) => (
@@ -238,11 +367,22 @@ export function ProductDetailTabs({
           aria-labelledby="detail-torque-curves-tab"
           hidden={activeTab !== 'torque-curves'}
         >
-          <article className="info-card">
-            <div className="section-header">
-              <h2 className="section-title">Torque-Speed Curves</h2>
-              <p className="section-description">Performance characteristics showing torque output across operating speeds.</p>
+          <article className="info-card detail-panel-card">
+            <div className="detail-panel-heading">
+              <div className="detail-panel-copy">
+                <span className="card-kicker">Performance validation</span>
+                <h2 className="detail-panel-title">Torque-speed curves for driver sizing and operating-speed review.</h2>
+              </div>
+              <div className="detail-panel-badges">
+                <span className="detail-panel-badge">{torqueCurveImages.length || (torqueCurveDocumentHref || datasheetUrl ? 1 : 0)} curve source</span>
+                {torqueCurveDocumentHref || datasheetUrl ? (
+                  <a href={torqueCurveDocumentHref || datasheetUrl} target="_blank" rel="noreferrer" className="detail-tab-link">
+                    Curve PDF
+                  </a>
+                ) : null}
+              </div>
             </div>
+
             <div className="torque-curves-gallery">
               {torqueCurveImages.length ? (
                 torqueCurveImages.map((image, index) => (
@@ -254,7 +394,7 @@ export function ProductDetailTabs({
                 <div className="torque-curve-content">
                   <p>Complete torque-speed curves are available in the product datasheet.</p>
                   <a href={torqueCurveDocumentHref || datasheetUrl} target="_blank" rel="noreferrer" className="button-secondary">
-                    Download Datasheet with Curves
+                    Download datasheet with curves
                   </a>
                 </div>
               ) : (
@@ -276,34 +416,66 @@ export function ProductDetailTabs({
           aria-labelledby="detail-custom-design-tab"
           hidden={activeTab !== 'custom-design'}
         >
-          <article className="info-card">
-            <div className="section-header">
-              <h2 className="section-title">Custom Design Services</h2>
-              <p className="section-description">Tailored solutions to meet your specific application requirements.</p>
-            </div>
-            <div className="custom-design-content">
-              <p>Need changes to shaft, winding, gearbox, or environment? Our engineering team can customize this product to your exact specifications.</p>
-              <div className="custom-options">
-                <div className="custom-option">
-                  <strong>Shaft Modifications</strong>
-                  <p>Custom length, diameter, keyway, D-cut, or special profiles</p>
-                </div>
-                <div className="custom-option">
-                  <strong>Winding Options</strong>
-                  <p>Voltage, current, and resistance adjustments for optimal performance</p>
-                </div>
-                <div className="custom-option">
-                  <strong>Gearbox Integration</strong>
-                  <p>Ratio selection and mounting configuration</p>
-                </div>
-                <div className="custom-option">
-                  <strong>Environmental Protection</strong>
-                  <p>IP rating upgrades, special coatings, extreme temperature operation</p>
-                </div>
+          <article className="info-card detail-panel-card">
+            <div className="detail-panel-heading">
+              <div className="detail-panel-copy">
+                <span className="card-kicker">Custom engineering</span>
+                <h2 className="detail-panel-title">Modification paths for shaft, winding, drivetrain and environment.</h2>
               </div>
-              <Link href={customHref} className="button-secondary" style={{ marginTop: '24px' }}>
-                Start Custom Development
-              </Link>
+              <div className="detail-panel-badges">
+                <span className="detail-panel-badge">4 program modules</span>
+                <span className="detail-panel-badge">Pilot-to-batch ready</span>
+              </div>
+            </div>
+
+            <div className="custom-design-content">
+              <p className="section-description">Use the same base frame and tailor the motor around your mechanics, electrical target, motion profile or environmental constraints.</p>
+
+              <div className="custom-program-grid">
+                <article className="custom-program-card">
+                  <strong>Shaft modifications</strong>
+                  <p>Custom length, diameter, keyway, D-cut or special profiles.</p>
+                </article>
+                <article className="custom-program-card">
+                  <strong>Winding options</strong>
+                  <p>Voltage, current and resistance adjustments for the required driver window.</p>
+                </article>
+                <article className="custom-program-card">
+                  <strong>Gearbox integration</strong>
+                  <p>Ratio selection, backlash targets and mounting configuration around the same motor family.</p>
+                </article>
+                <article className="custom-program-card">
+                  <strong>Environmental protection</strong>
+                  <p>IP upgrades, coatings and temperature-range adjustments for harsher duty cycles.</p>
+                </article>
+              </div>
+
+              <div className="custom-program-steps">
+                <article className="custom-program-step">
+                  <span className="card-kicker">Step 01</span>
+                  <strong>Application brief</strong>
+                  <p>Share motion target, driver stack, mounting limits and environmental conditions.</p>
+                </article>
+                <article className="custom-program-step">
+                  <span className="card-kicker">Step 02</span>
+                  <strong>Engineering review</strong>
+                  <p>We confirm winding, shaft, gearbox and thermal tradeoffs against the base SKU.</p>
+                </article>
+                <article className="custom-program-step">
+                  <span className="card-kicker">Step 03</span>
+                  <strong>Pilot approval</strong>
+                  <p>Prototype, sample sign-off and batch handoff follow the same documented path.</p>
+                </article>
+              </div>
+
+              <div className="custom-program-actions">
+                <Link href={customHref} className="button-primary">
+                  Start custom development
+                </Link>
+                <Link href={contactPath} className="button-secondary">
+                  Talk to an engineer
+                </Link>
+              </div>
             </div>
           </article>
         </div>
@@ -315,11 +487,33 @@ export function ProductDetailTabs({
           aria-labelledby="detail-downloads-tab"
           hidden={activeTab !== 'downloads'}
         >
-          <article className="info-card">
-            <div className="section-header">
-              <h2 className="section-title">Downloads & Documentation</h2>
-              <p className="section-description">Technical documents, datasheets, and CAD files for engineering review.</p>
+          <article className="info-card detail-panel-card">
+            <div className="detail-panel-heading">
+              <div className="detail-panel-copy">
+                <span className="card-kicker">Documentation pack</span>
+                <h2 className="detail-panel-title">Datasheets, support files and request-based engineering documents.</h2>
+              </div>
+              <div className="detail-panel-badges">
+                <span className="detail-panel-badge">{externalDocumentCount} live downloads</span>
+                <span className="detail-panel-badge">{requestDocumentCount} request workflows</span>
+              </div>
             </div>
+
+            <div className="detail-summary-strip">
+              <article className="detail-summary-tile">
+                <strong>{formatStatValue(externalDocumentCount)}</strong>
+                <span>Open now</span>
+              </article>
+              <article className="detail-summary-tile">
+                <strong>{formatStatValue(requestDocumentCount)}</strong>
+                <span>Request-based</span>
+              </article>
+              <article className="detail-summary-tile">
+                <strong>{formatStatValue(documentCards.length)}</strong>
+                <span>Total file paths</span>
+              </article>
+            </div>
+
             <div className="pdp-doc-grid">
               {documentCards.map((item) => (
                 <article key={`${item.title}-${item.meta}`} className="pdp-doc-card">
@@ -346,20 +540,46 @@ export function ProductDetailTabs({
           aria-labelledby="detail-reviews-tab"
           hidden={activeTab !== 'reviews'}
         >
-          <article className="info-card">
-            <div className="section-header">
-              <h2 className="section-title">Customer Reviews</h2>
-              <p className="section-description">See what other engineers and buyers are saying about this product.</p>
+          <article className="info-card detail-panel-card">
+            <div className="detail-panel-heading">
+              <div className="detail-panel-copy">
+                <span className="card-kicker">Field feedback</span>
+                <h2 className="detail-panel-title">Application notes and buyer feedback are handled through a guided review loop.</h2>
+              </div>
+              <div className="detail-panel-badges">
+                <span className="detail-panel-badge">No public reviews yet</span>
+              </div>
             </div>
-            <div className="reviews-placeholder">
-              <p>Reviews will be available soon. Be the first to share your experience!</p>
+
+            <div className="field-feedback-hero">
+              <p className="section-description">This SKU has not accumulated enough published buyer reviews yet, but we can still support validation through engineering dialogue, sample evaluation and application-specific references.</p>
+            </div>
+
+            <div className="field-feedback-grid">
+              <article className="field-feedback-card">
+                <strong>Application matching</strong>
+                <p>Discuss frame size, torque reserve, driver pairing and load profile before release.</p>
+              </article>
+              <article className="field-feedback-card">
+                <strong>Pilot sample feedback</strong>
+                <p>Use sample runs to confirm vibration, temperature and mounting suitability in the real machine.</p>
+              </article>
+              <article className="field-feedback-card">
+                <strong>Procurement handoff</strong>
+                <p>Once validated, we align the same SKU or custom derivative into sample, pilot and batch purchasing.</p>
+              </article>
+            </div>
+
+            <div className="field-feedback-actions">
               <Link href={contactPath} className="button-secondary">
-                Contact us with feedback
+                Contact us with your application
+              </Link>
+              <Link href={quoteHref} className="detail-inline-link">
+                Request evaluation support
               </Link>
             </div>
           </article>
         </div>
-
       </div>
     </>
   );

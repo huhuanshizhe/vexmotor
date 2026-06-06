@@ -49,28 +49,56 @@ function formatSpecValue(value: string, unit?: string | null) {
   return unit ? `${value} ${unit}` : value;
 }
 
+function normalizeComparableText(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+function resolveLeadCopy(product: StorefrontProductDetail) {
+  const candidates = [product.shortDescription, product.descriptionLong, product.description]
+    .map((value) => value?.trim())
+    .filter((value): value is string => Boolean(value));
+  const blockedValues = new Set([
+    normalizeComparableText(product.name),
+    normalizeComparableText(product.sku),
+    normalizeComparableText(`${product.name}${product.sku}`),
+  ]);
+
+  return (
+    candidates.find((candidate) => {
+      const normalized = normalizeComparableText(candidate);
+      return normalized.length > 32 && !blockedValues.has(normalized);
+    }) ?? product.descriptionLong?.trim() ?? product.description.trim()
+  );
+}
+
 function buildSpecGroups(product: StorefrontProductDetail): DetailSpecGroup[] {
-  // Group features by category (matching old site structure)
-  const categoryMap: Record<string, DetailSpecRow[]> = {
+  const categoryMap: Record<'product_type' | 'electrical' | 'mechanical' | 'performance' | 'environmental' | 'general', DetailSpecRow[]> = {
     product_type: [],
     electrical: [],
-    physical: [],
+    mechanical: [],
+    performance: [],
     environmental: [],
     general: [],
   };
+  const categoryAliases: Record<string, keyof typeof categoryMap> = {
+    product: 'product_type',
+    product_type: 'product_type',
+    electrical: 'electrical',
+    mechanical: 'mechanical',
+    physical: 'mechanical',
+    performance: 'performance',
+    environmental: 'environmental',
+    general: 'general',
+  };
 
   product.features.forEach((feature) => {
-    const category = feature.category || 'general';
+    const normalizedCategory = categoryAliases[feature.category?.toLowerCase() ?? 'general'] ?? 'general';
     const row = {
       label: feature.key,
       value: formatSpecValue(feature.value, feature.unit),
     };
-    
-    if (categoryMap[category]) {
-      categoryMap[category].push(row);
-    } else {
-      categoryMap.general.push(row);
-    }
+
+    categoryMap[normalizedCategory].push(row);
   });
 
   const attributeRows = product.attributes.map((attribute) => ({
@@ -90,47 +118,50 @@ function buildSpecGroups(product: StorefrontProductDetail): DetailSpecGroup[] {
 
   const groups: DetailSpecGroup[] = [];
 
-  // Product Type (if exists)
   if (categoryMap.product_type.length) {
     groups.push({
       title: 'Product Type',
-      description: 'Product classification and type information.',
+      description: 'Catalog family, construction type and frame-level classification.',
       rows: categoryMap.product_type,
     });
   }
 
-  // Electrical Specification
   if (categoryMap.electrical.length) {
     groups.push({
       title: 'Electrical Specification',
-      description: 'Electrical characteristics and ratings.',
+      description: 'Electrical ratings, winding data and driver-facing values.',
       rows: categoryMap.electrical,
     });
   }
 
-  // Physical Specification
-  if (categoryMap.physical.length) {
+  if (categoryMap.mechanical.length) {
     groups.push({
-      title: 'Physical Specification',
-      description: 'Physical dimensions and mechanical properties.',
-      rows: categoryMap.physical,
+      title: 'Mechanical Specification',
+      description: 'Frame dimensions, shaft details and mechanical construction values.',
+      rows: categoryMap.mechanical,
     });
   }
 
-  // Environmental specs
+  if (categoryMap.performance.length) {
+    groups.push({
+      title: 'Performance',
+      description: 'Torque, speed and application-facing operating behavior.',
+      rows: categoryMap.performance,
+    });
+  }
+
   if (categoryMap.environmental.length) {
     groups.push({
       title: 'Environmental Specification',
-      description: 'Operating conditions and environmental ratings.',
+      description: 'Temperature, protection and environmental operating conditions.',
       rows: categoryMap.environmental,
     });
   }
 
-  // General/uncategorized specs
   if (categoryMap.general.length) {
     groups.push({
       title: 'General',
-      description: 'Additional specifications.',
+      description: 'Additional catalog points that do not belong to a dedicated engineering bucket.',
       rows: categoryMap.general,
     });
   }
@@ -275,6 +306,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const specGroups = buildSpecGroups(product);
   const topSpecs = specGroups.flatMap((group) => group.rows).slice(0, 5);
   const heroSpecs = topSpecs.slice(0, 4);
+  const leadCopy = resolveLeadCopy(product);
   const summaryEyebrow = category ? category.name : 'Catalog product';
   const procurementLabel = product.purchaseMode === 'buy' ? 'Direct Buy' : 'RFQ Project';
   const availabilityLabel = product.inStock ? 'Stock program active' : 'Build-to-order review';
@@ -519,7 +551,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                   </div>
                 </div>
 
-                <p className="pdp-lead-copy">{product.shortDescription ?? product.description}</p>
+                <p className="pdp-lead-copy">{leadCopy}</p>
               </div>
 
               <div className="product-pricing-stack pdp-price-panel">
