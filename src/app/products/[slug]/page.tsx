@@ -619,15 +619,313 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
       <section className="section detail-tabs-section">
         <div className="section-inner">
-          <nav className="detail-tab-nav detail-subnav" aria-label="Product details navigation">
-            {detailSections.map((tab) => (
-              <a key={tab.id} href={`#${tab.id}`} className="detail-tab-link">
-                {tab.label}
-              </a>
-            ))}
+          {/* Tab Navigation */}
+          <nav className="detail-tab-nav" aria-label="Product details navigation">
+            <button 
+              className="tab-button active" 
+              onClick={(e) => {
+                e.preventDefault();
+                const tabs = document.querySelectorAll('.product-tab-content');
+                const buttons = document.querySelectorAll('.tab-button');
+                tabs.forEach(t => t.classList.remove('active'));
+                buttons.forEach(b => b.classList.remove('active'));
+                document.getElementById('tab-description')?.classList.add('active');
+                (e.target as HTMLElement).classList.add('active');
+              }}
+            >
+              Description
+            </button>
+            <button 
+              className="tab-button" 
+              onClick={(e) => {
+                e.preventDefault();
+                const tabs = document.querySelectorAll('.product-tab-content');
+                const buttons = document.querySelectorAll('.tab-button');
+                tabs.forEach(t => t.classList.remove('active'));
+                buttons.forEach(b => b.classList.remove('active'));
+                document.getElementById('tab-specifications')?.classList.add('active');
+                (e.target as HTMLElement).classList.add('active');
+              }}
+            >
+              Specifications
+            </button>
+            <button 
+              className="tab-button" 
+              onClick={(e) => {
+                e.preventDefault();
+                const tabs = document.querySelectorAll('.product-tab-content');
+                const buttons = document.querySelectorAll('.tab-button');
+                tabs.forEach(t => t.classList.remove('active'));
+                buttons.forEach(b => b.classList.remove('active'));
+                document.getElementById('tab-dimensions')?.classList.add('active');
+                (e.target as HTMLElement).classList.add('active');
+              }}
+            >
+              Dimensions
+            </button>
+            <button 
+              className="tab-button" 
+              onClick={(e) => {
+                e.preventDefault();
+                const tabs = document.querySelectorAll('.product-tab-content');
+                const buttons = document.querySelectorAll('.tab-button');
+                tabs.forEach(t => t.classList.remove('active'));
+                buttons.forEach(b => b.classList.remove('active'));
+                document.getElementById('tab-torque-curves')?.classList.add('active');
+                (e.target as HTMLElement).classList.add('active');
+              }}
+            >
+              Torque Curves
+            </button>
+            <button 
+              className="tab-button" 
+              onClick={(e) => {
+                e.preventDefault();
+                const tabs = document.querySelectorAll('.product-tab-content');
+                const buttons = document.querySelectorAll('.tab-button');
+                tabs.forEach(t => t.classList.remove('active'));
+                buttons.forEach(b => b.classList.remove('active'));
+                document.getElementById('tab-custom-design')?.classList.add('active');
+                (e.target as HTMLElement).classList.add('active');
+              }}
+            >
+              CUSTOM DESIGN
+            </button>
+            <button 
+              className="tab-button" 
+              onClick={(e) => {
+                e.preventDefault();
+                const tabs = document.querySelectorAll('.product-tab-content');
+                const buttons = document.querySelectorAll('.tab-button');
+                tabs.forEach(t => t.classList.remove('active'));
+                buttons.forEach(b => b.classList.remove('active'));
+                document.getElementById('tab-downloads')?.classList.add('active');
+                (e.target as HTMLElement).classList.add('active');
+              }}
+            >
+              Downloads
+            </button>
+            <button 
+              className="tab-button" 
+              onClick={(e) => {
+                e.preventDefault();
+                const tabs = document.querySelectorAll('.product-tab-content');
+                const buttons = document.querySelectorAll('.tab-button');
+                tabs.forEach(t => t.classList.remove('active'));
+                buttons.forEach(b => b.classList.remove('active'));
+                document.getElementById('tab-reviews')?.classList.add('active');
+                (e.target as HTMLElement).classList.add('active');
+              }}
+            >
+              Reviews
+            </button>
+            <button 
+              className="tab-button" 
+              onClick={(e) => {
+                e.preventDefault();
+                const tabs = document.querySelectorAll('.product-tab-content');
+                const buttons = document.querySelectorAll('.tab-button');
+                tabs.forEach(t => t.classList.remove('active'));
+                buttons.forEach(b => b.classList.remove('active'));
+                document.getElementById('tab-faq')?.classList.add('active');
+                (e.target as HTMLElement).classList.add('active');
+              }}
+            >
+              FAQ
+            </button>
           </nav>
 
-          <article id="detail-overview" className="info-card detail-anchor-card">
+          {/* Tab Content */}
+          <div className="tab-content-wrapper">
+            {/* Description Tab */}
+            <div id="tab-description" className="product-tab-content active">
+              <div className="info-card">
+                <div className="product-description-content">
+                  <p style={{ whiteSpace: 'pre-line' }}>
+                    {product.descriptionLong || product.description}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Specifications Tab */}
+            <div id="tab-specifications" className="product-tab-content">
+              <article className="info-card">
+                <div className="pdp-spec-group-list">
+                  {specGroups.map((group) => (
+                    <section key={group.title} className="pdp-spec-group">
+                      <div className="pdp-spec-group-header">
+                        <h3>{group.title}</h3>
+                        <p className="section-description compact-copy">{group.description}</p>
+                      </div>
+                      <div className="spec-table">
+                        {group.rows.map((row) => (
+                          <div key={`${group.title}-${row.label}-${row.value}`} className="spec-row">
+                            <span className="spec-label">{row.label}</span>
+                            <strong className="spec-value">{row.value}</strong>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                  ))}
+                </div>
+              </article>
+            </div>
+
+            {/* Dimensions Tab */}
+            <div id="tab-dimensions" className="product-tab-content">
+              <article className="info-card">
+                <div className="section-header">
+                  <h2 className="section-title">Dimensional Drawings</h2>
+                  <p className="section-description">Technical drawings with precise measurements for integration planning.</p>
+                </div>
+                <div className="dimensions-gallery">
+                  {galleryImages.filter(img => img.alt?.toLowerCase().includes('dimension') || img.alt?.toLowerCase().includes('diagram')).length > 0 ? (
+                    galleryImages
+                      .filter(img => img.alt?.toLowerCase().includes('dimension') || img.alt?.toLowerCase().includes('diagram'))
+                      .map((img, idx) => (
+                        <div key={idx} className="dimension-image">
+                          <img src={img.url} alt={img.alt || 'Dimension drawing'} />
+                        </div>
+                      ))
+                  ) : (
+                    <div className="dimension-placeholder">
+                      <p>Dimensional drawings will be available upon request.</p>
+                      <Link href={quoteHref} className="button-secondary">
+                        Request dimension drawings
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </article>
+            </div>
+
+            {/* Torque Curves Tab */}
+            <div id="tab-torque-curves" className="product-tab-content">
+              <article className="info-card">
+                <div className="section-header">
+                  <h2 className="section-title">Torque-Speed Curves</h2>
+                  <p className="section-description">Performance characteristics showing torque output across operating speeds.</p>
+                </div>
+                <div className="torque-curves-gallery">
+                  {datasheetAttachment ? (
+                    <div className="torque-curve-content">
+                      <p>Complete torque-speed curves are available in the product datasheet.</p>
+                      <a href={datasheetAttachment.url} target="_blank" rel="noreferrer" className="button-secondary">
+                        Download Datasheet with Curves
+                      </a>
+                    </div>
+                  ) : (
+                    <div className="torque-curve-placeholder">
+                      <p>Torque-speed curves will be available upon request.</p>
+                      <Link href={quoteHref} className="button-secondary">
+                        Request torque curves
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </article>
+            </div>
+
+            {/* Custom Design Tab */}
+            <div id="tab-custom-design" className="product-tab-content">
+              <article className="info-card">
+                <div className="section-header">
+                  <h2 className="section-title">Custom Design Services</h2>
+                  <p className="section-description">Tailored solutions to meet your specific application requirements.</p>
+                </div>
+                <div className="custom-design-content">
+                  <p>Need changes to shaft, winding, gearbox, or environment? Our engineering team can customize this product to your exact specifications.</p>
+                  <div className="custom-options">
+                    <div className="custom-option">
+                      <strong>Shaft Modifications</strong>
+                      <p>Custom length, diameter, keyway, D-cut, or special profiles</p>
+                    </div>
+                    <div className="custom-option">
+                      <strong>Winding Options</strong>
+                      <p>Voltage, current, and resistance adjustments for optimal performance</p>
+                    </div>
+                    <div className="custom-option">
+                      <strong>Gearbox Integration</strong>
+                      <p>Ratio selection and mounting configuration</p>
+                    </div>
+                    <div className="custom-option">
+                      <strong>Environmental Protection</strong>
+                      <p>IP rating upgrades, special coatings, extreme temperature operation</p>
+                    </div>
+                  </div>
+                  <Link href={customHref} className="button-secondary" style={{ marginTop: '24px' }}>
+                    Start Custom Development
+                  </Link>
+                </div>
+              </article>
+            </div>
+
+            {/* Downloads Tab */}
+            <div id="tab-downloads" className="product-tab-content">
+              <article className="info-card">
+                <div className="section-header">
+                  <h2 className="section-title">Downloads & Documentation</h2>
+                  <p className="section-description">Technical documents, datasheets, and CAD files for engineering review.</p>
+                </div>
+                <div className="pdp-doc-grid">
+                  {documentCards.map((item) => (
+                    <article key={`${item.title}-${item.meta}`} className="pdp-doc-card">
+                      <span className="pdp-doc-card-meta">{item.meta}</span>
+                      <strong>{item.title}</strong>
+                      <p className="section-description compact-copy">{item.description}</p>
+                      {item.external ? (
+                        <a href={item.href} target="_blank" rel="noreferrer">
+                          Open file
+                        </a>
+                      ) : (
+                        <Link href={item.href}>Request file</Link>
+                      )}
+                    </article>
+                  ))}
+                </div>
+              </article>
+            </div>
+
+            {/* Reviews Tab */}
+            <div id="tab-reviews" className="product-tab-content">
+              <article className="info-card">
+                <div className="section-header">
+                  <h2 className="section-title">Customer Reviews</h2>
+                  <p className="section-description">See what other engineers and buyers are saying about this product.</p>
+                </div>
+                <div className="reviews-placeholder">
+                  <p>Reviews will be available soon. Be the first to share your experience!</p>
+                  <Link href={contactPath} className="button-secondary">
+                    Contact us with feedback
+                  </Link>
+                </div>
+              </article>
+            </div>
+
+            {/* FAQ Tab */}
+            <div id="tab-faq" className="product-tab-content">
+              <article className="info-card">
+                <div className="section-header">
+                  <h2 className="section-title">Frequently Asked Questions</h2>
+                  <p className="section-description">Common questions about this product and how we can help.</p>
+                </div>
+                <div className="pdp-faq-list">
+                  {faqItems.map((item, index) => (
+                    <details key={index} className="faq-item">
+                      <summary className="faq-question">{item.question}</summary>
+                      <div className="faq-answer">
+                        <p>{item.answer}</p>
+                      </div>
+                    </details>
+                  ))}
+                </div>
+              </article>
+            </div>
+          </div>
+
+          {/* Compatible Products Section (below tabs) */}
+          <article id="detail-compatible" className="info-card" style={{ marginTop: '48px' }}>
             <div className="section-header detail-section-header">
               <div>
                 <h2 className="section-title">Overview</h2>

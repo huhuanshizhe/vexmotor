@@ -1813,6 +1813,55 @@ main {
   box-shadow: var(--shadow-panel);
 }
 
+/* New Tab System (Old site style) */
+.tab-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 24px;
+  border: none;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+  color: var(--color-accent);
+  border-bottom-color: rgba(102, 126, 234, 0.3);
+}
+
+.tab-button.active {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+
+.product-tab-content {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.product-tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tab-content-wrapper {
+  margin-top: 24px;
+}
+
 .detail-tab-link {
   display: inline-flex;
   align-items: center;
