@@ -499,6 +499,7 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
         sku: products.sku,
         shortDescription: products.shortDescription,
         description: products.description,
+        descriptionLong: products.descriptionLong,
         purchaseMode: products.purchaseMode,
         stockQuantity: products.stockQuantity,
         price: products.price,
