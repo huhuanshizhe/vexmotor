@@ -285,24 +285,6 @@ export function ProductDetailTabs({
 
   return (
     <>
-      <div className="detail-dossier-header">
-        <div className="detail-dossier-copy">
-          <span className="card-kicker">Engineering dossier</span>
-          <h2 className="detail-dossier-title">Technical review, drawings and procurement files in one structured flow.</h2>
-          <p className="section-description">Start with the engineering brief, validate fit in the dossier, then move into drawings, curves and file handoff without hunting through cluttered panels.</p>
-        </div>
-
-        <div className="detail-dossier-metrics">
-          {dossierStats.map((item) => (
-            <article key={item.label} className="detail-dossier-metric">
-              <strong>{item.value}</strong>
-              <span>{item.label}</span>
-              <p>{item.note}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-
       <nav className="detail-tab-nav" aria-label="Product details navigation" role="tablist">
         {TAB_DEFINITIONS.map((tab) => {
           const isActive = activeTab === tab.key;

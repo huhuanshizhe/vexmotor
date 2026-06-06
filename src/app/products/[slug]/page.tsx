@@ -488,6 +488,29 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <span>{product.name}</span>
           </nav>
 
+          <header className="pdp-top-header">
+            <div className="pdp-top-header-copy">
+              <div className="pdp-top-header-meta">
+                {category ? (
+                  <Link href={categoryPath} className="pdp-top-eyebrow">
+                    {category.name}
+                  </Link>
+                ) : (
+                  <span className="pdp-top-eyebrow">Catalog product</span>
+                )}
+                <span className="pdp-top-sku">SKU {product.sku}</span>
+              </div>
+
+              <h1 className="pdp-top-title">{product.name}</h1>
+            </div>
+
+            <div className="pdp-top-status">
+              <span className="pdp-top-badge is-accent">{procurementLabel}</span>
+              <span className="pdp-top-badge">{availabilityLabel}</span>
+              <span className="pdp-top-badge is-subtle">{product.inStock ? `${Math.max(product.stockQuantity, 0)} in stock` : 'Quote review'}</span>
+            </div>
+          </header>
+
           <div className="product-detail-grid">
             <div className="product-gallery-column">
               <ProductGallery images={galleryImages} productName={product.name} />
@@ -510,14 +533,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
             <article className="info-card product-summary-card pdp-buybox-card">
               <div className="pdp-header-stack">
-                <div className="pdp-header-meta">
-                  <span className="pdp-header-chip">{summaryEyebrow}</span>
-                  <span className="pdp-header-chip is-muted">{procurementLabel}</span>
-                  <span className="pdp-header-chip is-muted">{availabilityLabel}</span>
-                </div>
-
-                <h1 className="section-title pdp-hero-title">{product.name}</h1>
-
                 <div className="pdp-sku-row">
                   <p className="product-meta">SKU {product.sku}</p>
                   <div className="pdp-sku-actions">
