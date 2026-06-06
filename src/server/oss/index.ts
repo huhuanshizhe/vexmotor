@@ -1,7 +1,12 @@
 /**
  * Aliyun OSS file upload service.
  * Gracefully degrades when credentials are not configured.
+ * 
+ * SERVER-ONLY MODULE: This file uses Node.js-specific packages (ali-oss, proxy-agent)
+ * and must never be imported into client-side components.
  */
+
+'use server';
 
 import { randomUUID } from 'node:crypto';
 import path from 'node:path';
