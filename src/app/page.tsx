@@ -72,9 +72,16 @@ export default async function HomePage() {
     getBlogCatalog(locale),
   ]);
 
-  const categoryTiles = categories
-    .filter((category) => category.isFeatured && (category.productCount ?? 0) > 0)
-    .sort((left, right) => (left.featuredOrder ?? 0) - (right.featuredOrder ?? 0))
+  const categoryTiles = [
+    ...categories
+      .filter((category) => category.isFeatured && (category.productCount ?? 0) > 0)
+      .sort((left, right) => (left.featuredOrder ?? 0) - (right.featuredOrder ?? 0)),
+    ...homeData.featuredCategories,
+    ...categories
+      .filter((category) => (category.productCount ?? 0) > 0)
+      .sort((left, right) => (right.productCount ?? 0) - (left.productCount ?? 0)),
+  ]
+    .filter((category, index, allCategories) => allCategories.findIndex((item) => item.slug === category.slug) === index)
     .slice(0, 15); // 3 排 x 5 列 = 15 个
   const featuredIndustries = solutionIndustries.slice(0, 6);
   const featuredProducts = featuredResult.items.slice(0, 8);
@@ -150,8 +157,8 @@ export default async function HomePage() {
                 <Link href={withLocalePath(`/c/${category.slug}`, locale)} className="home-category-card">
                   <div className="home-category-image">
                     <Image
-                      src={`/categories/${category.slug}.png`}
-                      alt={category.name}
+                      src={category.image?.url ?? `/categories/${category.slug}.png`}
+                      alt={category.image?.alt ?? category.name}
                       width={200}
                       height={200}
                       sizes="(max-width: 768px) 150px, 200px"

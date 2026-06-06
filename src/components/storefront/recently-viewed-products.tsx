@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -9,7 +10,7 @@ import type { StorefrontProductCard } from '@/server/storefront';
 
 const RECENTLY_VIEWED_STORAGE_KEY = 'vexmotor-recently-viewed-products';
 
-type RecentProduct = Pick<StorefrontProductCard, 'id' | 'name' | 'slug' | 'sku' | 'price' | 'purchaseMode' | 'shortDescription'>;
+type RecentProduct = Pick<StorefrontProductCard, 'id' | 'name' | 'slug' | 'sku' | 'price' | 'purchaseMode' | 'coverImage' | 'inStock'>;
 
 type RecentlyViewedProductsProps = {
   currentProduct: StorefrontProductCard;
@@ -17,20 +18,12 @@ type RecentlyViewedProductsProps = {
   locale: Locale;
 };
 
-function normalizeComparableText(value: string) {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, '');
-}
-
-function buildRecentSummary(item: RecentProduct) {
-  const description = item.shortDescription?.trim();
-
-  if (description && normalizeComparableText(description) !== normalizeComparableText(item.name)) {
-    return description;
+function formatAvailability(item: RecentProduct) {
+  if (item.purchaseMode !== 'buy') {
+    return 'RFQ workflow';
   }
 
-  return item.purchaseMode === 'buy'
-    ? 'Saved to your comparison trail for a fast return to pricing, drawings and documents.'
-    : 'Saved to your shortlist so the RFQ flow and engineering files stay one click away.';
+  return item.inStock ? 'Stock ready' : 'Quote review';
 }
 
 function toRecentProduct(product: StorefrontProductCard): RecentProduct {
@@ -41,9 +34,46 @@ function toRecentProduct(product: StorefrontProductCard): RecentProduct {
     sku: product.sku,
     price: product.price,
     purchaseMode: product.purchaseMode,
-    shortDescription: product.shortDescription,
+    coverImage: product.coverImage,
+    inStock: product.inStock,
   };
 }
+
+function hydrateRecentProduct(item: RecentProduct, fallbackProduct?: StorefrontProductCard): RecentProduct {
+  if (!fallbackProduct) {
+    return item;
+  }
+
+  return {
+    ...item,
+    coverImage: item.coverImage ?? fallbackProduct.coverImage,
+    inStock: item.inStock ?? fallbackProduct.inStock,
+  };
+}
+
+function buildVisibleRecentProducts(storedItems: RecentProduct[], currentProductId: string, fallbackProducts: StorefrontProductCard[]) {
+  const fallbackById = new Map(fallbackProducts.map((item) => [item.id, item]));
+  const hydratedStored = storedItems
+    .filter((item) => item.id !== currentProductId)
+    .slice(0, 8)
+    .map((item) => hydrateRecentProduct(item, fallbackById.get(item.id)));
+
+  const preferredItems = hydratedStored.filter((item) => item.coverImage).slice(0, 3);
+
+  if (preferredItems.length === 3) {
+    return preferredItems;
+  }
+
+  const fallbackItems = fallbackProducts
+    .map(toRecentProduct)
+    .filter((item) => item.id !== currentProductId && !preferredItems.some((preferredItem) => preferredItem.id === item.id))
+    .filter((item) => item.coverImage)
+    .slice(0, 3 - preferredItems.length);
+
+  return [...preferredItems, ...fallbackItems].slice(0, 3);
+}
+
+type RecentProductPatch = Pick<RecentProduct, 'coverImage' | 'inStock' | 'purchaseMode' | 'price'>;
 
 function readRecentlyViewed() {
   if (typeof window === 'undefined') {
@@ -72,7 +102,8 @@ export function RecentlyViewedProducts({ currentProduct, fallbackProducts, local
 
     window.localStorage.setItem(RECENTLY_VIEWED_STORAGE_KEY, JSON.stringify(nextStored));
 
-    const visibleItems = nextStored.filter((item) => item.id !== currentProduct.id).slice(0, 3);
+    const visibleItems = buildVisibleRecentProducts(nextStored, currentProduct.id, fallbackProducts);
+
     if (visibleItems.length) {
       setItems(visibleItems);
       return;
@@ -81,32 +112,116 @@ export function RecentlyViewedProducts({ currentProduct, fallbackProducts, local
     setItems(fallbackProducts.map(toRecentProduct).filter((item) => item.id !== currentProduct.id).slice(0, 3));
   }, [currentProduct, fallbackProducts]);
 
+  useEffect(() => {
+    const missingImageItems = items.filter((item) => !item.coverImage).slice(0, 3);
+
+    if (!missingImageItems.length) {
+      return;
+    }
+
+    let isCancelled = false;
+
+    const loadMissingImages = async () => {
+      const results = await Promise.all(
+        missingImageItems.map(async (item) => {
+          try {
+            const response = await fetch(`/api/front/products/${item.slug}`, { cache: 'no-store' });
+
+            if (!response.ok) {
+              return null;
+            }
+
+            const product = (await response.json()) as StorefrontProductCard;
+
+            if (!product.coverImage) {
+              return null;
+            }
+
+            return {
+              id: item.id,
+              patch: {
+                coverImage: product.coverImage,
+                inStock: product.inStock,
+                purchaseMode: product.purchaseMode,
+                price: product.price,
+              } satisfies RecentProductPatch,
+            };
+          } catch {
+            return null;
+          }
+        }),
+      );
+
+      if (isCancelled) {
+        return;
+      }
+
+      const updateEntries = results.flatMap((result) => (result ? [[result.id, result.patch] as const] : []));
+      const updates = new Map(updateEntries);
+
+      if (!updates.size) {
+        return;
+      }
+
+      setItems((currentItems) =>
+        currentItems.map((item) => {
+          const patch = updates.get(item.id);
+          return patch ? { ...item, ...patch } : item;
+        }),
+      );
+
+      const stored = readRecentlyViewed();
+      const nextStored = stored.map((item) => {
+        const patch = updates.get(item.id);
+        return patch ? { ...item, ...patch } : item;
+      });
+
+      window.localStorage.setItem(RECENTLY_VIEWED_STORAGE_KEY, JSON.stringify(nextStored));
+    };
+
+    void loadMissingImages();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [items]);
+
   if (!items.length) {
     return null;
   }
 
   return (
-    <article className="info-card detail-panel-card detail-recent-card detail-shortlist-card">
-      <div className="detail-panel-heading">
-        <div className="detail-panel-copy">
-          <span className="card-kicker">Shortlist trail</span>
-          <h2 className="detail-panel-title">Recently viewed products from this session.</h2>
-        </div>
-        <div className="detail-panel-badges">
-          <span className="detail-panel-badge">{items.length} items</span>
-        </div>
+    <article className="info-card detail-panel-card detail-recent-card">
+      <div className="detail-recent-header">
+        <h2 className="section-title detail-recent-title-heading">Recently viewed</h2>
       </div>
 
-      <div className="detail-shortlist-list">
+      <div className="detail-recent-list">
         {items.map((item) => (
-          <Link key={item.id} href={withLocalePath(`/products/${item.slug}`, locale)} className="detail-shortlist-item">
-            <div className="detail-shortlist-meta">
-              <span className="product-meta">SKU {item.sku}</span>
-              <span className="detail-shortlist-price">{item.purchaseMode === 'buy' ? item.price.formatted : 'Request Quote'}</span>
+          <Link key={item.id} href={withLocalePath(`/products/${item.slug}`, locale)} className="detail-recent-item">
+            <div className="detail-recent-media">
+              {item.coverImage ? (
+                <Image
+                  src={item.coverImage.url}
+                  alt={item.coverImage.alt || item.name}
+                  fill
+                  sizes="96px"
+                  className="detail-recent-image"
+                  unoptimized
+                />
+              ) : (
+                <div className="detail-recent-placeholder">No image</div>
+              )}
             </div>
-            <strong>{item.name}</strong>
-            <p className="section-description compact-copy">{buildRecentSummary(item)}</p>
-            <span className="card-kicker">{item.purchaseMode === 'buy' ? 'Direct buy ready' : 'RFQ workflow'}</span>
+
+            <div className="detail-recent-content">
+              <strong className="detail-recent-title">{item.name}</strong>
+              <div className="detail-recent-stats">
+                <span className="detail-recent-stat">SKU {item.sku}</span>
+                <span className="detail-recent-stat">{item.purchaseMode === 'buy' ? item.price.formatted : 'Request Quote'}</span>
+                <span className="detail-recent-stat">{formatAvailability(item)}</span>
+              </div>
+            </div>
           </Link>
         ))}
       </div>
