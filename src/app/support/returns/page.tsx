@@ -1,296 +1,180 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 
 import { StorefrontFrame } from '@/components/layout/storefront-frame';
 import { JsonLdScript } from '@/components/seo/json-ld';
 import { withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
-import { getCurrentUserId } from '@/server/auth/session';
-import { getSupportPageBySlug } from '@/server/content/support';
-import { getOrdersByUser } from '@/server/storefront/account';
-
-const rmaSteps = [
-  {
-    title: 'Open RMA',
-    note: 'Choose the affected order, open the RMA handoff, and describe whether the case is defect, wrong item, damage, or warranty review.',
-  },
-  {
-    title: 'Receive label or routing',
-    note: 'Support confirms whether return freight is covered, whether an RMA number is required, and which lane or warehouse should receive the goods.',
-  },
-  {
-    title: 'Ship back with evidence',
-    note: 'Use the approved route, keep packaging when possible, and attach the visual evidence set if the request is tied to a defect or shipping issue.',
-  },
-  {
-    title: 'Refund or replace',
-    note: 'After inspection, the case moves into refund, replacement, or paid-repair handling depending on the approved outcome and policy scope.',
-  },
-] as const;
-
-const nonReturnable = [
-  'Returned goods can be refused when no approved RMA or support confirmation exists before shipment.',
-  'Initial export postage, packaging charges, and some handling deductions remain non-refundable even when a return is approved.',
-  'Change-of-mind or procurement-plan changes remain customer-paid return scenarios unless the shipment was wrong or defective.',
-  'Issues caused by misuse, unauthorized modification, disassembly, electrical overstress, or damage outside normal industrial use are outside standard warranty handling.',
-] as const;
-
-const faq = [
-  {
-    question: 'When does StepMotech pay return freight?',
-    answer: 'Return freight is normally covered when a confirmed quality defect or wrong-item shipment is established. Change-of-mind or demand-change returns remain customer-paid.',
-  },
-  {
-    question: 'How fast are refunds processed?',
-    answer: 'Approved refunds are typically issued within 2 business days after inspection, with settlement timing then depending on the payment provider.',
-  },
-  {
-    question: 'What if the issue is not clearly a return yet?',
-    answer: 'Start with after-sales or the order-issue contact path when the case still needs diagnosis, compatibility review, or a decision between repair, replacement, and return.',
-  },
-] as const;
 
 export async function generateMetadata() {
   const { locale } = await getServerSitePreferences();
   return buildMetadata({
-  title: 'Returns & Warranty — STEPMOTECH',
-  description: 'Return timing, RMA workflow, warranty scope, exclusions, and order-linked support handoff for refunds, replacements, and repair review.',
-  path: '/support/returns',
+    title: 'Returns & Warranty — STEPMOTECH',
+    description: 'Transparent return process: 30-day window, RMA authorization, scenario-based handling, and cost deduction policies.',
+    path: '/support/returns',
     locale,
   });
 }
 
+const returnRequirements = [
+  { label: 'Authorization', detail: 'All returns require prior official approval. Unauthorized return packages will be returned or disposed of via the original route.' },
+  { label: 'Logistics', detail: 'Use FedEx or DHL for returns. Postal services are not accepted.' },
+  { label: 'Time Limit', detail: 'Returns must be submitted within 30 days of receipt (tracked by valid logistics number).' },
+  { label: 'Product Condition', detail: 'Products must be unused, untested, and unprogrammed. Original packaging and accessories must be intact and undamaged.' },
+  { label: 'Custom Products', detail: 'Only eligible for return if there are process defects or functional failures upon receipt. Non-quality issues are not eligible for returns or exchanges.' },
+];
+
+const deductionRules = [
+  'Costs for quality inspection, secondary packaging, warehouse management, and transportation losses will be deducted from the refund. Deduction ratios vary by product type.',
+  'Initial export postage and packaging fees are non-refundable. Return shipping costs are customer-borne.',
+  'If quality defects are confirmed, apply for "freight collect" to return items. Submit clear visual evidence of defects simultaneously.',
+  'Purchase sufficient insurance to mitigate transportation risks. StepMotech is not responsible for loss, damage, or customs detention during logistics.',
+];
+
+const returnScenarios = [
+  {
+    title: 'Regular Product Return (Non-Quality Issue)',
+    eligibility: 'Subjective dissatisfaction, mistaken purchase, or demand change.',
+    process: 'Submit an application via the account center with a product panoramic photo and proof of packaging integrity. Upon approval, a unique RMA number (e.g., RMA123456789) will be generated. Mark the RMA number on the recipient information column; otherwise, the warehouse may reject the package.',
+    refund: 'Refund = Product Payment Price - Purchase Cost - Export Postage. Return logistics costs are not deducted.',
+  },
+  {
+    title: 'Received the Wrong Item',
+    eligibility: 'Must be reported within 48 hours of delivery.',
+    process: 'Contact customer service with a screenshot comparing the wrong item vs. the order, plus multi-angle photos/videos of the package.',
+    refund: 'Option 1: Keep the wrong item + 50% price difference compensation (via coupon/refund) + reshipment of correct item. Option 2: Return within 5 working days (no additional compensation).',
+  },
+  {
+    title: 'Defective Product Return',
+    eligibility: 'Request must be submitted within 15 working days of delivery.',
+    process: 'Provide 3 videos from different angles, 10 high-definition photos under ambient lighting, and a fault statement attached to the original packaging.',
+    refund: 'Refund ratio may be reduced based on evaluation if packaging is improper. If quality defects are confirmed, return freight is covered.',
+  },
+];
+
+const timelineSteps = [
+  { label: 'Review Feedback', detail: 'Standard cases: 2 working days. Complex cases: up to 5 working days.' },
+  { label: 'Shipment Deadline', detail: 'Approved returns must be shipped within 7 natural days. Otherwise, the return right is considered waived and the package may be rejected.' },
+  { label: 'Refund Processing', detail: 'Approved refunds are typically issued within 2 business days after inspection, with funds appearing in 10 to 15 business days depending on the payment provider.' },
+];
+
+const faq = [
+  { question: 'When does StepMotech cover return freight?', answer: 'Return freight is covered when a confirmed quality defect or wrong-item shipment is established. Change-of-mind or demand-change returns remain customer-paid.' },
+  { question: 'What if I receive the wrong item?', answer: 'Report within 48 hours of delivery. You can keep the wrong item with 50% price difference compensation plus reshipment, or return within 5 working days.' },
+  { question: 'What evidence is needed for defective returns?', answer: '3 videos from different angles, 10 high-definition photos under ambient lighting, and a fault statement attached to the original packaging.' },
+];
+
 export default async function ReturnsWarrantyPage() {
   const { locale } = await getServerSitePreferences();
-  const userId = await getCurrentUserId();
-  const orders = userId ? await getOrdersByUser(userId) : [];
-  const latestOrder = orders[0] ?? null;
-  const [returnsPolicy, warrantyPolicy] = await Promise.all([
-    getSupportPageBySlug('returns'),
-    getSupportPageBySlug('terms-and-conditions'),
-  ]);
-
-  if (!returnsPolicy || !warrantyPolicy) {
-    notFound();
-  }
-
-  const approvedReturnSection = returnsPolicy.sections.find((section) => section.title === 'Approved Return Scenarios');
-  const deductionsSection = returnsPolicy.sections.find((section) => section.title === 'Deductions, Inspection, and Rights');
-  const qualitySection = warrantyPolicy.sections.find((section) => section.title === 'Cancellation and Quality Issues');
-  const warrantySection = warrantyPolicy.sections.find((section) => section.title === 'Warranty and Lifetime Support');
-
-  if (!approvedReturnSection || !deductionsSection || !qualitySection || !warrantySection) {
-    notFound();
-  }
-
-  const accountOrdersPath = withLocalePath('/account/orders', locale);
-  const loginPath = `${withLocalePath('/login', locale)}?callbackUrl=${encodeURIComponent(accountOrdersPath)}`;
-  const openRmaPath = latestOrder ? `${withLocalePath(`/account/orders/${latestOrder.orderNumber}`, locale)}?action=rma` : userId ? accountOrdersPath : loginPath;
-  const openRmaLabel = latestOrder ? `Open RMA for ${latestOrder.orderNumber}` : userId ? 'Open RMA from order history' : 'Sign in to open RMA';
+  const contactPath = withLocalePath('/support/contact?topic=order-issue', locale);
 
   const breadcrumbJsonLd = buildBreadcrumbJsonLd(
-    [
-      { name: 'Home', path: '/' },
-      { name: 'Support', path: '/support' },
-      { name: 'Returns & Warranty', path: '/support/returns' },
-    ],
+    [{ name: 'Home', path: '/' }, { name: 'Support', path: '/support' }, { name: 'Returns & Warranty', path: '/support/returns' }],
     locale,
   );
-  const faqJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faq.map((item) => ({
-      '@type': 'Question',
-      name: item.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: item.answer,
-      },
-    })),
-  };
 
   return (
     <StorefrontFrame
       eyebrow="Support"
-      title="Returns and warranty guidance for refund, replacement, and repair-path decisions."
-      description="Use this page to check return timing, warranty scope, exclusions, and the order-linked RMA handoff before sending product back or escalating a field issue."
+      title="Transparent return and warranty service for every order."
+      description="Before submitting a return request, please review the requirements, scenarios, and timelines below. All returns require prior RMA authorization."
       actions={
         <>
-          <Link href={openRmaPath} className="button-primary">
-            {openRmaLabel}
-          </Link>
-          <Link href={withLocalePath('/support/contact?topic=order-issue', locale)} className="button-secondary page-button-secondary-dark">
-            Contact Order Support
-          </Link>
+          <Link href={contactPath} className="button-primary">Contact Order Support</Link>
+          <Link href={withLocalePath('/support/shipping', locale)} className="button-secondary page-button-secondary-dark">Shipping & Customs</Link>
         </>
       }
     >
       <JsonLdScript id="returns-breadcrumb-jsonld" data={breadcrumbJsonLd} />
-      <JsonLdScript id="returns-faq-jsonld" data={faqJsonLd} />
 
       <section className="section">
         <div className="section-inner returns-summary-grid">
           <article className="summary-stat">
             <span className="summary-label">Return window</span>
             <strong>30 calendar days</strong>
-            <span className="section-description compact-copy">Return requests must be opened within 30 days of receiving the order.</span>
+            <span className="section-description compact-copy">From delivery date, tracked by valid logistics number.</span>
           </article>
           <article className="summary-stat">
-            <span className="summary-label">Warranty policy</span>
-            <strong>3-year coverage</strong>
-            <span className="section-description compact-copy">The current legacy terms reference 3-year warranty handling for qualifying failures under normal use.</span>
+            <span className="summary-label">Review time</span>
+            <strong>2–5 working days</strong>
+            <span className="section-description compact-copy">Standard review within 2 days; complex cases up to 5 days.</span>
           </article>
           <article className="summary-stat">
-            <span className="summary-label">Support beyond warranty</span>
-            <strong>Lifetime technical support</strong>
-            <span className="section-description compact-copy">Paid repair or service options can still be reviewed after warranty, with charges disclosed before work starts.</span>
+            <span className="summary-label">Refund timeline</span>
+            <strong>10–15 business days</strong>
+            <span className="section-description compact-copy">After inspection approval, depending on payment provider.</span>
           </article>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="section-inner trade-flow-grid">
-          <div className="trade-main-stack">
-            <article className="info-card returns-step-card">
-              <div className="section-header trade-card-header">
-                <div>
-                  <div className="card-kicker">RMA flow</div>
-                  <h2 className="cart-section-title">Four-step return path</h2>
-                  <p className="section-description">The return flow stays tied to a real order so support can validate freight responsibility, inspection handling, and the correct warehouse destination.</p>
-                </div>
-              </div>
-
-              <div className="returns-step-grid">
-                {rmaSteps.map((step, index) => (
-                  <article key={step.title} className="summary-stat">
-                    <span className="summary-label">Step {index + 1}</span>
-                    <strong>{step.title}</strong>
-                    <span className="section-description compact-copy">{step.note}</span>
-                  </article>
-                ))}
-              </div>
-            </article>
-
-            <article className="info-card returns-step-card">
-              <div className="section-header trade-card-header">
-                <div>
-                  <div className="card-kicker">Policy details</div>
-                  <h2 className="cart-section-title">Return and warranty scope</h2>
-                </div>
-              </div>
-
-              <div className="returns-policy-grid">
-                <article className="info-card">
-                  <h3 style={{ marginTop: 0 }}>Approved return scenarios</h3>
-                  <div className="support-list">
-                    {approvedReturnSection.bullets?.map((item) => (
-                      <div key={item} className="support-item">
-                        <span className="support-bullet" />
-                        <span>{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </article>
-
-                <article className="info-card">
-                  <h3 style={{ marginTop: 0 }}>Deductions and inspection</h3>
-                  <div className="support-list">
-                    {deductionsSection.paragraphs?.map((item) => (
-                      <div key={item} className="support-item">
-                        <span className="support-bullet" />
-                        <span>{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </article>
-
-                <article className="info-card">
-                  <h3 style={{ marginTop: 0 }}>Damage and wrong-item handling</h3>
-                  <div className="support-list">
-                    {qualitySection.bullets?.map((item) => (
-                      <div key={item} className="support-item">
-                        <span className="support-bullet" />
-                        <span>{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </article>
-
-                <article className="info-card">
-                  <h3 style={{ marginTop: 0 }}>Warranty and lifetime support</h3>
-                  <div className="support-list">
-                    {warrantySection.bullets?.map((item) => (
-                      <div key={item} className="support-item">
-                        <span className="support-bullet" />
-                        <span>{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </article>
-              </div>
-            </article>
-          </div>
-
-          <aside className="trade-side-stack">
-            <article className="info-card returns-step-card">
-              <div className="card-kicker">Open RMA</div>
-              <h2 className="cart-section-title">Order-linked handoff</h2>
-              <p className="section-description">RMA requests are anchored to a specific order so support can confirm shipment history, line items, and the right return lane before goods are sent back.</p>
-              <div className="trade-empty-actions">
-                <Link href={openRmaPath} className="button-primary">
-                  {openRmaLabel}
-                </Link>
-                <Link href={withLocalePath('/account/orders', locale)} className="button-secondary">
-                  View Orders
-                </Link>
-              </div>
-              <p className="section-description compact-copy">
-                {latestOrder
-                  ? `Your latest available order is ${latestOrder.orderNumber}. Open it directly in RMA mode if that is the affected shipment.`
-                  : userId
-                    ? 'Choose the relevant order from your history before opening the RMA handoff.'
-                    : 'Sign in first, then pick the affected order from your account history.'}
-              </p>
-            </article>
-
-            <article className="info-card returns-step-card">
-              <div className="card-kicker">Not returnable</div>
-              <h2 className="cart-section-title">Cases that usually fall outside standard return approval</h2>
-              <div className="support-list">
-                {nonReturnable.map((item) => (
-                  <div key={item} className="support-item">
-                    <span className="support-bullet" />
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-            </article>
-
-            <article className="info-card returns-step-card">
-              <div className="card-kicker">Escalation</div>
-              <h2 className="cart-section-title">When to switch to another support path</h2>
-              <div className="inline-link-list">
-                <Link href={withLocalePath('/support/after-sales', locale)} className="section-link">
-                  After-sales Support
-                </Link>
-                <Link href={withLocalePath('/support/contact?topic=order-issue', locale)} className="section-link">
-                  Order-Issue Contact
-                </Link>
-                <Link href={withLocalePath('/support/shipping', locale)} className="section-link">
-                  Shipping & Customs
-                </Link>
-              </div>
-            </article>
-          </aside>
         </div>
       </section>
 
       <section className="section">
         <div className="section-inner">
-          <article className="info-card returns-step-card">
+          <div className="section-header">
+            <div><h2 className="section-title">Return Requirements</h2><p className="section-description">All returns must meet these conditions before an RMA can be approved.</p></div>
+          </div>
+          <div className="trust-grid">
+            {returnRequirements.map((item) => (
+              <article key={item.label} className="trust-card">
+                <div className="card-kicker">{item.label}</div>
+                <p className="section-description" style={{ marginBottom: 0 }}>{item.detail}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section-inner">
+          <div className="section-header">
+            <div><h2 className="section-title">Cost Deductions & Responsibilities</h2><p className="section-description">Understand what costs may be deducted and who bears responsibility in each scenario.</p></div>
+          </div>
+          <div className="support-list">
+            {deductionRules.map((item) => (
+              <div key={item} className="support-item"><span className="support-bullet" /><span>{item}</span></div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section-inner">
+          <div className="section-header">
+            <div><h2 className="section-title">Return Handling by Scenario</h2><p className="section-description">Different procedures apply depending on the reason for return.</p></div>
+          </div>
+          <div className="trade-flow-grid">
+            {returnScenarios.map((scenario) => (
+              <article key={scenario.title} className="info-card" style={{ gridColumn: '1 / -1' }}>
+                <div className="card-kicker">{scenario.eligibility}</div>
+                <h3 style={{ marginTop: 4 }}>{scenario.title}</h3>
+                <p className="section-description"><strong>Process:</strong> {scenario.process}</p>
+                <p className="section-description"><strong>Refund:</strong> {scenario.refund}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section-inner">
+          <div className="section-header">
+            <div><h2 className="section-title">Process Timelines</h2></div>
+          </div>
+          <div className="trust-grid">
+            {timelineSteps.map((item) => (
+              <article key={item.label} className="trust-card">
+                <div className="card-kicker">{item.label}</div>
+                <p className="section-description" style={{ marginBottom: 0 }}>{item.detail}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section-inner">
+          <article className="info-card">
             <div className="card-kicker">FAQ</div>
-            <h2 className="cart-section-title">Common return and warranty questions</h2>
+            <h2 className="cart-section-title">Common return questions</h2>
             <div className="custom-faq-grid">
               {faq.map((item) => (
                 <article key={item.question} className="custom-faq-card">

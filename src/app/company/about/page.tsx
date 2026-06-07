@@ -9,11 +9,10 @@ import { buildBreadcrumbJsonLd, buildMetadata, buildOrganizationJsonLd } from '@
 export async function generateMetadata() {
   const { locale } = await getServerSitePreferences();
   return buildMetadata({
-  title: 'About STEPMOTECH — Factory-direct motion engineering',
-  description:
-    'Our mission, story, capacity by the numbers, leadership, and values as a factory-direct supplier of stepper motors, drivers, and matched motion systems.',
-  path: '/company/about',
-  type: 'website',
+    title: 'About STEPMOTECH — Precision Stepper Motors Engineered for Industrial Reliability',
+    description: 'Factory-direct supplier of stepper motors, drivers, and matched motion systems. 100,000h MTBF, ±0.05° precision, IP67 options available.',
+    path: '/company/about',
+    type: 'website',
     locale,
   });
 }
@@ -27,17 +26,27 @@ const milestones = [
 ];
 
 const stats = [
-  { label: 'Employees', value: '480+' },
+  { label: 'Employees', value: '200+' },
   { label: 'Factory area', value: '32,000 m²' },
   { label: 'Monthly capacity', value: '120k units' },
   { label: 'Customer countries', value: '60+' },
   { label: 'Catalog SKUs', value: '2,400+' },
+  { label: 'MTBF Rating', value: '100,000h' },
 ];
 
-const leadership = [
-  { name: 'L. Wen', role: 'Chief Executive Officer', bio: 'Two decades in motion manufacturing, focused on factory-direct quality and export readiness.' },
-  { name: 'M. Aigner', role: 'VP Engineering', bio: 'Leads motor and driver design, datasheet accuracy, and application sizing support.' },
-  { name: 'S. Ferraro', role: 'Director of Customer Operations', bio: 'Owns the RFQ, credit, and after-sales experience for B2B accounts.' },
+const techHighlights = [
+  { title: 'Precision That Scales', detail: '±0.05° step error at 3,000 RPM (ISO 230-2), outperforming NEMA 17-42 standards for CNC tool changers and optical alignment systems.' },
+  { title: 'Thermal Consistency', detail: '<0.005% torque variance from -30°C to 120°C, with IP67 options validated in battery module assembly environments.' },
+  { title: 'Energy-Efficient Innovation', detail: 'Patented coil design delivers 35% lower power consumption vs. conventional motors, proven in 24/7 pharmaceutical blister packaging lines.' },
+  { title: 'Regenerative Braking', detail: 'Recovers 18% kinetic energy in automated warehouse shuttle systems.' },
+  { title: 'Rugged Reliability', detail: '100,000h MTBF validated per MIL-HDBK-217F for semiconductor wafer transfer robots. Vacuum-ready operation at 10⁻⁶ mbar for cleanroom automation.' },
+];
+
+const industrySolutions = [
+  { title: '3D Printing Systems', detail: '±0.0417mm linear repeatability in extrusion path control, reducing material waste by 19% in aerospace-grade composite printing.' },
+  { title: 'Semiconductor Automation', detail: 'Vacuum-rated NEMA 23 motors with <0.008° angular deviation at 10⁻⁶ mbar for wafer transfer.' },
+  { title: 'Medical Robotics', detail: 'FDA-compliant NEMA 17 motors enabling 72-hour continuous operation in surgical robotic arms.' },
+  { title: 'Smart Logistics', detail: 'EtherCAT-synchronized motors driving warehouse robots with ±0.1mm positioning accuracy.' },
 ];
 
 const values = [
@@ -47,10 +56,10 @@ const values = [
   { title: 'Sustainability', detail: 'Efficient drives and right-sized motors reduce energy and material waste.' },
 ];
 
-const press = [
-  { year: '2025', title: 'Motion Components Award — Best Stepper Driver Series', source: 'Industrial Automation Review' },
-  { year: '2024', title: 'Featured supplier in cross-border OEM sourcing report', source: 'Global Manufacturing Weekly' },
-  { year: '2023', title: 'ISO quality program profile', source: 'Precision Engineering Journal' },
+const leadership = [
+  { name: 'L. Wen', role: 'Chief Executive Officer', bio: 'Two decades in motion manufacturing, focused on factory-direct quality and export readiness.' },
+  { name: 'M. Aigner', role: 'VP Engineering', bio: 'Leads motor and driver design, datasheet accuracy, and application sizing support.' },
+  { name: 'S. Ferraro', role: 'Director of Customer Operations', bio: 'Owns the RFQ, credit, and after-sales experience for B2B accounts.' },
 ];
 
 export default async function CompanyAboutPage() {
@@ -65,55 +74,37 @@ export default async function CompanyAboutPage() {
     locale,
   );
 
-  const aboutPageJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'AboutPage',
-    name: 'About STEPMOTECH',
-    description:
-      'Factory-direct supplier of stepper motors, drivers, and matched motion systems serving OEM and distribution markets worldwide.',
-  };
-
   return (
     <StorefrontFrame
       eyebrow="Company"
-      title="Engineering motion you can specify, source, and trust — straight from the factory."
-      description="STEPMOTECH builds stepper motors, drivers, and matched motion systems and sells them direct: fast for catalog reorders, structured for engineering-led RFQs and export procurement."
+      title="Stepper Motors Engineered for Industrial Reliability"
+      description="While stepper motors are rarely the headline of a factory tour, their precision defines every micro-movement in modern industry. At StepMotech, we deliver mission-critical motion control for applications where 0.05° accuracy impacts million-dollar production lines."
       actions={
         <>
-          <Link href={withLocalePath('/company/careers', locale)} className="button-primary">
-            Careers
-          </Link>
-          <Link href={withLocalePath('/company/factory', locale)} className="button-secondary page-button-secondary-dark">
-            Factory Tour
-          </Link>
+          <Link href={withLocalePath('/products', locale)} className="button-primary">Browse Catalog</Link>
+          <Link href={withLocalePath('/company/factory', locale)} className="button-secondary page-button-secondary-dark">Factory Tour</Link>
         </>
       }
     >
       <JsonLdScript id="company-about-organization-jsonld" data={buildOrganizationJsonLd()} />
-      <JsonLdScript id="company-about-aboutpage-jsonld" data={aboutPageJsonLd} />
       <JsonLdScript id="company-about-breadcrumb-jsonld" data={breadcrumbJsonLd} />
 
       <section className="section">
-        <div className="section-inner story-grid">
-          <article className="story-card story-card-accent">
-            <div className="card-kicker">Our mission</div>
-            <h2 className="section-title">Make precise motion sourcing simple for the people who build machines.</h2>
-            <p className="section-description">
-              We pair manufacturing depth with a transparent catalog and responsive engineering support so buyers can move from specification to delivery
-              without guesswork.
-            </p>
-          </article>
-          <article className="story-card">
-            <div className="card-kicker">What we make</div>
-            <div className="support-list">
-              {['Stepper motors across NEMA frames', 'Matched drivers and controllers', 'Custom and OEM motion assemblies', 'Application sizing and after-sales support'].map((item) => (
-                <div key={item} className="support-item">
-                  <span className="support-bullet" />
-                  <span>{item}</span>
-                </div>
-              ))}
+        <div className="section-inner">
+          <div className="section-header">
+            <div>
+              <h2 className="section-title">Technical Superiority</h2>
+              <p className="section-description">Engineering-grade performance data that sets our motion products apart.</p>
             </div>
-          </article>
+          </div>
+          <div className="trust-grid">
+            {techHighlights.map((item) => (
+              <article key={item.title} className="trust-card">
+                <div className="card-kicker">{item.title}</div>
+                <p className="section-description" style={{ marginBottom: 0 }}>{item.detail}</p>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -121,7 +112,45 @@ export default async function CompanyAboutPage() {
         <div className="section-inner">
           <div className="section-header">
             <div>
-              <h2 className="section-title">Our story</h2>
+              <h2 className="section-title">Industry-Proven Solutions</h2>
+              <p className="section-description">Real-world applications where precision motion control makes the difference.</p>
+            </div>
+          </div>
+          <div className="trust-grid">
+            {industrySolutions.map((item) => (
+              <article key={item.title} className="trust-card">
+                <div className="card-kicker">{item.title}</div>
+                <p className="section-description" style={{ marginBottom: 0 }}>{item.detail}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section-inner">
+          <div className="section-header">
+            <div>
+              <h2 className="section-title">By the Numbers</h2>
+              <p className="section-description">A snapshot of the manufacturing and commercial footprint behind every order.</p>
+            </div>
+          </div>
+          <div className="trust-grid about-stat-grid">
+            {stats.map((item) => (
+              <article key={item.label} className="trust-card">
+                <strong className="about-stat">{item.value}</strong>
+                <div className="card-kicker">{item.label}</div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section-inner">
+          <div className="section-header">
+            <div>
+              <h2 className="section-title">Our Story</h2>
               <p className="section-description">From a single winding workshop to a direct global motion supplier.</p>
             </div>
           </div>
@@ -143,17 +172,19 @@ export default async function CompanyAboutPage() {
         <div className="section-inner">
           <div className="section-header">
             <div>
-              <h2 className="section-title">By the numbers</h2>
-              <p className="section-description">A snapshot of the manufacturing and commercial footprint behind every order.</p>
+              <h2 className="section-title">Rooted in Industrial Excellence</h2>
+              <p className="section-description">As a technology spin-off from FA Dreamworks Limited — the automation backbone for Fortune 500 manufacturers — we inherit 20 years of mission-critical engineering (IATF 16949 / ISO 13849 certified). Zero-compromise DNA with 72hr rapid prototyping for NEMA 8-34 customizations.</p>
             </div>
           </div>
-          <div className="trust-grid about-stat-grid">
-            {stats.map((item) => (
-              <article key={item.label} className="trust-card">
-                <strong className="about-stat">{item.value}</strong>
-                <div className="card-kicker">{item.label}</div>
-              </article>
-            ))}
+          <div className="story-grid">
+            <article className="story-card">
+              <div className="card-kicker">Engineering DNA</div>
+              <p className="section-description">Backed by 200+ engineers in Shanghai, with 15+ new regional centers planned across the US, EMEA, and LATAM over the next 3 years.</p>
+            </article>
+            <article className="story-card story-card-accent">
+              <div className="card-kicker">Global Scale</div>
+              <p className="section-description">Multi-warehouse fulfillment across Asia, Europe, North America, and Australia — including the US, Germany, UK, Australia, Poland, Japan, France, and China.</p>
+            </article>
           </div>
         </div>
       </section>
@@ -183,7 +214,7 @@ export default async function CompanyAboutPage() {
         <div className="section-inner">
           <div className="section-header">
             <div>
-              <h2 className="section-title">What we value</h2>
+              <h2 className="section-title">What We Value</h2>
               <p className="section-description">Principles that shape how we engineer, document, and support motion products.</p>
             </div>
           </div>
@@ -199,39 +230,14 @@ export default async function CompanyAboutPage() {
       </section>
 
       <section className="section">
-        <div className="section-inner">
-          <div className="section-header">
-            <div>
-              <h2 className="section-title">Press &amp; awards</h2>
-              <p className="section-description">Recognition and coverage of our products and quality program.</p>
-            </div>
-          </div>
-          <div className="support-list">
-            {press.map((item) => (
-              <div key={item.title} className="support-item">
-                <span className="support-bullet" />
-                <span>
-                  <strong>{item.year}</strong> — {item.title} · <em>{item.source}</em>
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section">
         <div className="section-inner story-grid">
           <article className="story-card story-card-accent">
             <div className="card-kicker">Join or visit</div>
-            <h2 className="section-title">Work with us or see how it’s built.</h2>
+            <h2 className="section-title">Work with us or see how it's built.</h2>
             <p className="section-description">Explore open roles or book a factory tour to review the production process behind our motion systems.</p>
             <div className="trade-empty-actions">
-              <Link href={withLocalePath('/company/careers', locale)} className="button-primary">
-                View Careers
-              </Link>
-              <Link href={withLocalePath('/company/factory', locale)} className="button-secondary page-button-secondary-dark">
-                Book a Factory Tour
-              </Link>
+              <Link href={withLocalePath('/company/careers', locale)} className="button-primary">View Careers</Link>
+              <Link href={withLocalePath('/company/factory', locale)} className="button-secondary page-button-secondary-dark">Factory Tour</Link>
             </div>
           </article>
         </div>

@@ -41,108 +41,45 @@ export const legalPages: LegalPage[] = [
     title: 'Terms of Sale & Use',
     eyebrow: 'Legal',
     description:
-      'The trading terms that govern catalog purchases, quotations, payment, delivery, warranty, and liability between STEPMOTECH and its business customers.',
-    lastUpdated: '2026-05-01',
-    effectiveDate: '2026-05-15',
+      'The trading terms that govern orders, customs clearance, cancellation, quality issue handling, and warranty between STEPMOTECH and its customers.',
+    lastUpdated: '2026-06-07',
+    effectiveDate: '2026-06-15',
     sections: [
       {
-        id: 'scope',
-        title: '1. Scope and Acceptance',
-        paragraphs: [
-          'These Terms of Sale & Use ("Terms") apply to every order, quotation, and use of the STEPMOTECH storefront. By placing an Order or accepting a Quotation you agree to these Terms in full.',
-          'Where a signed master supply agreement exists between the parties, that agreement prevails over any conflicting provision in these Terms.',
-        ],
-      },
-      {
-        id: 'pricing',
-        title: '2. Pricing, Currency, and Volume Tiers',
-        bullets: [
-          'Catalog prices are shown in the currency selected for your session and exclude duties and taxes unless an all-inclusive shipping route is chosen.',
-          'Volume tier pricing and project quotations are confirmed in writing and supersede catalog list pricing for the quoted lines and quantities.',
-          'Quotations remain valid for the period stated on the Quotation; after expiry, pricing is subject to re-confirmation.',
-        ],
-        glossaryTerms: [{ label: 'Volume tier', termId: 'volume-pricing' }],
-      },
-      {
-        id: 'order-acceptance',
-        title: '3. Order Acceptance',
-        paragraphs: [
-          'An Order constitutes an offer to purchase. A contract is formed only when STEPMOTECH issues an order confirmation or dispatches the goods, whichever occurs first.',
-          'STEPMOTECH may decline or cancel an Order before dispatch where stock, pricing errors, export screening, or credit checks require it.',
-        ],
-      },
-      {
-        id: 'payment',
-        title: '4. Payment and Net Terms',
-        bullets: [
-          'Standard orders are payable in advance unless approved Net 30 credit terms are in place for the account.',
-          'Approved Net 30 customers must settle invoices within thirty (30) days of the invoice date.',
-          'Overdue balances may accrue interest at the maximum rate permitted by applicable law and may suspend open credit.',
-        ],
-      },
-      {
-        id: 'delivery',
-        title: '5. Delivery, Risk, and Incoterms',
-        paragraphs: [
-          'Delivery, transfer of risk, and customs responsibility follow the Incoterm stated on the order confirmation. Title passes only upon full payment.',
-          'Delivery dates are estimates. STEPMOTECH is not liable for delays caused by carriers, customs authorities, or events outside its reasonable control.',
-        ],
-        glossaryTerms: [{ label: 'Incoterm', termId: 'incoterms' }],
-      },
-      {
         id: 'duties',
-        title: '6. Duties and Taxes',
+        title: '1. Customs Fees and Clearance Responsibilities',
         paragraphs: [
-          'Unless a duty-inclusive route is selected, the customer is responsible for import duties, VAT, and clearance charges levied by the destination country.',
+          'Tax burden varies by shipping warehouse. Prices for EU, US, FR, UK, AU, and JP warehouses include all applicable taxes. Orders shipped from the China warehouse operate under DDU (Delivered Duty Unpaid) mode, and prices exclude import tariffs.',
+          'International customers are responsible for customs duties and clearance fees. Customers in India, Turkey, Brazil, and South Africa must ensure they have the necessary customs clearance qualifications.',
+          'If a package is returned due to refusal to pay customs fees, the applicable logistics costs will be deducted from the refund.',
+        ],
+      },
+      {
+        id: 'cancellation',
+        title: '2. Order Cancellation',
+        paragraphs: [
+          'Cancellation requests must be submitted via email. A cancellation is valid only if received before the order has been handed to the carrier.',
+          'After shipment has commenced, cancellation requires mutual consultation between both parties. Any disputes arising after shipment must be resolved cooperatively, with the customer working with the carrier to arrange return or receipt of the goods.',
+        ],
+      },
+      {
+        id: 'quality',
+        title: '3. Product Quality Issues',
+        paragraphs: [
+          'Any product quality concerns must be reported to STEPMOTECH technical support within thirty (30) days of receipt. Professional testing will be conducted to determine the nature of the issue.',
+          'Based on testing results, STEPMOTECH will offer a return, replacement, or repair at its discretion. If the issue is caused by improper operation or human damage, the customer bears all repair costs.',
         ],
       },
       {
         id: 'warranty',
-        title: '7. Warranty',
-        bullets: [
-          'Products carry a three (3) year limited warranty from the delivery date against functional failure under normal, rated operating conditions.',
-          'The warranty excludes misuse, over-current operation, unauthorized modification, and cosmetic wear.',
-          'The sole remedy under warranty is repair, replacement, or credit at STEPMOTECH’s election.',
-        ],
-      },
-      {
-        id: 'liability',
-        title: '8. Limitation of Liability',
+        title: '4. Standard Warranty',
         paragraphs: [
-          'To the maximum extent permitted by law, STEPMOTECH’s aggregate liability for any claim is limited to the amount paid for the goods giving rise to the claim.',
-          'STEPMOTECH is not liable for indirect, incidental, or consequential loss, including loss of profit, production, or downtime.',
-        ],
-      },
-      {
-        id: 'ip',
-        title: '9. Intellectual Property',
-        paragraphs: [
-          'All trademarks, drawings, datasheets, and CAD assets remain the property of STEPMOTECH. Purchase of goods grants no licence to the underlying intellectual property beyond ordinary use of the product.',
-        ],
-      },
-      {
-        id: 'disputes',
-        title: '10. Disputes and Governing Law',
-        paragraphs: [
-          'These Terms are governed by the laws stated on the order confirmation. The parties will attempt good-faith resolution before commencing formal proceedings.',
-        ],
-      },
-      {
-        id: 'force-majeure',
-        title: '11. Force Majeure',
-        paragraphs: [
-          'Neither party is liable for failure or delay caused by events beyond reasonable control, including natural disasters, labour action, transport disruption, or government measures.',
-        ],
-      },
-      {
-        id: 'severability',
-        title: '12. Severability',
-        paragraphs: [
-          'If any provision of these Terms is held unenforceable, the remaining provisions continue in full force and effect.',
+          'STEPMOTECH provides a standard one (1) year warranty from the delivery date of the product.',
         ],
       },
     ],
     versionHistory: [
+      { version: 'v4.0', date: '2026-06-07', summary: 'Updated to reflect revised trading terms covering customs clearance, order cancellation, quality issue handling, and warranty.' },
       { version: 'v3.0', date: '2026-05-01', summary: 'Clarified Net 30 credit terms and Incoterm-based risk transfer.' },
       { version: 'v2.1', date: '2025-09-12', summary: 'Updated warranty remedy language and liability cap.' },
       { version: 'v2.0', date: '2025-02-03', summary: 'Restructured into numbered articles; added force majeure clause.' },
@@ -154,91 +91,39 @@ export const legalPages: LegalPage[] = [
     title: 'Privacy Policy',
     eyebrow: 'Legal',
     description:
-      'How STEPMOTECH collects, uses, shares, and protects personal data, the legal bases we rely on, and the rights available to you under GDPR and CCPA.',
-    lastUpdated: '2026-05-01',
-    effectiveDate: '2026-05-15',
+      'How STEPMOTECH collects, uses, and protects personal data, and the rights available to you regarding your information.',
+    lastUpdated: '2026-06-07',
+    effectiveDate: '2026-06-15',
     sections: [
       {
-        id: 'controller',
-        title: '1. Data Controller and DPO',
-        paragraphs: [
-          'STEPMOTECH is the data controller for personal data processed through this storefront. Our Data Protection Officer can be reached at the contact details in the footer of this page.',
-        ],
-      },
-      {
         id: 'collection',
-        title: '2. Categories of Data We Collect',
-        bullets: [
-          'Identity and contact data: name, company, email, phone, and shipping address.',
-          'Account data: credentials, order history, quotations, and saved lists.',
-          'Technical data: IP address, device and browser details, and page interaction data.',
+        title: '1. Information Collection',
+        paragraphs: [
+          'STEPMOTECH follows the minimum necessity principle when collecting personal data. We collect the following categories of information: identity identification (name, username, and password); contact and transaction information (email address, phone number, and delivery address); and device and network information (device type, operating system, browser type, IP address, accessed pages, and dwell time).',
+          'Anonymized information that cannot be linked to an identifiable individual is not considered personal information under this policy and may be used for any legitimate business purpose.',
         ],
       },
       {
         id: 'purposes',
-        title: '3. How We Use Personal Data',
+        title: '2. Purpose of Information Use',
         bullets: [
-          'To process orders, quotations, payments, and shipments.',
-          'To provide support, manage accounts, and operate B2B credit and verification workflows.',
-          'To improve site performance and to send marketing only where you have opted in.',
-        ],
-      },
-      {
-        id: 'legal-basis',
-        title: '4. Legal Bases (GDPR)',
-        bullets: [
-          'Performance of a contract for order fulfilment and account services.',
-          'Legitimate interests for fraud prevention, security, and service improvement.',
-          'Consent for marketing communications, which you may withdraw at any time.',
-          'Legal obligation for tax, customs, and export-compliance records.',
-        ],
-      },
-      {
-        id: 'sharing',
-        title: '5. Who We Share Data With',
-        paragraphs: [
-          'We share data with payment processors, logistics and customs providers, and IT service providers acting as processors under contract, and with authorities where legally required. We do not sell personal data.',
-        ],
-      },
-      {
-        id: 'transfers',
-        title: '6. International Transfers',
-        paragraphs: [
-          'Where data is transferred outside your region, we rely on adequacy decisions or Standard Contractual Clauses with appropriate safeguards.',
-        ],
-      },
-      {
-        id: 'retention',
-        title: '7. Retention',
-        paragraphs: [
-          'We retain personal data only as long as needed to fulfil the purposes above and to satisfy legal, tax, and export-record requirements.',
-        ],
-      },
-      {
-        id: 'cookies',
-        title: '8. Cookies',
-        paragraphs: [
-          'We use cookies for cart persistence, session preferences, and analytics. See our Cookies Policy for the full list and consent controls.',
+          'To process orders and deliver products purchased through the storefront.',
+          'To ensure account security and send transaction progress and account changes via email or phone.',
+          'To analyze user behavior for the purpose of optimizing and improving our website.',
+          'Marketing communications are sent only with your explicit opt-in consent. You may unsubscribe at any time.',
         ],
       },
       {
         id: 'rights',
-        title: '9. Your Rights',
-        bullets: [
-          'Access, rectification, erasure, restriction, portability, and objection under GDPR.',
-          'CCPA rights to know, delete, and opt out of sale (note: we do not sell personal data).',
-          'The right to lodge a complaint with your supervisory authority.',
-        ],
-      },
-      {
-        id: 'requests',
-        title: '10. Submitting a Request',
+        title: '3. User Rights Protection',
         paragraphs: [
-          'To exercise any right, contact our DPO using the details in the footer. We respond within the timeframe required by applicable law.',
+          'You have the right to access the personal information we hold about you. You may request data portability of your personal information. You may unsubscribe from marketing communications at any time.',
+          'To exercise any of these rights, please contact our DPO using the details provided in the footer of this page.',
         ],
       },
     ],
     versionHistory: [
+      { version: 'v4.0', date: '2026-06-07', summary: 'Revised to reflect minimum necessity collection principle, defined purposes of information use, and user rights protections.' },
       { version: 'v3.0', date: '2026-05-01', summary: 'Added explicit GDPR legal-basis table and CCPA request routing.' },
       { version: 'v2.2', date: '2025-08-20', summary: 'Updated international transfer safeguards to reference SCCs.' },
       { version: 'v2.0', date: '2025-01-15', summary: 'Separated cookies detail into a dedicated Cookies Policy.' },
