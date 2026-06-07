@@ -190,6 +190,7 @@ export const products = pgTable(
     certifications: jsonb('certifications').$type<string[]>(),
     configurationRules: jsonb('configuration_rules'),
     torqueCurveData: jsonb('torque_curve_data'),
+    paidSampleEnabled: boolean('paid_sample_enabled').notNull().default(false),
     featured: boolean('featured').notNull().default(false),
     seoTitle: varchar('seo_title', { length: 255 }),
     seoDescription: varchar('seo_description', { length: 500 }),

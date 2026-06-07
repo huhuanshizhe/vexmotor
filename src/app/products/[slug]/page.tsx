@@ -214,13 +214,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 <span className="pdp-top-sku">SKU {p.sku}</span>
               </div>
               <h1 className="pdp-top-title">{p.name}</h1>
-            </div>
-            <div className="pdp-top-status">
-              <span className="pdp-top-badge is-accent">{procurementLabel}</span>
-              <span className="pdp-top-badge">{availabilityLabel}</span>
-              <span className="pdp-top-badge is-subtle">{p.inStock ? `${Math.max(p.stockQuantity, 0)} in stock` : 'Quote review'}</span>
               {lifecycleBadge ? (
-                <span className={`pdp-top-badge ${lifecycleBadge.className}`}>{lifecycleBadge.label}</span>
+                <span className={`pdp-top-badge ${lifecycleBadge.className}`} style={{ marginTop: 8 }}>{lifecycleBadge.label}</span>
               ) : null}
             </div>
           </header>
@@ -255,65 +250,49 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
               <div className="product-pricing-stack pdp-price-panel">
                 <p className="product-price">{priceHeadline}</p>
-                {p.compareAtPrice ? <p className="comparison-note">Reference price {p.compareAtPrice.formatted}</p> : null}
+                {p.compareAtPrice ? <p className="comparison-note">Ref {p.compareAtPrice.formatted}</p> : null}
                 {bulkPrices.length ? (
-                  <>
-                    <details className="pdp-tier-pricing">
-                      <summary>Tier pricing</summary>
-                      <div className="detail-volume-pricing">
-                        {bulkPrices.map((item) => (
-                          <span key={item.label} className="detail-volume-line">{item.rangeLabel} pcs {item.unitPriceLabel}</span>
-                        ))}
-                      </div>
-                    </details>
-                    <Link href={volumePricingHref} className="detail-inline-link">View volume pricing</Link>
-                  </>
-                ) : (
-                  <p className="section-description compact-copy">Pricing is finalized through the quote workflow once engineering scope and volume are confirmed.</p>
-                )}
+                  <details className="pdp-tier-pricing">
+                    <summary>Tier pricing</summary>
+                    <div className="detail-volume-pricing">
+                      {bulkPrices.map((item) => (
+                        <span key={item.label} className="detail-volume-line">{item.rangeLabel} pcs {item.unitPriceLabel}</span>
+                      ))}
+                    </div>
+                  </details>
+                ) : null}
               </div>
 
-              <div className="pdp-mini-spec-grid">
+              <div className="pdp-specs-strip">
                 {heroSpecs.map((item) => (
-                  <article key={`${item.label}-${item.value}`} className="pdp-mini-spec-card">
-                    <span className="summary-label">{item.label}</span>
-                    <strong>{item.value}</strong>
-                  </article>
+                  <span key={`${item.label}-${item.value}`} className="pdp-spec-chip">
+                    <span className="pdp-spec-chip-label">{item.label}</span>
+                    <span className="pdp-spec-chip-value">{item.value}</span>
+                  </span>
                 ))}
               </div>
 
-              <div className="pdp-stock-card">
-                <article className="summary-stat">
-                  <span className="summary-label">Availability</span>
-                  <strong>{p.inStock ? `${Math.max(p.stockQuantity, 0)} units ready` : 'Quote-based allocation'}</strong>
-                </article>
-                <article className="summary-stat">
-                  <span className="summary-label">MOQ</span>
-                  <strong>{p.moq > 1 ? `${p.moq} pcs minimum` : 'No minimum'}</strong>
-                </article>
-                <article className="summary-stat">
-                  <span className="summary-label">Lead time</span>
-                  <strong>{p.inStock ? `${p.leadTimeMin}–${p.leadTimeMax} ${p.leadTimeUnit.replace(/_/g, ' ')}` : `${p.leadTimeMin}–${p.leadTimeMax} ${p.leadTimeUnit.replace(/_/g, ' ')}`}</strong>
-                </article>
+              <div className="pdp-logistics-bar">
+                <span className="pdp-logistics-item">{p.moq > 1 ? `MOQ ${p.moq}` : 'No MOQ'}</span>
+                <span className="pdp-logistics-divider" aria-hidden="true" />
+                <span className="pdp-logistics-item">{p.inStock ? `${p.stockQuantity} in stock` : 'Build to order'}</span>
+                <span className="pdp-logistics-divider" aria-hidden="true" />
+                <span className="pdp-logistics-item">{p.leadTimeMin}–{p.leadTimeMax} {p.leadTimeUnit.replace(/_/g, ' ')}</span>
                 {p.efficiencyClass ? (
-                  <article className="summary-stat">
-                    <span className="summary-label">Efficiency</span>
-                    <strong>{p.efficiencyClass}</strong>
-                  </article>
-                ) : null}
-                {p.lifecycleStatus === 'eol' && eolDeadline ? (
-                  <article className="summary-stat">
-                    <span className="summary-label">Discontinued since</span>
-                    <strong>{eolDeadline}</strong>
-                  </article>
-                ) : null}
-                {p.lifecycleStatus === 'last_time_buy' && ltbDeadline ? (
-                  <article className="summary-stat">
-                    <span className="summary-label">Last purchase by</span>
-                    <strong>{ltbDeadline}</strong>
-                  </article>
+                  <>
+                    <span className="pdp-logistics-divider" aria-hidden="true" />
+                    <span className="pdp-logistics-item">{p.efficiencyClass}</span>
+                  </>
                 ) : null}
               </div>
+
+              {p.paidSampleEnabled ? (
+                <div className="pdp-sample-banner">
+                  <span className="pdp-sample-badge">Pay-for-Shipping Sample</span>
+                  <p className="pdp-sample-desc">Try before you buy — order 1 unit as a sample, pay only shipping. Our team will review and confirm your sample request.</p>
+                  <Link href={`${sampleHref}&sample=1`} className="button-primary pdp-sample-cta">Request Sample — Shipping Only</Link>
+                </div>
+              ) : null}
 
               <div className="product-action-stack pdp-action-cluster">
                 {p.purchaseMode === 'buy' ? (
@@ -328,7 +307,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                   <div className="pdp-primary-cta">
                     <Link href={quoteHref} className="button-secondary pdp-quote-button">Add to Quote</Link>
                     <div className="pdp-support-links">
-                      <Link href={sampleHref} className="detail-inline-link">Request a production sample</Link>
                       <Link href={customHref} className="detail-inline-link">Discuss a custom variant</Link>
                       <Link href={contactPath} className="detail-inline-link">Talk to engineering support</Link>
                     </div>

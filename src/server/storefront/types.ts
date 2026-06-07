@@ -104,6 +104,7 @@ export type StorefrontProductDetail = StorefrontProductCard & {
   certifications?: string[];
   configurationRules?: unknown | null;
   torqueCurveData?: unknown | null;
+  paidSampleEnabled?: boolean;
 };
 
 export type ProductListResult = {

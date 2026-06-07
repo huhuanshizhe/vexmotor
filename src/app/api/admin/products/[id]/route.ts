@@ -58,6 +58,7 @@ const patchSchema = z.object({
   certifications: z.array(z.string()).optional(),
   configurationRules: z.any().optional().nullable().transform((value) => value ?? null),
   torqueCurveData: z.any().optional().nullable().transform((value) => value ?? null),
+  paidSampleEnabled: z.boolean().optional(),
   featured: z.boolean().optional(),
   brandId: z.string().uuid().nullable().optional().transform((value) => value ?? null),
   defaultCategoryId: z.string().uuid().nullable().optional().transform((value) => value ?? null),

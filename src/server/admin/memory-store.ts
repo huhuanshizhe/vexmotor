@@ -96,6 +96,7 @@ export type AdminMemoryProduct = {
   }>;
   configurationRules: unknown | null;
   torqueCurveData: unknown | null;
+  paidSampleEnabled: boolean;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -274,6 +275,7 @@ function buildInitialProducts(): AdminMemoryProduct[] {
       certifications: detail.certifications ?? [],
       configurationRules: null,
       torqueCurveData: null,
+      paidSampleEnabled: false,
       price: detail.price.amount.toFixed(2),
       compareAtPrice: formatAmount(detail.compareAtPrice?.amount),
       currencyCode: detail.price.currency,

@@ -33,6 +33,7 @@ export type AdminProductRow = {
   certifications: string[] | null;
   configurationRules: unknown | null;
   torqueCurveData: unknown | null;
+  paidSampleEnabled: boolean;
   price: string;
   compareAtPrice: string | null;
   currencyCode: string;
@@ -105,6 +106,7 @@ export type AdminProductInput = {
   certifications?: string[];
   configurationRules?: unknown | null;
   torqueCurveData?: unknown | null;
+  paidSampleEnabled?: boolean;
   featured: boolean;
   brandId?: string | null;
   defaultCategoryId?: string | null;
@@ -170,6 +172,7 @@ function mapMemoryProductRow(id: string): AdminProductDetail | null {
     certifications: product.certifications ?? [],
     configurationRules: product.configurationRules ?? null,
     torqueCurveData: product.torqueCurveData ?? null,
+    paidSampleEnabled: product.paidSampleEnabled ?? false,
     price: product.price,
     compareAtPrice: product.compareAtPrice,
     currencyCode: product.currencyCode,
@@ -211,6 +214,7 @@ function toMemoryProductPayload(input: AdminProductInput) {
     certifications: input.certifications ?? [],
     configurationRules: input.configurationRules ?? null,
     torqueCurveData: input.torqueCurveData ?? null,
+    paidSampleEnabled: input.paidSampleEnabled ?? false,
     featured: input.featured,
     brandId: input.brandId ?? null,
     defaultCategoryId: input.defaultCategoryId ?? null,
@@ -289,6 +293,7 @@ export async function getAdminProducts(search = '') {
           certifications: products.certifications,
           configurationRules: products.configurationRules,
           torqueCurveData: products.torqueCurveData,
+          paidSampleEnabled: products.paidSampleEnabled,
           price: products.price,
           compareAtPrice: products.compareAtPrice,
           currencyCode: products.currencyCode,
@@ -372,6 +377,7 @@ export async function getAdminProductDetail(id: string): Promise<AdminProductDet
         certifications: products.certifications,
         configurationRules: products.configurationRules,
         torqueCurveData: products.torqueCurveData,
+        paidSampleEnabled: products.paidSampleEnabled,
         price: products.price,
         compareAtPrice: products.compareAtPrice,
         currencyCode: products.currencyCode,
@@ -489,6 +495,7 @@ export async function createAdminProduct(input: AdminProductInput) {
           certifications: input.certifications ?? [],
           configurationRules: input.configurationRules ?? null,
           torqueCurveData: input.torqueCurveData ?? null,
+          paidSampleEnabled: input.paidSampleEnabled ?? false,
           featured: input.featured,
           brandId: input.brandId ?? null,
           defaultCategoryId: input.defaultCategoryId ?? null,
@@ -649,6 +656,7 @@ export async function updateAdminProduct(id: string, input: Partial<AdminProduct
         certifications: input.certifications,
         configurationRules: input.configurationRules,
         torqueCurveData: input.torqueCurveData,
+        paidSampleEnabled: input.paidSampleEnabled,
         featured: input.featured,
         brandId: input.brandId,
         defaultCategoryId: input.defaultCategoryId,

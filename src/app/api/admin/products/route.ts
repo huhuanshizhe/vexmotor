@@ -58,6 +58,7 @@ const productSchema = z.object({
   certifications: z.array(z.string()).optional().default([]),
   configurationRules: z.any().optional().nullable().transform((value) => value ?? null),
   torqueCurveData: z.any().optional().nullable().transform((value) => value ?? null),
+  paidSampleEnabled: z.boolean().default(false),
   featured: z.boolean().default(false),
   brandId: z.string().uuid().optional().nullable().transform((value) => value ?? null),
   defaultCategoryId: z.string().uuid().optional().nullable().transform((value) => value ?? null),

@@ -20,6 +20,7 @@ export async function runMigrations() {
     `ALTER TABLE products ADD COLUMN IF NOT EXISTS certifications jsonb DEFAULT '[]'::jsonb`,
     `ALTER TABLE products ADD COLUMN IF NOT EXISTS configuration_rules jsonb`,
     `ALTER TABLE products ADD COLUMN IF NOT EXISTS torque_curve_data jsonb`,
+    `ALTER TABLE products ADD COLUMN IF NOT EXISTS paid_sample_enabled boolean DEFAULT false`,
 
     // Product features - new columns
     `ALTER TABLE product_features ADD COLUMN IF NOT EXISTS feature_value_min numeric(12,4)`,

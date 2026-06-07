@@ -38,6 +38,7 @@ const initialValues = {
   certifications: [] as string[],
   configurationRules: null as unknown | null,
   torqueCurveData: null as unknown | null,
+  paidSampleEnabled: false,
   featured: false,
   brandId: null as string | null,
   defaultCategoryId: null as string | null,
@@ -218,6 +219,7 @@ export function AdminProductsClient({
         certifications: detail.certifications ?? [],
         configurationRules: detail.configurationRules ?? null,
         torqueCurveData: detail.torqueCurveData ?? null,
+        paidSampleEnabled: detail.paidSampleEnabled ?? false,
         featured: detail.featured,
         brandId: detail.brandId,
         defaultCategoryId: detail.defaultCategoryId,
@@ -498,6 +500,9 @@ export function AdminProductsClient({
           </Form.Item>
           <Form.Item name="defaultCategoryId" label="默认分类">
             <Select allowClear options={categoryOptions} />
+          </Form.Item>
+          <Form.Item name="paidSampleEnabled" label="付邮拿样" valuePropName="checked">
+            <Switch />
           </Form.Item>
           <Form.Item name="featured" label="首页推荐" valuePropName="checked">
             <Switch />
