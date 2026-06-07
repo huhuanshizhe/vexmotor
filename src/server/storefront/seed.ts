@@ -679,9 +679,54 @@ const sellingPoints: HomeData['sellingPoints'] = [
 
 const footerSections: HomeData['footerSections'] = [
   {
+    id: 'footer-products',
+    title: 'Products',
+    links: [
+      { label: 'Nema 8 Stepper Motor', href: '/c/nema-8-stepper-motor' },
+      { label: 'Nema 11 Stepper Motor', href: '/c/nema-11-stepper-motor' },
+      { label: 'Nema 17 Stepper Motor', href: '/c/nema-17-stepper-motor' },
+      { label: 'Nema 23 Stepper Motor', href: '/c/nema-23-stepper-motor' },
+      { label: 'Nema 34 Stepper Motor', href: '/c/nema-34-stepper-motor' },
+      { label: 'Stepper Motor Driver', href: '/c/stepper-motor-driver' },
+      { label: 'Closed Loop Stepper', href: '/c/closed-loop-stepper-motor' },
+      { label: 'Brushless DC Motor', href: '/c/brushless-dc-motor' },
+      { label: 'View All Products', href: '/products' },
+    ],
+  },
+  {
     id: 'footer-support',
     title: 'Support',
-    links: footerSupportLinks,
+    links: [
+      { label: 'Help Center', href: '/support' },
+      { label: 'Shipping & Customs', href: '/support/shipping' },
+      { label: 'Returns & Warranty', href: '/support/returns' },
+      { label: 'Payment Method', href: '/support/payment-methods' },
+      { label: 'After-sales', href: '/support/after-sales' },
+      { label: 'Volume Pricing', href: '/volume-pricing' },
+      { label: 'Track Order', href: 'https://www.17track.net/en', external: true },
+    ],
+  },
+  {
+    id: 'footer-company',
+    title: 'Company',
+    links: [
+      { label: 'About Us', href: '/company/about' },
+      { label: 'Certifications', href: '/company/certifications' },
+      { label: 'Factory Tour', href: '/company/factory' },
+      { label: 'Careers', href: '/company/careers' },
+      { label: 'Contact', href: '/contact' },
+    ],
+  },
+  {
+    id: 'footer-legal',
+    title: 'Legal & Policies',
+    links: [
+      { label: 'Terms of Sale', href: '/legal/terms' },
+      { label: 'Privacy Policy', href: '/legal/privacy' },
+      { label: 'Cookies Policy', href: '/legal/cookies' },
+      { label: 'IP Policy', href: '/legal/ip' },
+      { label: 'Export Compliance', href: '/legal/export-compliance' },
+    ],
   },
 ];
 
