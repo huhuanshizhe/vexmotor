@@ -14,7 +14,7 @@ import {
 } from '@/server/db/schema';
 
 import { storefrontNavigationBase, footerContactBlocks, footerPaymentMethods, footerCopyright } from './site-shell';
-import { getSeedCategories } from './seed';
+import { getSeedCategories, getSeedProductById, getSeedProductsResult } from './seed';
 import type { HomeData, NavigationData, ProductListResult, ProductListSort, StorefrontCategory, StorefrontCompatibleGroup, StorefrontImage, StorefrontProductCard, StorefrontProductDetail } from './types';
 
 const defaultHomeData: HomeData = {
@@ -318,7 +318,7 @@ export async function getProductList(input: {
   inStockOnly?: boolean;
 }): Promise<ProductListResult> {
   if (!db) {
-    return emptyProductListResult(input.page ?? 1, input.pageSize ?? 12);
+    return getSeedProductsResult(input);
   }
 
   const page = input.page ?? 1;
@@ -497,7 +497,7 @@ export async function getProductList(input: {
 
 export async function getProductBySlug(slug: string): Promise<StorefrontProductDetail | null> {
   if (!db) {
-    return null;
+    return getSeedProductById(slug);
   }
 
   try {
@@ -621,7 +621,7 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
       descriptionLong: product.descriptionLong || null,
     };
   } catch {
-    return null;
+    return getSeedProductById(slug);
   }
 }
 
