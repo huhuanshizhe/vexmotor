@@ -517,17 +517,8 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
         currencyCode: products.currencyCode,
         seoTitle: products.seoTitle,
         seoDescription: products.seoDescription,
-        moq: products.moq,
-        leadTimeMin: products.leadTimeMin,
-        leadTimeMax: products.leadTimeMax,
-        leadTimeUnit: products.leadTimeUnit,
-        lifecycleStatus: products.lifecycleStatus,
-        eolDate: products.eolDate,
-        lastTimeBuyDate: products.lastTimeBuyDate,
-        efficiencyClass: products.efficiencyClass,
-        certifications: products.certifications,
-        configurationRules: products.configurationRules,
-        torqueCurveData: products.torqueCurveData,
+        featured: products.featured,
+        allowBackorder: products.allowBackorder,
         brandId: brands.id,
         brandName: brands.name,
         brandSlug: brands.slug,
@@ -577,17 +568,17 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
       purchaseMode: product.purchaseMode,
       inStock: product.stockQuantity > 0,
       stockQuantity: product.stockQuantity,
-      moq: product.moq ?? 1,
-      leadTimeMin: product.leadTimeMin ?? 3,
-      leadTimeMax: product.leadTimeMax ?? 15,
-      leadTimeUnit: product.leadTimeUnit ?? 'business_days',
-      lifecycleStatus: product.lifecycleStatus ?? 'active',
-      eolDate: product.eolDate?.toISOString() ?? null,
-      lastTimeBuyDate: product.lastTimeBuyDate?.toISOString() ?? null,
-      efficiencyClass: product.efficiencyClass ?? null,
-      certifications: product.certifications ?? undefined,
-      configurationRules: product.configurationRules ?? undefined,
-      torqueCurveData: product.torqueCurveData ?? undefined,
+      moq: 1,
+      leadTimeMin: 3,
+      leadTimeMax: 15,
+      leadTimeUnit: 'business_days',
+      lifecycleStatus: 'active',
+      eolDate: null,
+      lastTimeBuyDate: null,
+      efficiencyClass: null,
+      certifications: undefined,
+      configurationRules: undefined,
+      torqueCurveData: undefined,
       brand: product.brandId && product.brandName && product.brandSlug ? { id: product.brandId, name: product.brandName, slug: product.brandSlug } : null,
       categories: categoryRows.map((item) => ({
         id: item.id,
@@ -620,8 +611,9 @@ export async function getProductBySlug(slug: string): Promise<StorefrontProductD
       })),
       descriptionLong: product.descriptionLong || null,
     };
-  } catch {
-    return getSeedProductBySlug(slug);
+  } catch (error) {
+    console.error('getProductBySlug DB error:', error);
+    return null;
   }
 }
 
