@@ -14,7 +14,7 @@ import {
 } from '@/server/db/schema';
 
 import { storefrontNavigationBase, footerContactBlocks, footerPaymentMethods, footerCopyright } from './site-shell';
-import { getSeedCategories, getSeedProductBySlug, getSeedProductsResult } from './seed';
+import { getSeedCategories, getSeedHomeData, getSeedProductBySlug, getSeedProductsResult } from './seed';
 import type { HomeData, NavigationData, ProductListResult, ProductListSort, StorefrontCategory, StorefrontCompatibleGroup, StorefrontImage, StorefrontProductCard, StorefrontProductDetail } from './types';
 
 const defaultHomeData: HomeData = {
@@ -120,7 +120,7 @@ function toImage(row: {
 
 export async function getHomeData(): Promise<HomeData> {
   if (!db) {
-    return defaultHomeData;
+    return getSeedHomeData();
   }
 
   try {
@@ -196,7 +196,7 @@ export async function getHomeData(): Promise<HomeData> {
     }
 
     if (!dbProducts.length) {
-      return defaultHomeData;
+      return getSeedHomeData();
     }
 
     const dynamicCards = dbProducts.map((item) => ({
@@ -246,7 +246,7 @@ export async function getHomeData(): Promise<HomeData> {
     ];
 
     return {
-      ...defaultHomeData,
+      ...getSeedHomeData(),
       featuredCategories: categoryRows
         .filter((item) => (item.productCount ?? 0) > 0)
         .sort((left, right) => (right.productCount ?? 0) - (left.productCount ?? 0))
@@ -257,7 +257,7 @@ export async function getHomeData(): Promise<HomeData> {
       mostViewedProducts: dynamicCards.slice(0, 4),
     };
   } catch {
-    return defaultHomeData;
+    return getSeedHomeData();
   }
 }
 
