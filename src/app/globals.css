@@ -2825,13 +2825,15 @@ main {
 
 .pdp-top-title {
   margin: 0;
-  max-width: 26ch;
   color: #12283d;
   font-family: var(--font-display);
   font-size: clamp(1.45rem, 2vw, 2.2rem);
   font-weight: 500;
-  line-height: 1.08;
+  line-height: 1.25;
   letter-spacing: -0.025em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .pdp-top-status {

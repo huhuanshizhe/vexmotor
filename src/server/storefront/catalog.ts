@@ -629,47 +629,41 @@ export async function getRelatedProducts(slug: string, categorySlug?: string | n
       categoryId = category?.id ?? null;
     }
 
+    const cardSelect = {
+      id: products.id,
+      name: products.name,
+      slug: products.slug,
+      sku: products.sku,
+      shortDescription: products.shortDescription,
+      purchaseMode: products.purchaseMode,
+      stockQuantity: products.stockQuantity,
+      price: products.price,
+      compareAtPrice: products.compareAtPrice,
+      currencyCode: products.currencyCode,
+      coverUrl: productImages.url,
+      coverAlt: productImages.alt,
+      coverWidth: productImages.width,
+      coverHeight: productImages.height,
+      brandId: brands.id,
+      brandName: brands.name,
+      brandSlug: brands.slug,
+    };
+
     const rows = categoryId
       ? await db
-          .select({
-            id: products.id,
-            name: products.name,
-            slug: products.slug,
-            sku: products.sku,
-            shortDescription: products.shortDescription,
-            purchaseMode: products.purchaseMode,
-            stockQuantity: products.stockQuantity,
-            price: products.price,
-            compareAtPrice: products.compareAtPrice,
-            currencyCode: products.currencyCode,
-            brandId: brands.id,
-            brandName: brands.name,
-            brandSlug: brands.slug,
-          })
+          .select(cardSelect)
           .from(products)
           .innerJoin(productCategories, eq(productCategories.productId, products.id))
           .leftJoin(brands, eq(products.brandId, brands.id))
+          .leftJoin(productImages, and(eq(productImages.productId, products.id), eq(productImages.isPrimary, true)))
           .where(and(eq(products.status, 'active'), eq(productCategories.categoryId, categoryId), excludeId ? drizzleSql`${products.id} <> ${excludeId}` : undefined))
           .orderBy(desc(products.featured), desc(products.publishedAt))
           .limit(4)
       : await db
-          .select({
-            id: products.id,
-            name: products.name,
-            slug: products.slug,
-            sku: products.sku,
-            shortDescription: products.shortDescription,
-            purchaseMode: products.purchaseMode,
-            stockQuantity: products.stockQuantity,
-            price: products.price,
-            compareAtPrice: products.compareAtPrice,
-            currencyCode: products.currencyCode,
-            brandId: brands.id,
-            brandName: brands.name,
-            brandSlug: brands.slug,
-          })
+          .select(cardSelect)
           .from(products)
           .leftJoin(brands, eq(products.brandId, brands.id))
+          .leftJoin(productImages, and(eq(productImages.productId, products.id), eq(productImages.isPrimary, true)))
           .where(and(eq(products.status, 'active'), excludeId ? drizzleSql`${products.id} <> ${excludeId}` : undefined))
           .orderBy(desc(products.featured), desc(products.publishedAt))
           .limit(4);
@@ -680,6 +674,7 @@ export async function getRelatedProducts(slug: string, categorySlug?: string | n
       slug: item.slug,
       sku: item.sku,
       shortDescription: item.shortDescription,
+      coverImage: item.coverUrl ? { id: `${item.id}-cover`, url: item.coverUrl, alt: item.coverAlt || item.name, width: item.coverWidth, height: item.coverHeight } : null,
       price: asMoney(item.price, item.currencyCode),
       compareAtPrice: item.compareAtPrice ? asMoney(item.compareAtPrice, item.currencyCode) : null,
       purchaseMode: item.purchaseMode,
@@ -717,6 +712,10 @@ export async function getCompatibleGroups(productId: string): Promise<Storefront
         price: products.price,
         compareAtPrice: products.compareAtPrice,
         currencyCode: products.currencyCode,
+        coverUrl: productImages.url,
+        coverAlt: productImages.alt,
+        coverWidth: productImages.width,
+        coverHeight: productImages.height,
         brandId: brands.id,
         brandName: brands.name,
         brandSlug: brands.slug,
@@ -724,6 +723,7 @@ export async function getCompatibleGroups(productId: string): Promise<Storefront
       .from(productRelations)
       .innerJoin(products, eq(products.id, productRelations.relatedProductId))
       .leftJoin(brands, eq(products.brandId, brands.id))
+      .leftJoin(productImages, and(eq(productImages.productId, products.id), eq(productImages.isPrimary, true)))
       .where(and(eq(productRelations.productId, productId), eq(products.status, 'active')))
       .orderBy(asc(productRelations.sortOrder));
 
@@ -743,6 +743,7 @@ export async function getCompatibleGroups(productId: string): Promise<Storefront
         slug: row.slug,
         sku: row.sku,
         shortDescription: row.shortDescription,
+        coverImage: row.coverUrl ? { id: `${row.id}-cover`, url: row.coverUrl, alt: row.coverAlt || row.name, width: row.coverWidth, height: row.coverHeight } : null,
         price: asMoney(row.price, row.currencyCode),
         compareAtPrice: row.compareAtPrice ? asMoney(row.compareAtPrice, row.currencyCode) : null,
         purchaseMode: row.purchaseMode,
