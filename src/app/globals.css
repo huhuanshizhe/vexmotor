@@ -437,9 +437,9 @@ main {
 }
 
 .nav-mega-heading {
-  color: var(--color-accent);
+  color: #0f172a !important;
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 0.92rem;
   font-weight: 700;
 }
 
@@ -451,9 +451,14 @@ main {
 }
 
 .nav-mega-link {
+  color: #334155 !important;
+  font-weight: 500;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  padding: 4px 0;
+}
+.nav-mega-link:hover {
   color: #0f172a !important;
-  font-weight: 600;
-  line-height: 1.35;
 }
 
 .nav-mega-link:hover,
