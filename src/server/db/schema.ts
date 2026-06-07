@@ -158,6 +158,8 @@ export const brands = pgTable(
   }),
 );
 
+export const productLifecycleEnum = pgEnum('product_lifecycle', ['new', 'active', 'nfd', 'eol', 'last_time_buy']);
+
 export const products = pgTable(
   'products',
   {
@@ -169,7 +171,7 @@ export const products = pgTable(
     sku: varchar('sku', { length: 100 }).notNull(),
     shortDescription: text('short_description'),
     description: text('description'),
-    descriptionLong: text('description_long'), // Full detailed product description
+    descriptionLong: text('description_long'),
     purchaseMode: purchaseModeEnum('purchase_mode').notNull().default('buy'),
     status: productStatusEnum('status').notNull().default('draft'),
     price: numeric('price', { precision: 12, scale: 2 }).notNull().default('0'),
@@ -177,6 +179,17 @@ export const products = pgTable(
     currencyCode: varchar('currency_code', { length: 3 }).notNull().default('USD'),
     stockQuantity: integer('stock_quantity').notNull().default(0),
     allowBackorder: boolean('allow_backorder').notNull().default(false),
+    moq: integer('moq').notNull().default(1),
+    leadTimeMin: integer('lead_time_min').notNull().default(3),
+    leadTimeMax: integer('lead_time_max').notNull().default(15),
+    leadTimeUnit: varchar('lead_time_unit', { length: 20 }).notNull().default('business_days'),
+    lifecycleStatus: productLifecycleEnum('lifecycle_status').notNull().default('active'),
+    eolDate: timestamp('eol_date', { withTimezone: true }),
+    lastTimeBuyDate: timestamp('last_time_buy_date', { withTimezone: true }),
+    efficiencyClass: varchar('efficiency_class', { length: 20 }),
+    certifications: jsonb('certifications').$type<string[]>(),
+    configurationRules: jsonb('configuration_rules'),
+    torqueCurveData: jsonb('torque_curve_data'),
     featured: boolean('featured').notNull().default(false),
     seoTitle: varchar('seo_title', { length: 255 }),
     seoDescription: varchar('seo_description', { length: 500 }),
@@ -282,6 +295,10 @@ export const productFeatures = pgTable('product_features', {
   productId: uuid('product_id').notNull().references(() => products.id, { onDelete: 'cascade' }),
   featureKey: varchar('feature_key', { length: 100 }).notNull(),
   featureValue: varchar('feature_value', { length: 255 }).notNull(),
+  featureValueMin: numeric('feature_value_min', { precision: 12, scale: 4 }),
+  featureValueMax: numeric('feature_value_max', { precision: 12, scale: 4 }),
+  valueType: varchar('value_type', { length: 20 }).notNull().default('text'), // text | number | range | boolean | select
+  conditionalValue: jsonb('conditional_value'), // { dependsOn: string, condition: string, values: Record<string, string> }
   unit: varchar('unit', { length: 50 }),
   specCategory: varchar('spec_category', { length: 50 }).notNull().default('general'), // electrical, mechanical, performance, environmental, general
   sortOrder: integer('sort_order').notNull().default(0),
@@ -517,5 +534,24 @@ export const newsletterSubscribers = pgTable(
   },
   (table) => ({
     emailUnique: uniqueIndex('newsletter_subscribers_email_unique').on(table.email),
+  }),
+);
+
+export const productTranslations = pgTable(
+  'product_translations',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    productId: uuid('product_id').notNull().references(() => products.id, { onDelete: 'cascade' }),
+    locale: varchar('locale', { length: 16 }).notNull().default('en'),
+    name: varchar('name', { length: 255 }),
+    shortDescription: text('short_description'),
+    description: text('description'),
+    seoTitle: varchar('seo_title', { length: 255 }),
+    seoDescription: varchar('seo_description', { length: 500 }),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    productLocaleUnique: uniqueIndex('product_translations_product_locale_unique').on(table.productId, table.locale),
   }),
 );

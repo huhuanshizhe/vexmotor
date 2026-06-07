@@ -7,11 +7,15 @@ import { withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Engineering Resources — STEPMOTECH',
   description: 'Browse whitepapers, videos, webinars, downloads, CAD files, and datasheets from one engineering resource hub.',
   path: '/resources',
-});
+    locale,
+  });
+}
 
 export default async function ResourcesPage() {
   const { locale } = await getServerSitePreferences();

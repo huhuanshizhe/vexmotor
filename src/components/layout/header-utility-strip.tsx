@@ -51,10 +51,7 @@ export function HeaderUtilityStrip({ links, initialCartCount, preferences }: Hea
     const nextPath = `${withLocalePath(strippedPath, nextLocale)}${queryString ? `?${queryString}` : ''}`;
 
     setLocale(nextLocale);
-    setCurrency(defaults.currency);
-    setUnitSystem(defaults.unitSystem);
     writePreferenceCookie(LOCALE_COOKIE_NAME, nextLocale);
-    writePreferenceCookie(CURRENCY_COOKIE_NAME, defaults.currency);
     writePreferenceCookie(UNIT_SYSTEM_COOKIE_NAME, defaults.unitSystem);
 
     startTransition(() => {

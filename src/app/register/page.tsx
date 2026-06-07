@@ -19,12 +19,16 @@ const timeline = [
   'Approval normally lands within one working day, while skipped verification keeps the account in limited pending mode.',
 ];
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Create a business account — STEPMOTECH',
   description: 'Register a company account for pricing, BOM, and RFQ follow-up.',
   path: '/register',
   noIndex: true,
-});
+    locale,
+  });
+}
 
 export default async function RegisterPage({
   searchParams,

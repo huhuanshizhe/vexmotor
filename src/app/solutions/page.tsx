@@ -8,11 +8,15 @@ import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 import { getCategories } from '@/server/storefront';
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Industry Motion Solutions — STEPMOTECH',
   description: 'Browse motion solutions by industry, then move into selector, catalog, custom development, or RFQ with the right application context already framed.',
   path: '/solutions',
-});
+    locale,
+  });
+}
 
 export default async function SolutionsPage() {
   const [{ locale }, categories] = await Promise.all([getServerSitePreferences(), getCategories()]);

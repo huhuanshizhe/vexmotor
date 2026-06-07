@@ -2,11 +2,36 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
-import { CURRENCY_COOKIE_NAME, DEFAULT_LOCALE, LOCALE_COOKIE_NAME, LOCALE_REQUEST_HEADER, UNIT_SYSTEM_COOKIE_NAME, getMarketDefaults, normalizeCurrency, normalizeUnitSystem, parseLocaleFromPathname, withLocalePath } from '@/lib/i18n';
+import { type Locale, CURRENCY_COOKIE_NAME, DEFAULT_LOCALE, LOCALE_COOKIE_NAME, LOCALE_REQUEST_HEADER, SUPPORTED_LOCALES, UNIT_SYSTEM_COOKIE_NAME, getMarketDefaults, normalizeCurrency, normalizeUnitSystem, parseLocaleFromPathname, withLocalePath } from '@/lib/i18n';
 
-export async function proxy(request: NextRequest) {
+function parseAcceptLanguage(header: string | null): string | null {
+  if (!header) return null;
+  try {
+    const locales = header
+      .split(',')
+      .map((part) => {
+        const [code, q = '1'] = part.trim().split(';q=');
+        return { code: code.split('-')[0].toLowerCase(), q: parseFloat(q) };
+      })
+      .sort((a, b) => b.q - a.q);
+    for (const { code } of locales) {
+      if ((SUPPORTED_LOCALES as readonly string[]).includes(code)) return code;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const { locale, pathname: normalizedPathname, hadPrefix } = parseLocaleFromPathname(pathname);
+  const { locale: urlLocale, pathname: normalizedPathname, hadPrefix } = parseLocaleFromPathname(pathname);
+
+  // If no URL prefix and no cookie, detect from Accept-Language
+  const hasCookie = Boolean(request.cookies.get(LOCALE_COOKIE_NAME)?.value);
+  const detectedLocale = (!hadPrefix && !hasCookie) ? parseAcceptLanguage(request.headers.get('accept-language')) : null;
+  const locale = (detectedLocale ?? urlLocale) as Locale;
+
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set(LOCALE_REQUEST_HEADER, locale);
 

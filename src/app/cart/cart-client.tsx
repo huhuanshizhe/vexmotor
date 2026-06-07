@@ -93,11 +93,11 @@ type CartClientProps = {
   commerceConfig: CommerceConfig;
 };
 
-function formatMoney(amount: number, currency = 'USD') {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount);
-}
-
 export function CartClient({ initialCart, locale, hasAccountContext, crossSellProducts, emptyStateCategories, commerceConfig }: CartClientProps) {
+
+  function formatMoney(amount: number, currency = 'USD') {
+    return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount);
+  }
   const [cart, setCart] = useState<CartDetail>(initialCart);
   const [couponCode, setCouponCode] = useState(initialCart?.couponCode ?? '');
   const [message, setMessage] = useState<string | null>(null);

@@ -8,11 +8,15 @@ import { getProductList } from '@/server/storefront/catalog';
 
 import { SelectorClient } from './selector-client';
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Motor Selector — Find the right motor in 5 steps',
   description: 'Use a five-step guided selector to narrow motion products by application, mechanics, electrical fit, and feedback needs.',
   path: '/selector',
-});
+    locale,
+  });
+}
 
 export default async function SelectorPage({
   searchParams,

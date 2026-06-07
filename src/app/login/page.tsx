@@ -6,12 +6,16 @@ import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildMetadata } from '@/lib/seo';
 import { LoginForm } from '@/components/storefront/login-form';
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Sign in — STEPMOTECH',
   description: 'Access account orders, checkout, and inquiry records.',
   path: '/login',
   noIndex: true,
-});
+    locale,
+  });
+}
 
 const authHighlights = [
   'Track orders, inquiries, addresses, and quote history from one account center.',

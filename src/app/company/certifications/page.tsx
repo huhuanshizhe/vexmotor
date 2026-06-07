@@ -7,11 +7,15 @@ import { withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Certifications & Compliance — STEPMOTECH',
   description: 'Certification summaries, export-compliance notes, restricted-destination guidance, and downloadable compliance files for regulated buyer review.',
   path: '/company/certifications',
-});
+    locale,
+  });
+}
 
 export default async function CompanyCertificationsPage() {
   const { locale } = await getServerSitePreferences();

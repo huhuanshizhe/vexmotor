@@ -151,7 +151,22 @@ const categories: StorefrontCategory[] = [
   },
 ];
 
-const products: StorefrontProductDetail[] = [
+function applyProductDefaults<T extends Record<string, unknown>>(p: T): StorefrontProductDetail {
+  return {
+    moq: 1,
+    leadTimeMin: 3,
+    leadTimeMax: 15,
+    leadTimeUnit: 'business_days',
+    lifecycleStatus: 'active',
+    eolDate: null,
+    lastTimeBuyDate: null,
+    efficiencyClass: null,
+    certifications: [],
+    ...p,
+  } as unknown as StorefrontProductDetail;
+}
+
+const _rawProducts = [
   {
     id: 'prod-1',
     name: '17 Single Shaft Bipolar Stepper Motor, 45N·cm Torque',
@@ -561,6 +576,8 @@ const products: StorefrontProductDetail[] = [
     ],
   },
 ];
+
+const products: StorefrontProductDetail[] = _rawProducts.map(applyProductDefaults);
 
 const categoryGroups: HomeData['categoryGroups'] = [
   {

@@ -6,13 +6,17 @@ import { withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata, buildOrganizationJsonLd } from '@/lib/seo';
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'About STEPMOTECH — Factory-direct motion engineering',
   description:
     'Our mission, story, capacity by the numbers, leadership, and values as a factory-direct supplier of stepper motors, drivers, and matched motion systems.',
   path: '/company/about',
   type: 'website',
-});
+    locale,
+  });
+}
 
 const milestones = [
   { year: '2009', label: 'Founded', detail: 'Started as a stepper-motor winding workshop serving regional automation builders.' },

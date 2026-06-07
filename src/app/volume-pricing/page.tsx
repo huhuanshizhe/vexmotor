@@ -24,11 +24,15 @@ const faq = [
   },
 ];
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Volume Discount & Contract Pricing — STEPMOTECH',
   description: 'Published web tiers, annual-program benefits, and a contract-pricing intake for higher-volume motion component demand.',
   path: '/volume-pricing',
-});
+    locale,
+  });
+}
 
 type VolumePricingPageProps = {
   searchParams: Promise<{ sku?: string }>;

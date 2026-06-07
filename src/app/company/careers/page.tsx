@@ -7,11 +7,15 @@ import { withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Careers — STEPMOTECH',
   description: 'Open roles, company values, benefits, hiring process, and application path for careers at STEPMOTECH.',
   path: '/company/careers',
-});
+    locale,
+  });
+}
 
 export default async function CompanyCareersPage() {
   const { locale } = await getServerSitePreferences();

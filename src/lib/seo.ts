@@ -85,22 +85,24 @@ export function buildMetadata({
   };
 }
 
-export function buildOrganizationJsonLd() {
+export function buildOrganizationJsonLd(locale: Locale = DEFAULT_LOCALE) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: SITE_NAME,
     url: SITE_URL,
     brand: SITE_NAME,
+    inLanguage: locale,
   };
 }
 
-export function buildWebsiteJsonLd() {
+export function buildWebsiteJsonLd(locale: Locale = DEFAULT_LOCALE) {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: SITE_NAME,
     url: SITE_URL,
+    inLanguage: locale,
   };
 }
 
@@ -114,6 +116,7 @@ export function buildBreadcrumbJsonLd(items: BreadcrumbItem[], locale: Locale = 
       name: item.name,
       item: toAbsoluteUrl(withLocalePath(item.path, locale)),
     })),
+    inLanguage: locale,
   };
 }
 

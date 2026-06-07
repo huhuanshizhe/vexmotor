@@ -12,12 +12,16 @@ const resetNotes = [
   'Completing the reset upgrades pending accounts to active sign-in status in the current implementation.',
 ];
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Password reset — STEPMOTECH',
   description: 'Request or complete a password reset for your business account.',
   path: '/password-reset',
   noIndex: true,
-});
+    locale,
+  });
+}
 
 export default async function PasswordResetPage({
   searchParams,

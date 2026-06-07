@@ -73,7 +73,7 @@ export const adminEditorialBlogEntrySchema = z.object({
   title: z.string().min(1),
   slug: z.string().min(1),
   summary: z.string().nullable().optional(),
-  locale: z.string().min(2).default('en-US'),
+  locale: z.string().min(2).default('en'),
   status: z.enum(editorialEntryStatuses).default('draft'),
   seoTitle: z.string().nullable().optional(),
   seoDescription: z.string().nullable().optional(),
@@ -86,7 +86,7 @@ export const adminEditorialPressEntrySchema = z.object({
   title: z.string().min(1),
   slug: z.string().min(1),
   summary: z.string().nullable().optional(),
-  locale: z.string().min(2).default('en-US'),
+  locale: z.string().min(2).default('en'),
   status: z.enum(editorialEntryStatuses).default('draft'),
   seoTitle: z.string().nullable().optional(),
   seoDescription: z.string().nullable().optional(),
@@ -178,7 +178,7 @@ function normalizeSlug(value: string) {
 }
 
 function normalizeLocale(value: string | null | undefined) {
-  return value?.trim() || 'en-US';
+  return value?.trim() || 'en';
 }
 
 function normalizeDateValue(value: Date | string | null | undefined) {
@@ -207,7 +207,7 @@ function createBlogEntryInputFromSeed(post: BlogPost): BlogEntryCreateInput {
     title: post.title,
     slug: post.slug,
     summary: post.summary,
-    locale: 'en-US',
+    locale: 'en',
     status: 'published',
     seoTitle: post.title,
     seoDescription: post.summary,
@@ -254,7 +254,7 @@ function createPressEntryInputFromSeed(release: PressRelease): PressEntryCreateI
     title: release.title,
     slug: release.slug,
     summary: release.summary,
-    locale: 'en-US',
+    locale: 'en',
     status: 'published',
     seoTitle: release.title,
     seoDescription: release.summary,
@@ -630,7 +630,7 @@ export async function deleteAdminEditorialBlogEntry(id: string) {
   }
 }
 
-export async function getPublishedAdminEditorialBlogEntries(locale = 'en-US') {
+export async function getPublishedAdminEditorialBlogEntries(locale = 'en') {
   const normalizedLocale = normalizeLocale(locale);
   const entries = await getAdminEditorialBlogEntries();
 
@@ -648,7 +648,7 @@ export async function importSeededBlogPosts(options?: { dryRun?: boolean }): Pro
     return {
       title: post.title,
       slug: normalizeSlug(post.slug),
-      locale: 'en-US',
+      locale: 'en',
       publishedAt: parseSeedPublishedAt(post.publishedAt).toISOString(),
       status: existingEntry ? 'skipped' : 'candidate',
       reason: existingEntry ? '该 slug 已存在后台内容资产，保持后台版本优先。' : '可导入为后台已发布 Blog 文章。',
@@ -883,7 +883,7 @@ export async function deleteAdminEditorialPressEntry(id: string) {
   }
 }
 
-export async function getPublishedAdminEditorialPressEntries(locale = 'en-US') {
+export async function getPublishedAdminEditorialPressEntries(locale = 'en') {
   const normalizedLocale = normalizeLocale(locale);
   const entries = await getAdminEditorialPressEntries();
 
@@ -902,7 +902,7 @@ export async function importSeededPressReleases(options?: { dryRun?: boolean }):
     return {
       title: release.title,
       slug: normalizeSlug(release.slug),
-      locale: 'en-US',
+      locale: 'en',
       publishedAt,
       status: existingEntry ? 'skipped' : 'candidate',
       reason: existingEntry ? '该 slug 已存在后台 Press 资产，保持后台版本优先。' : '可导入为后台已发布新闻稿。',

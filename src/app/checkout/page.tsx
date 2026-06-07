@@ -12,12 +12,16 @@ import { getActiveCartDetail } from '@/server/storefront/cart';
 
 import { CheckoutClient } from './checkout-client';
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Checkout — STEPMOTECH',
   description: 'Secure one-page checkout for direct-buy orders.',
   path: '/checkout',
   noIndex: true,
-});
+    locale,
+  });
+}
 
 export default async function CheckoutPage() {
   const cookieStore = await cookies();

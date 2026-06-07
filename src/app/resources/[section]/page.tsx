@@ -17,11 +17,13 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: ResourceSectionPageProps) {
+  const { locale } = await getServerSitePreferences();
   const { section: rawSection } = await params;
   const section = getResourceSectionMeta(rawSection as ResourceSection);
 
   if (!section) {
     return buildMetadata({
+      locale,
       title: 'Resources — STEPMOTECH',
       description: 'Engineering resources library.',
       path: '/resources',
@@ -32,6 +34,7 @@ export async function generateMetadata({ params }: ResourceSectionPageProps) {
     title: `${section.label} — STEPMOTECH`,
     description: section.description,
     path: `/resources/${section.slug}`,
+    locale,
   });
 }
 

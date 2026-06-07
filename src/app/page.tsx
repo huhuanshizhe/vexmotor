@@ -12,12 +12,16 @@ import { solutionIndustries } from '@/lib/solutions';
 import { getBlogCatalog } from '@/server/content/blog';
 import { getCategories, getHomeData, getProductList } from '@/server/storefront';
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'STEPMOTECH — Precision Stepper, BLDC & Servo Motors',
   description:
     'Engineering-grade motion components. CAD, datasheets, tiered pricing. Ships worldwide from US/EU/CN warehouses.',
   path: '/',
-});
+    locale,
+  });
+}
 
 // Revalidate homepage every 60 seconds (ISR)
 export const revalidate = 60;

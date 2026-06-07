@@ -4,12 +4,16 @@ import { buildMetadata } from '@/lib/seo';
 import { CompareClient } from '@/components/storefront/compare-client';
 import { getProductList } from '@/server/storefront';
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Compare products — STEPMOTECH',
   description: 'Evaluate catalog items side by side before direct buy or RFQ.',
   path: '/compare',
   noIndex: true,
-});
+    locale,
+  });
+}
 
 export default async function ComparePage() {
   const preferences = await getServerSitePreferences();

@@ -13,11 +13,15 @@ const workingHours = [
   'Emergency line-down issues should go to the global support line or WhatsApp intake first.',
 ] as const;
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Global Offices & Warehouses — STEPMOTECH',
   description: 'Office, warehouse, phone, email, and operating-center details for global support, engineering coordination, and sales routing.',
   path: '/company/offices',
-});
+    locale,
+  });
+}
 
 export default async function CompanyOfficesPage() {
   const { locale } = await getServerSitePreferences();

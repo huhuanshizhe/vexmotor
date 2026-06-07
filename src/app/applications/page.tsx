@@ -14,11 +14,15 @@ type ApplicationsPageProps = {
   }>;
 };
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Motion Solutions by Industry — STEPMOTECH',
   description: 'Browse application case studies by industry, product line, and region to find the right motion solution pattern.',
   path: '/applications',
-});
+    locale,
+  });
+}
 
 export default async function ApplicationsPage({ searchParams }: ApplicationsPageProps) {
   const [{ locale }, params] = await Promise.all([getServerSitePreferences(), searchParams]);

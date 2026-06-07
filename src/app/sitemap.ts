@@ -80,31 +80,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...staticRoutes.flatMap((path) => 
       createMultilingualEntry(path, path === '/' ? 'daily' : 'weekly', path === '/' ? 1 : 0.7)
     ),
-    ...careerRoles.map((role) => ({
-      url: toAbsoluteUrl(`/company/careers/${role.slug}`),
-      changeFrequency: 'weekly' as const,
-      priority: 0.6,
-    })),
-    ...blogPosts.map((post) => ({
-      url: toAbsoluteUrl(`/blog/${post.slug}`),
-      changeFrequency: 'weekly' as const,
-      priority: 0.6,
-    })),
-    ...applicationCaseStudies.map((caseStudy) => ({
-      url: toAbsoluteUrl(`/applications/${caseStudy.slug}`),
-      changeFrequency: 'weekly' as const,
-      priority: 0.6,
-    })),
-    ...supportCatalog.pages.map((page) => ({
-      url: toAbsoluteUrl(`/support/${page.slug}`),
-      changeFrequency: 'monthly' as const,
-      priority: 0.5,
-    })),
-    ...legalPages.map((page) => ({
-      url: toAbsoluteUrl(`/legal/${page.slug}`),
-      changeFrequency: 'yearly' as const,
-      priority: 0.4,
-    })),
+    ...careerRoles.flatMap((role) =>
+      createMultilingualEntry(`/company/careers/${role.slug}`, 'weekly', 0.6)
+    ),
+    ...blogPosts.flatMap((post) =>
+      createMultilingualEntry(`/blog/${post.slug}`, 'weekly', 0.6)
+    ),
+    ...applicationCaseStudies.flatMap((caseStudy) =>
+      createMultilingualEntry(`/applications/${caseStudy.slug}`, 'weekly', 0.6)
+    ),
+    ...supportCatalog.pages.flatMap((page) =>
+      createMultilingualEntry(`/support/${page.slug}`, 'monthly', 0.5)
+    ),
+    ...legalPages.flatMap((page) =>
+      createMultilingualEntry(`/legal/${page.slug}`, 'yearly', 0.4)
+    ),
     // Categories with multilingual support
     ...categories.flatMap((category) => 
       createMultilingualEntry(`/c/${category.slug}`, 'weekly', 0.8)

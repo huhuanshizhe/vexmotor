@@ -15,9 +15,13 @@ const imageSchema = z.object({
 const featureSchema = z.object({
   featureKey: z.string().min(1),
   featureValue: z.string().min(1),
+  featureValueMin: z.coerce.number().optional().nullable().transform((value) => value ?? null),
+  featureValueMax: z.coerce.number().optional().nullable().transform((value) => value ?? null),
+  valueType: z.enum(['text', 'number', 'range', 'boolean', 'select']).default('text'),
+  conditionalValue: z.record(z.unknown()).optional().nullable().transform((value) => value ?? null),
   unit: z.string().optional().nullable().transform((value) => value ?? null),
+  specCategory: z.string().optional().nullable().transform((value) => value ?? 'general'),
 });
-
 const attachmentSchema = z.object({
   name: z.string().min(1),
   url: z.string().min(1),
@@ -43,6 +47,17 @@ const patchSchema = z.object({
   compareAtPrice: z.coerce.number().min(0).nullable().optional().transform((value) => value ?? null),
   currencyCode: z.string().length(3).optional(),
   stockQuantity: z.coerce.number().int().min(0).optional(),
+  moq: z.coerce.number().int().min(1).optional(),
+  leadTimeMin: z.coerce.number().int().min(0).optional(),
+  leadTimeMax: z.coerce.number().int().min(0).optional(),
+  leadTimeUnit: z.string().optional(),
+  lifecycleStatus: z.enum(['new', 'active', 'nfd', 'eol', 'last_time_buy']).optional(),
+  eolDate: z.string().nullable().optional().transform((value) => value ?? null),
+  lastTimeBuyDate: z.string().nullable().optional().transform((value) => value ?? null),
+  efficiencyClass: z.string().nullable().optional().transform((value) => value ?? null),
+  certifications: z.array(z.string()).optional(),
+  configurationRules: z.any().optional().nullable().transform((value) => value ?? null),
+  torqueCurveData: z.any().optional().nullable().transform((value) => value ?? null),
   featured: z.boolean().optional(),
   brandId: z.string().uuid().nullable().optional().transform((value) => value ?? null),
   defaultCategoryId: z.string().uuid().nullable().optional().transform((value) => value ?? null),

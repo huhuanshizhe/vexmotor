@@ -20,6 +20,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: ApplicationDetailPageProps) {
+  const { locale } = await getServerSitePreferences();
   const { slug } = await params;
   const caseStudy = getApplicationCaseStudyBySlug(slug);
 
@@ -28,6 +29,7 @@ export async function generateMetadata({ params }: ApplicationDetailPageProps) {
       title: 'Applications — STEPMOTECH',
       description: 'Motion application case studies.',
       path: '/applications',
+      locale,
     });
   }
 
@@ -37,6 +39,7 @@ export async function generateMetadata({ params }: ApplicationDetailPageProps) {
     path: `/applications/${caseStudy.slug}`,
     type: 'article',
     images: [{ url: `/applications/cover/${caseStudy.slug}`, alt: `${caseStudy.title} cover` }],
+    locale,
   });
 }
 

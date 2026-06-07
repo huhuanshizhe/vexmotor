@@ -47,6 +47,11 @@ export type StorefrontProductCard = {
   purchaseMode: 'buy' | 'inquiry';
   inStock: boolean;
   brand?: StorefrontBrand | null;
+  moq?: number;
+  leadTimeMin?: number;
+  leadTimeMax?: number;
+  leadTimeUnit?: string;
+  lifecycleStatus?: string;
 };
 
 export type ProductListSort = 'featured' | 'name-asc' | 'price-asc' | 'price-desc' | 'newest';
@@ -56,6 +61,10 @@ export type StorefrontFeature = {
   value: string;
   unit?: string | null;
   category?: string; // electrical, mechanical, performance, environmental, general
+  valueMin?: number | null;
+  valueMax?: number | null;
+  valueType?: string; // text | number | range | boolean | select
+  conditionalValue?: Record<string, unknown> | null;
 };
 
 export type StorefrontAttachment = {
@@ -73,7 +82,7 @@ export type StorefrontCompatibleGroup = {
 
 export type StorefrontProductDetail = StorefrontProductCard & {
   description: string;
-  descriptionLong?: string | null; // Full detailed product description
+  descriptionLong?: string | null;
   gallery: StorefrontImage[];
   categories: StorefrontCategory[];
   attributes: Array<{ group: string; value: string }>;
@@ -84,6 +93,17 @@ export type StorefrontProductDetail = StorefrontProductCard & {
   seoTitle?: string | null;
   seoDescription?: string | null;
   features: StorefrontFeature[];
+  moq: number;
+  leadTimeMin: number;
+  leadTimeMax: number;
+  leadTimeUnit: string;
+  lifecycleStatus: string;
+  eolDate?: string | null;
+  lastTimeBuyDate?: string | null;
+  efficiencyClass?: string | null;
+  certifications?: string[];
+  configurationRules?: unknown | null;
+  torqueCurveData?: unknown | null;
 };
 
 export type ProductListResult = {

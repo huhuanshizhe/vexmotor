@@ -43,11 +43,15 @@ const quickLinks = [
   },
 ] as const;
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Product Catalog — STEPMOTECH',
   description: 'Browse engineering-grade motion categories, application shortcuts, CAD, datasheets, and direct category entry points.',
   path: '/products',
-});
+    locale,
+  });
+}
 
 export default async function ProductsPage({
   searchParams,

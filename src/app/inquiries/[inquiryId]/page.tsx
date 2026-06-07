@@ -3,16 +3,21 @@ import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 import { StorefrontFrame } from '@/components/layout/storefront-frame';
+import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildMetadata } from '@/lib/seo';
 import { getCurrentUserId } from '@/server/auth/session';
 import { getGuestInquiryAccessCookieName, getStorefrontInquiryDetail } from '@/server/storefront/inquiries';
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Inquiry — STEPMOTECH',
   description: 'Buyer-facing RFQ snapshot.',
   path: '/inquiries',
   noIndex: true,
-});
+    locale,
+  });
+}
 
 export default async function InquiryDetailPage({ params }: { params: Promise<{ inquiryId: string }> }) {
   const cookieStore = await cookies();

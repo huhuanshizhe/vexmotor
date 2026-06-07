@@ -58,11 +58,15 @@ const faq = [
   },
 ];
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Custom Stepper / BLDC / Servo Motor Development — STEPMOTECH',
   description: 'Custom windings, shafts, integrated drivers, and special-environment motion programs with MOQ guidance and engineering intake.',
   path: '/custom',
-});
+    locale,
+  });
+}
 
 type CustomDevelopmentPageProps = {
   searchParams: Promise<{ sourceSku?: string; sourceProduct?: string }>;

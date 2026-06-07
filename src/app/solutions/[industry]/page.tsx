@@ -19,6 +19,7 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: SolutionDetailPageProps) {
+  const { locale } = await getServerSitePreferences();
   const { industry } = await params;
   const solution = getSolutionIndustry(industry);
 
@@ -26,6 +27,7 @@ export async function generateMetadata({ params }: SolutionDetailPageProps) {
     return buildMetadata({
       title: 'Solutions — STEPMOTECH',
       path: '/solutions',
+      locale,
       noIndex: true,
     });
   }
@@ -34,6 +36,7 @@ export async function generateMetadata({ params }: SolutionDetailPageProps) {
     title: `${solution.title} Motion Solutions — STEPMOTECH`,
     description: solution.painSummary,
     path: `/solutions/${solution.slug}`,
+    locale,
   });
 }
 

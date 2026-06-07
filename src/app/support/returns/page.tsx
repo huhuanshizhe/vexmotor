@@ -51,11 +51,15 @@ const faq = [
   },
 ] as const;
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Returns & Warranty — STEPMOTECH',
   description: 'Return timing, RMA workflow, warranty scope, exclusions, and order-linked support handoff for refunds, replacements, and repair review.',
   path: '/support/returns',
-});
+    locale,
+  });
+}
 
 export default async function ReturnsWarrantyPage() {
   const { locale } = await getServerSitePreferences();

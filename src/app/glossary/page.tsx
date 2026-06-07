@@ -11,11 +11,15 @@ import { SITE_URL } from '@/lib/site-config';
 import { getKnowledgeCatalog } from '@/server/content/knowledge';
 import { getProductBySlug, type StorefrontProductDetail } from '@/server/storefront';
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Motion Glossary — STEPMOTECH',
   description: 'Searchable glossary for motion-control, drivetrain, and compliance terms used across the STEPMOTECH content library.',
   path: '/glossary',
-});
+    locale,
+  });
+}
 
 function buildKnowledgeProductMap(products: StorefrontProductDetail[]) {
   return products.reduce<Record<string, KnowledgeLinkedProduct>>((accumulator, product) => {

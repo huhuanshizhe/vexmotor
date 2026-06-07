@@ -43,6 +43,15 @@ export type AdminMemoryProduct = {
   purchaseMode: 'buy' | 'inquiry';
   status: 'draft' | 'active' | 'inactive' | 'archived';
   stockQuantity: number;
+  moq: number;
+  leadTimeMin: number;
+  leadTimeMax: number;
+  leadTimeUnit: string;
+  lifecycleStatus: string;
+  eolDate: string | null;
+  lastTimeBuyDate: string | null;
+  efficiencyClass: string | null;
+  certifications: string[] | null;
   price: string;
   compareAtPrice: string | null;
   currencyCode: string;
@@ -63,7 +72,12 @@ export type AdminMemoryProduct = {
     id: string;
     featureKey: string;
     featureValue: string;
+    featureValueMin: number | null;
+    featureValueMax: number | null;
+    valueType: string;
+    conditionalValue: Record<string, unknown> | null;
     unit: string | null;
+    specCategory: string;
   }>;
   attachments: Array<{
     id: string;
@@ -80,6 +94,8 @@ export type AdminMemoryProduct = {
     relationLabel: string | null;
     sortOrder: number;
   }>;
+  configurationRules: unknown | null;
+  torqueCurveData: unknown | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -247,6 +263,17 @@ function buildInitialProducts(): AdminMemoryProduct[] {
       purchaseMode: detail.purchaseMode,
       status: 'active',
       stockQuantity: detail.stockQuantity,
+      moq: detail.moq ?? 1,
+      leadTimeMin: detail.leadTimeMin ?? 3,
+      leadTimeMax: detail.leadTimeMax ?? 15,
+      leadTimeUnit: detail.leadTimeUnit ?? 'business_days',
+      lifecycleStatus: detail.lifecycleStatus ?? 'active',
+      eolDate: detail.eolDate ?? null,
+      lastTimeBuyDate: detail.lastTimeBuyDate ?? null,
+      efficiencyClass: detail.efficiencyClass ?? null,
+      certifications: detail.certifications ?? [],
+      configurationRules: null,
+      torqueCurveData: null,
       price: detail.price.amount.toFixed(2),
       compareAtPrice: formatAmount(detail.compareAtPrice?.amount),
       currencyCode: detail.price.currency,
@@ -267,7 +294,12 @@ function buildInitialProducts(): AdminMemoryProduct[] {
         id: `${detail.id}-feature-${featureIndex + 1}`,
         featureKey: feature.key,
         featureValue: feature.value,
+        featureValueMin: feature.valueMin ?? null,
+        featureValueMax: feature.valueMax ?? null,
+        valueType: feature.valueType ?? 'text',
+        conditionalValue: (feature.conditionalValue as Record<string, unknown>) ?? null,
         unit: feature.unit ?? null,
+        specCategory: feature.category ?? 'general',
       })),
       attachments: detail.attachments.map((attachment, attachmentIndex) => ({
         id: `${detail.id}-attachment-${attachmentIndex + 1}`,

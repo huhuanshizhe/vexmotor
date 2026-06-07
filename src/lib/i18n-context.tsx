@@ -1,7 +1,8 @@
 'use client';
 
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
-import { type Locale, DEFAULT_LOCALE } from '@/lib/i18n';
+import { useRouter, usePathname } from 'next/navigation';
+import { type Locale, DEFAULT_LOCALE, withLocalePath } from '@/lib/i18n';
 
 // Import translations
 import enTranslations from '@/locales/en.json';
@@ -56,21 +57,23 @@ export function I18nProvider({
   children: ReactNode;
   initialLocale?: Locale;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
   const [locale, setLocaleState] = useState<Locale>(initialLocale);
 
   const t = useCallback((key: string, params?: TranslationParams): string => {
     const translationObj = translations[locale] || translations[DEFAULT_LOCALE];
     const template = getNestedValue(translationObj, key);
-    
+
     if (typeof template === 'string') {
       return interpolateString(template, params);
     }
-    
+
     // Fallback: return key if translation not found
     if (process.env.NODE_ENV === 'development') {
       console.warn(`Translation key not found: "${key}" for locale "${locale}"`);
     }
-    
+
     return key;
   }, [locale]);
 
@@ -78,9 +81,13 @@ export function I18nProvider({
     setLocaleState(newLocale);
     // Save to cookie for persistence
     document.cookie = `site_locale=${newLocale}; Path=/; Max-Age=31536000; SameSite=Lax`;
-    // Reload page to apply locale
-    window.location.reload();
-  }, []);
+    // Soft navigation to apply locale without full page reload
+    const newPath = withLocalePath(pathname, newLocale);
+    if (newPath !== pathname) {
+      router.push(newPath);
+    }
+    router.refresh();
+  }, [router, pathname]);
 
   return (
     <I18nContext.Provider value={{ locale, t, setLocale }}>

@@ -1,59 +1,58 @@
-/**
- * Product translation utilities
- * Handles loading and caching product translations from database
- */
-
+import { and, eq } from 'drizzle-orm';
 import { type Locale, DEFAULT_LOCALE } from '@/lib/i18n';
+import { db } from '@/server/db';
+import { productTranslations } from '@/server/db/schema';
 
-// Product translation cache (in production, this would be Redis or DB)
 const productTranslationCache = new Map<string, ProductTranslation>();
 
 export type ProductTranslation = {
   productId: string;
   locale: Locale;
-  name?: string;
-  shortDescription?: string;
-  description?: string;
-  seoTitle?: string;
-  seoDescription?: string;
+  name?: string | null;
+  shortDescription?: string | null;
+  description?: string | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
 };
 
-/**
- * Get product translation for a specific locale
- * Falls back to default locale (English) if translation not found
- */
 export async function getProductTranslation(
   productId: string,
   locale: Locale,
   fallback = true
 ): Promise<ProductTranslation | null> {
   const cacheKey = `${productId}_${locale}`;
-  
-  // Check cache first
   const cached = productTranslationCache.get(cacheKey);
-  if (cached) {
-    return cached;
-  }
-  
+  if (cached) return cached;
+
   try {
-    // In production, this would query the database:
-    // const translation = await db.query.productTranslations.findFirst({
-    //   where: (t, { eq, and }) => and(eq(t.productId, productId), eq(t.locale, locale)),
-    // });
-    
-    // For now, return null (will use English fallback)
-    const translation = null;
-    
-    if (translation) {
+    let row = null;
+    if (db) {
+      const [found] = await db
+        .select()
+        .from(productTranslations)
+        .where(and(eq(productTranslations.productId, productId), eq(productTranslations.locale, locale)))
+        .limit(1);
+      row = found ?? null;
+    }
+
+    if (row) {
+      const translation: ProductTranslation = {
+        productId: row.productId,
+        locale: row.locale as Locale,
+        name: row.name,
+        shortDescription: row.shortDescription,
+        description: row.description,
+        seoTitle: row.seoTitle,
+        seoDescription: row.seoDescription,
+      };
       productTranslationCache.set(cacheKey, translation);
       return translation;
     }
-    
-    // Fallback to default locale
+
     if (fallback && locale !== DEFAULT_LOCALE) {
       return getProductTranslation(productId, DEFAULT_LOCALE, false);
     }
-    
+
     return null;
   } catch (error) {
     console.error(`Failed to load product translation for ${productId} (${locale}):`, error);

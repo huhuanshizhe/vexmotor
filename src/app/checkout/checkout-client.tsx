@@ -70,8 +70,8 @@ function createEmptyAddress(defaultCountryCode = 'US'): AddressInput {
   };
 }
 
-function formatMoney(amount: number, currency = 'USD') {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount);
+function formatMoney(amount: number, currency = 'USD', locale = 'en') {
+  return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount);
 }
 
 function isAddressComplete(address: AddressInput) {

@@ -22,6 +22,17 @@ export type AdminProductRow = {
   purchaseMode: 'buy' | 'inquiry';
   status: 'draft' | 'active' | 'inactive' | 'archived';
   stockQuantity: number;
+  moq: number;
+  leadTimeMin: number;
+  leadTimeMax: number;
+  leadTimeUnit: string;
+  lifecycleStatus: string;
+  eolDate: string | null;
+  lastTimeBuyDate: string | null;
+  efficiencyClass: string | null;
+  certifications: string[] | null;
+  configurationRules: unknown | null;
+  torqueCurveData: unknown | null;
   price: string;
   compareAtPrice: string | null;
   currencyCode: string;
@@ -47,7 +58,12 @@ export type AdminProductDetail = AdminProductRow & {
     id: string;
     featureKey: string;
     featureValue: string;
+    featureValueMin: number | null;
+    featureValueMax: number | null;
+    valueType: string;
+    conditionalValue: Record<string, unknown> | null;
     unit: string | null;
+    specCategory: string;
   }>;
   attachments: Array<{
     id: string;
@@ -78,6 +94,17 @@ export type AdminProductInput = {
   compareAtPrice?: number | null;
   currencyCode: string;
   stockQuantity: number;
+  moq?: number;
+  leadTimeMin?: number;
+  leadTimeMax?: number;
+  leadTimeUnit?: string;
+  lifecycleStatus?: string;
+  eolDate?: string | null;
+  lastTimeBuyDate?: string | null;
+  efficiencyClass?: string | null;
+  certifications?: string[];
+  configurationRules?: unknown | null;
+  torqueCurveData?: unknown | null;
   featured: boolean;
   brandId?: string | null;
   defaultCategoryId?: string | null;
@@ -93,7 +120,12 @@ export type AdminProductInput = {
   features: Array<{
     featureKey: string;
     featureValue: string;
+    featureValueMin?: number | null;
+    featureValueMax?: number | null;
+    valueType?: string;
+    conditionalValue?: Record<string, unknown> | null;
     unit?: string | null;
+    specCategory?: string;
   }>;
   attachments: Array<{
     name: string;
@@ -127,6 +159,17 @@ function mapMemoryProductRow(id: string): AdminProductDetail | null {
     purchaseMode: product.purchaseMode,
     status: product.status,
     stockQuantity: product.stockQuantity,
+    moq: product.moq ?? 1,
+    leadTimeMin: product.leadTimeMin ?? 3,
+    leadTimeMax: product.leadTimeMax ?? 15,
+    leadTimeUnit: product.leadTimeUnit ?? 'business_days',
+    lifecycleStatus: product.lifecycleStatus ?? 'active',
+    eolDate: product.eolDate ?? null,
+    lastTimeBuyDate: product.lastTimeBuyDate ?? null,
+    efficiencyClass: product.efficiencyClass ?? null,
+    certifications: product.certifications ?? [],
+    configurationRules: product.configurationRules ?? null,
+    torqueCurveData: product.torqueCurveData ?? null,
     price: product.price,
     compareAtPrice: product.compareAtPrice,
     currencyCode: product.currencyCode,
@@ -157,6 +200,17 @@ function toMemoryProductPayload(input: AdminProductInput) {
     compareAtPrice: input.compareAtPrice == null ? null : input.compareAtPrice.toFixed(2),
     currencyCode: input.currencyCode.toUpperCase(),
     stockQuantity: input.stockQuantity,
+    moq: input.moq ?? 1,
+    leadTimeMin: input.leadTimeMin ?? 3,
+    leadTimeMax: input.leadTimeMax ?? 15,
+    leadTimeUnit: input.leadTimeUnit ?? 'business_days',
+    lifecycleStatus: input.lifecycleStatus ?? 'active',
+    eolDate: input.eolDate ?? null,
+    lastTimeBuyDate: input.lastTimeBuyDate ?? null,
+    efficiencyClass: input.efficiencyClass ?? null,
+    certifications: input.certifications ?? [],
+    configurationRules: input.configurationRules ?? null,
+    torqueCurveData: input.torqueCurveData ?? null,
     featured: input.featured,
     brandId: input.brandId ?? null,
     defaultCategoryId: input.defaultCategoryId ?? null,
@@ -172,7 +226,12 @@ function toMemoryProductPayload(input: AdminProductInput) {
     features: input.features.map((item) => ({
       featureKey: item.featureKey,
       featureValue: item.featureValue,
+      featureValueMin: item.featureValueMin ?? null,
+      featureValueMax: item.featureValueMax ?? null,
+      valueType: item.valueType || 'text',
+      conditionalValue: item.conditionalValue ?? null,
       unit: item.unit ?? null,
+      specCategory: item.specCategory || 'general',
     })),
     attachments: input.attachments.map((item) => ({
       name: item.name,
@@ -219,6 +278,17 @@ export async function getAdminProducts(search = '') {
           purchaseMode: products.purchaseMode,
           status: products.status,
           stockQuantity: products.stockQuantity,
+          moq: products.moq,
+          leadTimeMin: products.leadTimeMin,
+          leadTimeMax: products.leadTimeMax,
+          leadTimeUnit: products.leadTimeUnit,
+          lifecycleStatus: products.lifecycleStatus,
+          eolDate: products.eolDate,
+          lastTimeBuyDate: products.lastTimeBuyDate,
+          efficiencyClass: products.efficiencyClass,
+          certifications: products.certifications,
+          configurationRules: products.configurationRules,
+          torqueCurveData: products.torqueCurveData,
           price: products.price,
           compareAtPrice: products.compareAtPrice,
           currencyCode: products.currencyCode,
@@ -237,7 +307,11 @@ export async function getAdminProducts(search = '') {
     ]);
 
     return {
-      items,
+      items: items.map((item) => ({
+        ...item,
+        eolDate: item.eolDate ? item.eolDate.toISOString() : null,
+        lastTimeBuyDate: item.lastTimeBuyDate ? item.lastTimeBuyDate.toISOString() : null,
+      })),
       total: Number(totals[0]?.total ?? 0),
     };
   } catch {
@@ -287,6 +361,17 @@ export async function getAdminProductDetail(id: string): Promise<AdminProductDet
         purchaseMode: products.purchaseMode,
         status: products.status,
         stockQuantity: products.stockQuantity,
+        moq: products.moq,
+        leadTimeMin: products.leadTimeMin,
+        leadTimeMax: products.leadTimeMax,
+        leadTimeUnit: products.leadTimeUnit,
+        lifecycleStatus: products.lifecycleStatus,
+        eolDate: products.eolDate,
+        lastTimeBuyDate: products.lastTimeBuyDate,
+        efficiencyClass: products.efficiencyClass,
+        certifications: products.certifications,
+        configurationRules: products.configurationRules,
+        torqueCurveData: products.torqueCurveData,
         price: products.price,
         compareAtPrice: products.compareAtPrice,
         currencyCode: products.currencyCode,
@@ -330,6 +415,8 @@ export async function getAdminProductDetail(id: string): Promise<AdminProductDet
 
     return {
       ...product,
+      eolDate: product.eolDate ? product.eolDate.toISOString() : null,
+      lastTimeBuyDate: product.lastTimeBuyDate ? product.lastTimeBuyDate.toISOString() : null,
       images: imageRows.map((item) => ({
         id: item.id,
         url: item.url,
@@ -342,7 +429,12 @@ export async function getAdminProductDetail(id: string): Promise<AdminProductDet
         id: item.id,
         featureKey: item.featureKey,
         featureValue: item.featureValue,
+        featureValueMin: item.featureValueMin ? Number(item.featureValueMin) : null,
+        featureValueMax: item.featureValueMax ? Number(item.featureValueMax) : null,
+        valueType: item.valueType || 'text',
+        conditionalValue: item.conditionalValue as Record<string, unknown> | null,
         unit: item.unit,
+        specCategory: item.specCategory || 'general',
       })),
       attachments: attachmentRows.map((item) => ({
         id: item.id,
@@ -386,6 +478,17 @@ export async function createAdminProduct(input: AdminProductInput) {
           compareAtPrice: input.compareAtPrice == null ? null : input.compareAtPrice.toFixed(2),
           currencyCode: input.currencyCode.toUpperCase(),
           stockQuantity: input.stockQuantity,
+          moq: input.moq ?? 1,
+          leadTimeMin: input.leadTimeMin ?? 3,
+          leadTimeMax: input.leadTimeMax ?? 15,
+          leadTimeUnit: input.leadTimeUnit ?? 'business_days',
+          lifecycleStatus: (input.lifecycleStatus as 'new' | 'active' | 'nfd' | 'eol' | 'last_time_buy') ?? 'active',
+          eolDate: input.eolDate ? new Date(input.eolDate) : null,
+          lastTimeBuyDate: input.lastTimeBuyDate ? new Date(input.lastTimeBuyDate) : null,
+          efficiencyClass: input.efficiencyClass ?? null,
+          certifications: input.certifications ?? [],
+          configurationRules: input.configurationRules ?? null,
+          torqueCurveData: input.torqueCurveData ?? null,
           featured: input.featured,
           brandId: input.brandId ?? null,
           defaultCategoryId: input.defaultCategoryId ?? null,
@@ -418,7 +521,12 @@ export async function createAdminProduct(input: AdminProductInput) {
             productId: product.id,
             featureKey: item.featureKey,
             featureValue: item.featureValue,
+            featureValueMin: item.featureValueMin != null ? String(item.featureValueMin) : null,
+            featureValueMax: item.featureValueMax != null ? String(item.featureValueMax) : null,
+            valueType: item.valueType || 'text',
+            conditionalValue: item.conditionalValue ?? null,
             unit: item.unit ?? null,
+            specCategory: item.specCategory || 'general',
             sortOrder: index + 1,
           })),
         );
@@ -471,6 +579,15 @@ export async function updateAdminProduct(id: string, input: Partial<AdminProduct
       compareAtPrice: input.compareAtPrice == null ? input.compareAtPrice : input.compareAtPrice.toFixed(2),
       currencyCode: input.currencyCode?.toUpperCase(),
       stockQuantity: input.stockQuantity,
+      moq: input.moq,
+      leadTimeMin: input.leadTimeMin,
+      leadTimeMax: input.leadTimeMax,
+      leadTimeUnit: input.leadTimeUnit,
+      lifecycleStatus: input.lifecycleStatus,
+      eolDate: input.eolDate,
+      lastTimeBuyDate: input.lastTimeBuyDate,
+      efficiencyClass: input.efficiencyClass,
+      certifications: input.certifications,
       featured: input.featured,
       brandId: input.brandId,
       defaultCategoryId: input.defaultCategoryId,
@@ -486,7 +603,12 @@ export async function updateAdminProduct(id: string, input: Partial<AdminProduct
       features: input.features?.map((item) => ({
         featureKey: item.featureKey,
         featureValue: item.featureValue,
+        featureValueMin: item.featureValueMin ?? null,
+        featureValueMax: item.featureValueMax ?? null,
+        valueType: item.valueType || 'text',
+        conditionalValue: item.conditionalValue ?? null,
         unit: item.unit ?? null,
+        specCategory: item.specCategory || 'general',
       })),
       attachments: input.attachments?.map((item) => ({
         name: item.name,
@@ -516,6 +638,17 @@ export async function updateAdminProduct(id: string, input: Partial<AdminProduct
         compareAtPrice: input.compareAtPrice == null ? input.compareAtPrice : input.compareAtPrice.toFixed(2),
         currencyCode: input.currencyCode?.toUpperCase(),
         stockQuantity: input.stockQuantity,
+        moq: input.moq,
+        leadTimeMin: input.leadTimeMin,
+        leadTimeMax: input.leadTimeMax,
+        leadTimeUnit: input.leadTimeUnit,
+        lifecycleStatus: input.lifecycleStatus as 'new' | 'active' | 'nfd' | 'eol' | 'last_time_buy' | undefined,
+        eolDate: input.eolDate ? new Date(input.eolDate) : undefined,
+        lastTimeBuyDate: input.lastTimeBuyDate ? new Date(input.lastTimeBuyDate) : undefined,
+        efficiencyClass: input.efficiencyClass,
+        certifications: input.certifications,
+        configurationRules: input.configurationRules,
+        torqueCurveData: input.torqueCurveData,
         featured: input.featured,
         brandId: input.brandId,
         defaultCategoryId: input.defaultCategoryId,
@@ -554,7 +687,12 @@ export async function updateAdminProduct(id: string, input: Partial<AdminProduct
               productId: id,
               featureKey: item.featureKey,
               featureValue: item.featureValue,
+              featureValueMin: item.featureValueMin != null ? String(item.featureValueMin) : null,
+              featureValueMax: item.featureValueMax != null ? String(item.featureValueMax) : null,
+              valueType: item.valueType || 'text',
+              conditionalValue: item.conditionalValue ?? null,
               unit: item.unit ?? null,
+              specCategory: item.specCategory || 'general',
               sortOrder: index + 1,
             })),
           );
@@ -623,7 +761,12 @@ export async function updateAdminProduct(id: string, input: Partial<AdminProduct
       features: input.features?.map((item) => ({
         featureKey: item.featureKey,
         featureValue: item.featureValue,
+        featureValueMin: item.featureValueMin ?? null,
+        featureValueMax: item.featureValueMax ?? null,
+        valueType: item.valueType || 'text',
+        conditionalValue: item.conditionalValue ?? null,
         unit: item.unit ?? null,
+        specCategory: item.specCategory || 'general',
       })),
       attachments: input.attachments?.map((item) => ({
         name: item.name,

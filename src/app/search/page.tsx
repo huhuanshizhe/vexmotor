@@ -47,12 +47,16 @@ function suggestQuery(query: string) {
   return null;
 }
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Search results — STEPMOTECH',
   description: 'Search products, support content, technical FAQ answers, glossary terms, applications, blog posts, and documents from one page.',
   path: '/search',
   noIndex: true,
-});
+    locale,
+  });
+}
 
 export default async function SearchPage({
   searchParams,

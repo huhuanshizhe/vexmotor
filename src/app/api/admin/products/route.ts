@@ -14,7 +14,12 @@ const imageSchema = z.object({
 const featureSchema = z.object({
   featureKey: z.string().min(1),
   featureValue: z.string().min(1),
+  featureValueMin: z.coerce.number().optional().nullable().transform((value) => value ?? null),
+  featureValueMax: z.coerce.number().optional().nullable().transform((value) => value ?? null),
+  valueType: z.enum(['text', 'number', 'range', 'boolean', 'select']).default('text'),
+  conditionalValue: z.record(z.unknown()).optional().nullable().transform((value) => value ?? null),
   unit: z.string().optional().nullable().transform((value) => value ?? null),
+  specCategory: z.string().optional().nullable().transform((value) => value ?? 'general'),
 });
 
 const attachmentSchema = z.object({
@@ -42,6 +47,17 @@ const productSchema = z.object({
   compareAtPrice: z.coerce.number().min(0).optional().nullable().transform((value) => value ?? null),
   currencyCode: z.string().length(3).default('USD'),
   stockQuantity: z.coerce.number().int().min(0).default(0),
+  moq: z.coerce.number().int().min(1).default(1),
+  leadTimeMin: z.coerce.number().int().min(0).default(3),
+  leadTimeMax: z.coerce.number().int().min(0).default(15),
+  leadTimeUnit: z.string().default('business_days'),
+  lifecycleStatus: z.enum(['new', 'active', 'nfd', 'eol', 'last_time_buy']).default('active'),
+  eolDate: z.string().optional().nullable().transform((value) => value ?? null),
+  lastTimeBuyDate: z.string().optional().nullable().transform((value) => value ?? null),
+  efficiencyClass: z.string().optional().nullable().transform((value) => value ?? null),
+  certifications: z.array(z.string()).optional().default([]),
+  configurationRules: z.any().optional().nullable().transform((value) => value ?? null),
+  torqueCurveData: z.any().optional().nullable().transform((value) => value ?? null),
   featured: z.boolean().default(false),
   brandId: z.string().uuid().optional().nullable().transform((value) => value ?? null),
   defaultCategoryId: z.string().uuid().optional().nullable().transform((value) => value ?? null),

@@ -42,11 +42,15 @@ const faq = [
   },
 ];
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'After-sales Support — STEPMOTECH',
   description: 'Engineering support, repair guidance, spare-part ordering, software access routes, and response targets for post-purchase motion-control support.',
   path: '/support/after-sales',
-});
+    locale,
+  });
+}
 
 function supportLink(href: string, locale: Locale, className: string, label: string) {
   if (href.startsWith('mailto:') || href.startsWith('tel:')) {

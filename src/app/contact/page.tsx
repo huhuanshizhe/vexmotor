@@ -8,11 +8,15 @@ import { sanitizeLegacyCopy } from '@/lib/legacy-content';
 import { buildMetadata } from '@/lib/seo';
 import { getCmsPageByLegacySlug, getProductList } from '@/server/storefront';
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Contact Sales & Engineering — STEPMOTECH',
   description: 'Reach STEPMOTECH for pricing, MOQ, export shipping, custom assemblies, and broader OEM sourcing requests.',
   path: '/contact',
-});
+    locale,
+  });
+}
 
 export default async function ContactPage() {
   const [{ locale }, legacyContactPage, productList] = await Promise.all([

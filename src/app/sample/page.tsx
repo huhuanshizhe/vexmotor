@@ -9,12 +9,16 @@ import { getActiveCartDetail } from '@/server/storefront/cart';
 
 import { SampleClient } from './sample-client';
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Request Samples — STEPMOTECH',
   description: 'Request engineering samples with per-SKU limits, shipping selection, and buyer contact details.',
   path: '/sample',
   noIndex: true,
-});
+    locale,
+  });
+}
 
 export default async function SamplePage() {
   const cookieStore = await cookies();

@@ -29,11 +29,15 @@ function topicFromSearchParam(value?: string) {
   return undefined;
 }
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Contact Support — STEPMOTECH',
   description: 'Support contact desk for sales, technical issues, order exceptions, logistics, press, and partnership requests with immediate ticket creation.',
   path: '/support/contact',
-});
+    locale,
+  });
+}
 
 export default async function SupportContactPage({
   searchParams,

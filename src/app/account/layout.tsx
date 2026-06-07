@@ -8,12 +8,16 @@ import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildMetadata } from '@/lib/seo';
 import { getCurrentUserId } from '@/server/auth/session';
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Account — STEPMOTECH',
   description: 'Manage orders, addresses, quotes, downloads, and preferences.',
   path: '/account',
   noIndex: true,
-});
+    locale,
+  });
+}
 
 const accountLinks = [
   ...accountNavLinks,

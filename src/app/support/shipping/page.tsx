@@ -142,11 +142,15 @@ const faq = [
   },
 ] as const;
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Shipping & Customs — STEPMOTECH',
   description: 'Global shipping, customs handling, Incoterms guidance, regional tax and duty notes, and a shipping estimator aligned with the cart experience.',
   path: '/support/shipping',
-});
+    locale,
+  });
+}
 
 export default async function SupportShippingPage() {
   const { locale } = await getServerSitePreferences();

@@ -9,12 +9,16 @@ import { getActiveCartDetail } from '@/server/storefront/cart';
 
 import { QuoteClient } from './quote-client';
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Request for Quote — STEPMOTECH',
   description: 'Collect multi-line RFQ demand with project context, attachments, and buyer details in a dedicated quote workflow.',
   path: '/quote',
   noIndex: true,
-});
+    locale,
+  });
+}
 
 export default async function QuotePage() {
   const cookieStore = await cookies();

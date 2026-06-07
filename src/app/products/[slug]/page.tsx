@@ -14,224 +14,25 @@ import { ProductInquiryForm } from '@/components/storefront/product-inquiry-form
 import { RecentlyViewedProducts } from '@/components/storefront/recently-viewed-products';
 import { type Locale, withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
-import { buildVolumePricingTiers } from '@/lib/volume-pricing';
+import { buildCompatibleGroups, type DetailCompatibleGroup } from '@/lib/product-compatibility';
+import { buildApplicationCards, buildDocumentCards, buildFaqItems, buildOverviewBullets, buildTrustItems, matchesAttachmentAsset } from '@/lib/product-content';
+import { buildFaqJsonLd, buildProductJsonLd } from '@/lib/product-seo';
+import { getProductTranslation } from '@/lib/product-translations';
+import { buildSpecGroups, formatSpecValue, type DetailSpecGroup } from '@/lib/product-specs';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 import { SITE_NAME, SITE_URL } from '@/lib/site-config';
+import { buildVolumePricingTiers } from '@/lib/volume-pricing';
 import { getCommerceConfig } from '@/server/commerce/config';
-import { getHomeData, getProductBySlug, type StorefrontCompatibleGroup, type StorefrontProductCard, type StorefrontProductDetail } from '@/server/storefront';
+import { getHomeData, getProductBySlug, type StorefrontProductCard } from '@/server/storefront';
 
-// Revalidate product pages every 5 minutes (ISR)
 export const revalidate = 300;
-
-type DetailSpecRow = {
-  label: string;
-  value: string;
-};
-
-type DetailSpecGroup = {
-  title: string;
-  description: string;
-  rows: DetailSpecRow[];
-};
-
-type DetailCompatibleGroup = {
-  title: string;
-  description: string;
-  badge: string;
-  items: StorefrontProductCard[];
-};
-
-function matchesAttachmentAsset(attachment: StorefrontProductDetail['attachments'][number], pattern: RegExp) {
-  return pattern.test(`${attachment.name} ${attachment.url}`);
-}
-
-function formatSpecValue(value: string, unit?: string | null) {
-  return unit ? `${value} ${unit}` : value;
-}
-
-function buildSpecGroups(product: StorefrontProductDetail): DetailSpecGroup[] {
-  const categoryMap: Record<'product_type' | 'electrical' | 'mechanical' | 'performance' | 'environmental' | 'general', DetailSpecRow[]> = {
-    product_type: [],
-    electrical: [],
-    mechanical: [],
-    performance: [],
-    environmental: [],
-    general: [],
-  };
-  const categoryAliases: Record<string, keyof typeof categoryMap> = {
-    product: 'product_type',
-    product_type: 'product_type',
-    electrical: 'electrical',
-    mechanical: 'mechanical',
-    physical: 'mechanical',
-    performance: 'performance',
-    environmental: 'environmental',
-    general: 'general',
-  };
-
-  product.features.forEach((feature) => {
-    const normalizedCategory = categoryAliases[feature.category?.toLowerCase() ?? 'general'] ?? 'general';
-    const row = {
-      label: feature.key,
-      value: formatSpecValue(feature.value, feature.unit),
-    };
-
-    categoryMap[normalizedCategory].push(row);
-  });
-
-  const attributeRows = product.attributes.map((attribute) => ({
-    label: attribute.group,
-    value: attribute.value,
-  }));
-  
-  const commercialRows = [
-    { label: 'SKU', value: product.sku },
-    { label: 'Purchase mode', value: product.purchaseMode === 'buy' ? 'Direct buy' : 'Engineering RFQ' },
-    {
-      label: 'Stock status',
-      value: product.inStock ? `${Math.max(product.stockQuantity, 0)} units ready for standard orders` : 'Lead time confirmed during quote review',
-    },
-    { label: 'Brand', value: product.brand?.name ?? SITE_NAME },
-  ];
-
-  const groups: DetailSpecGroup[] = [];
-
-  if (categoryMap.product_type.length) {
-    groups.push({
-      title: 'Product Type',
-      description: 'Catalog family, construction type and frame-level classification.',
-      rows: categoryMap.product_type,
-    });
-  }
-
-  if (categoryMap.electrical.length) {
-    groups.push({
-      title: 'Electrical Specification',
-      description: 'Electrical ratings, winding data and driver-facing values.',
-      rows: categoryMap.electrical,
-    });
-  }
-
-  if (categoryMap.mechanical.length) {
-    groups.push({
-      title: 'Mechanical Specification',
-      description: 'Frame dimensions, shaft details and mechanical construction values.',
-      rows: categoryMap.mechanical,
-    });
-  }
-
-  if (categoryMap.performance.length) {
-    groups.push({
-      title: 'Performance',
-      description: 'Torque, speed and application-facing operating behavior.',
-      rows: categoryMap.performance,
-    });
-  }
-
-  if (categoryMap.environmental.length) {
-    groups.push({
-      title: 'Environmental Specification',
-      description: 'Temperature, protection and environmental operating conditions.',
-      rows: categoryMap.environmental,
-    });
-  }
-
-  if (categoryMap.general.length) {
-    groups.push({
-      title: 'General',
-      description: 'Additional catalog points that do not belong to a dedicated engineering bucket.',
-      rows: categoryMap.general,
-    });
-  }
-
-  if (attributeRows.length) {
-    groups.push({
-      title: 'Catalog attributes',
-      description: 'Structured metadata carried with this SKU.',
-      rows: attributeRows,
-    });
-  }
-
-  groups.push({
-    title: 'Commercial & support',
-    description: 'Fulfillment and support information.',
-    rows: commercialRows,
-  });
-
-  return groups;
-}
-
-const COMPATIBLE_DESCRIPTIONS: Record<string, string> = {
-  drivers: 'Control-side matches typically shortlisted next to this SKU.',
-  'mechanical-integration': 'Mounting and motion-transfer components frequently paired with the same family.',
-  'power-control': 'Power, wiring, and remaining control accessories for system-level planning.',
-  custom: 'Compatible accessories and components for system-level planning.',
-};
-
-const COMPATIBLE_BADGES: Record<string, string> = {
-  drivers: 'Adds compatibility check',
-  'mechanical-integration': 'Mechanical fit',
-  'power-control': 'System fit',
-  custom: 'Compatible',
-};
-
-function buildCompatibleGroups(
-  explicitGroups: StorefrontCompatibleGroup[],
-  fallbackProducts: StorefrontProductCard[],
-): DetailCompatibleGroup[] {
-  // Use manually configured groups if available
-  if (explicitGroups.length > 0) {
-    return explicitGroups.map((group) => ({
-      title: group.title,
-      description: COMPATIBLE_DESCRIPTIONS[group.relationType] ?? COMPATIBLE_DESCRIPTIONS.custom,
-      badge: COMPATIBLE_BADGES[group.relationType] ?? COMPATIBLE_BADGES.custom,
-      items: group.items.slice(0, 3),
-    }));
-  }
-
-  // Fallback: regex-based auto-grouping
-  const groups: Array<DetailCompatibleGroup & { matcher: RegExp }> = [
-    {
-      title: 'Drivers',
-      description: 'Control-side matches typically shortlisted next to this SKU.',
-      badge: 'Adds compatibility check',
-      matcher: /(driver|controller)/i,
-      items: [],
-    },
-    {
-      title: 'Mechanical integration',
-      description: 'Mounting and motion-transfer components frequently paired with the same family.',
-      badge: 'Mechanical fit',
-      matcher: /(bracket|gear|shaft|linear|coupling)/i,
-      items: [],
-    },
-    {
-      title: 'Power & control',
-      description: 'Power, wiring, and remaining control accessories for system-level planning.',
-      badge: 'System fit',
-      matcher: /(power|supply|cable|connector|encoder)/i,
-      items: [],
-    },
-  ];
-  const seen = new Set<string>();
-
-  for (const item of fallbackProducts) {
-    if (seen.has(item.id)) continue;
-    seen.add(item.id);
-    const haystack = `${item.name} ${item.slug}`;
-    const targetGroup = groups.find((group) => group.matcher.test(haystack)) ?? groups[groups.length - 1];
-    if (targetGroup.items.length < 3) targetGroup.items.push(item);
-  }
-
-  return groups.filter((group) => group.items.length).map(({ matcher, ...group }) => group);
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const { locale } = await getServerSitePreferences();
-  const product = await getProductBySlug(slug);
+  const p = await getProductBySlug(slug);
 
-  if (!product) {
+  if (!p) {
     return buildMetadata({
       title: 'Product not found — STEPMOTECH',
       path: '/products',
@@ -240,231 +41,145 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     });
   }
 
-  const topSpecs = product.features.slice(0, 2).map((feature) => `${feature.key} ${formatSpecValue(feature.value, feature.unit)}`);
+  const topSpecs = p.features.slice(0, 2).map((feature) => `${feature.key} ${formatSpecValue(feature.value, feature.unit)}`);
   const description =
-    product.seoDescription ??
-    `${product.name} (${product.sku}) with ${topSpecs.join(', ') || 'engineering-grade motion parameters'}, ${product.inStock ? 'multi-warehouse availability' : 'quote-based lead times'}, and ${product.purchaseMode === 'buy' ? `pricing from ${product.price.formatted}` : 'RFQ pricing support'}.`;
+    p.seoDescription ??
+    `${p.name} (${p.sku}) with ${topSpecs.join(', ') || 'engineering-grade motion parameters'}, ${p.inStock ? 'multi-warehouse availability' : 'quote-based lead times'}, and ${p.purchaseMode === 'buy' ? `pricing from ${p.price.formatted}` : 'RFQ pricing support'}.`;
 
   return buildMetadata({
-    title: product.seoTitle ?? `${product.name} — ${product.sku} | ${SITE_NAME}`,
+    title: p.seoTitle ?? `${p.name} — ${p.sku} | ${SITE_NAME}`,
     description,
     path: `/products/${slug}`,
     locale,
     type: 'website',
-    images: product.coverImage ? [{ url: product.coverImage.url, alt: product.coverImage.alt || product.name }] : undefined,
+    images: p.coverImage ? [{ url: p.coverImage.url, alt: p.coverImage.alt || p.name }] : undefined,
   });
 }
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const [{ locale }, product, homeData, commerceConfig] = await Promise.all([getServerSitePreferences(), getProductBySlug(slug), getHomeData(), getCommerceConfig()]);
+  const [{ locale }, product, homeData, commerceConfig] = await Promise.all([
+    getServerSitePreferences(),
+    getProductBySlug(slug),
+    getHomeData(),
+    getCommerceConfig(),
+  ]);
 
   if (!product) {
     notFound();
   }
 
-  const galleryImages = product.gallery.length ? product.gallery : product.coverImage ? [product.coverImage] : [];
-  const category = product.categories[0] ?? null;
+  // Apply locale-specific translations
+  const raw = product;
+  const translation = locale !== 'en' ? await getProductTranslation(raw.id, locale as Locale) : null;
+  const p = translation
+    ? { ...raw, ...(translation.name ? { name: translation.name } : {}), ...(translation.shortDescription ? { shortDescription: translation.shortDescription } : {}), ...(translation.description ? { description: translation.description } : {}), ...(translation.seoTitle ? { seoTitle: translation.seoTitle } : {}), ...(translation.seoDescription ? { seoDescription: translation.seoDescription } : {}) }
+    : raw;
+
+  const galleryImages = p.gallery.length ? p.gallery : p.coverImage ? [p.coverImage] : [];
+  const category = p.categories[0] ?? null;
   const productsPath = withLocalePath('/products', locale);
-  const productPath = withLocalePath(`/products/${product.slug}`, locale);
+  const productPath = withLocalePath(`/products/${p.slug}`, locale);
   const contactPath = withLocalePath('/contact', locale);
   const categoryPath = category ? withLocalePath(`/c/${category.slug}`, locale) : productsPath;
   const productUrl = `${SITE_URL}${productPath}`;
-  const fullDatasheetAttachment =
-    product.attachments.find(
-      (attachment) =>
-        matchesAttachmentAsset(attachment, /full[\s_-]*datasheet|datasheet/i) && !matchesAttachmentAsset(attachment, /torque[\s_-]*curve|curve|graph/i),
-    ) ?? null;
-  const genericSpecAttachment = product.attachments.find((attachment) => /pdf|datasheet|spec/i.test(`${attachment.name} ${attachment.mimeType} ${attachment.url}`)) ?? null;
-  const datasheetAttachment = fullDatasheetAttachment ?? genericSpecAttachment;
+
+  // Attachment detection
+  const fullDatasheet = p.attachments.find(
+    (a) => matchesAttachmentAsset(a, /full[\s_-]*datasheet|datasheet/i) && !matchesAttachmentAsset(a, /torque[\s_-]*curve|curve|graph/i),
+  ) ?? null;
+  const genericSpec = p.attachments.find((a) => /pdf|datasheet|spec/i.test(`${a.name} ${a.mimeType} ${a.url}`)) ?? null;
+  const datasheetAttachment = fullDatasheet ?? genericSpec;
   const torqueCurveAttachment =
-    product.attachments.find((attachment) => matchesAttachmentAsset(attachment, /torque[\s_-]*curve|speed[\s_-]*curve|performance[\s_-]*curve|graph/i)) ?? datasheetAttachment;
-  const dimensionDocumentAttachment =
-    product.attachments.find((attachment) => matchesAttachmentAsset(attachment, /dimension|drawing|outline|mechanical/i)) ?? fullDatasheetAttachment;
+    p.attachments.find((a) => matchesAttachmentAsset(a, /torque[\s_-]*curve|speed[\s_-]*curve|performance[\s_-]*curve|graph/i)) ?? datasheetAttachment;
+  const dimensionDocAttachment =
+    p.attachments.find((a) => matchesAttachmentAsset(a, /dimension|drawing|outline|mechanical/i)) ?? fullDatasheet;
+
+  // Build derived data
   const specGroups = buildSpecGroups(product);
-  const topSpecs = specGroups.flatMap((group) => group.rows).slice(0, 5);
+  const topSpecs = specGroups.flatMap((g) => g.rows).slice(0, 5);
   const heroSpecs = topSpecs.slice(0, 4);
-  const summaryEyebrow = category ? category.name : 'Catalog product';
-  const procurementLabel = product.purchaseMode === 'buy' ? 'Direct Buy' : 'RFQ Project';
-  const availabilityLabel = product.inStock ? 'Stock program active' : 'Build-to-order review';
-  const priceHeadline = product.purchaseMode === 'buy' ? product.price.formatted : 'Request Quote';
-  const queryForQuote = new URLSearchParams({ topic: 'quote', product: product.sku }).toString();
-  const queryForSample = new URLSearchParams({ topic: 'sample', product: product.sku }).toString();
-  const queryForVolumePricing = new URLSearchParams({ sku: product.sku }).toString();
-  const queryForCustom = new URLSearchParams({ sourceSku: product.sku, sourceProduct: product.name }).toString();
+
+  const priceHeadline = p.purchaseMode === 'buy' ? p.price.formatted : 'Request Quote';
+  const procurementLabel = p.purchaseMode === 'buy' ? 'Direct Buy' : 'RFQ Project';
+  const availabilityLabel = p.inStock ? 'Stock program active' : 'Build-to-order review';
+
+  const lifecycleBadge = (() => {
+    if (!p.lifecycleStatus || p.lifecycleStatus === 'active') return null;
+    const map: Record<string, { label: string; className: string }> = {
+      new: { label: 'New', className: 'is-accent' },
+      nfd: { label: 'End of Life Notice', className: 'is-warning' },
+      eol: { label: 'Discontinued', className: 'is-critical' },
+      last_time_buy: { label: 'Last Time Buy', className: 'is-critical' },
+    };
+    return map[p.lifecycleStatus] ?? null;
+  })();
+
+  const eolDeadline = p.eolDate ? new Date(p.eolDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : null;
+  const ltbDeadline = p.lastTimeBuyDate ? new Date(p.lastTimeBuyDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : null;
+
+  const bulkPrices =
+    p.purchaseMode === 'buy'
+      ? buildVolumePricingTiers(p.price.amount, p.price.currency, commerceConfig.volumePricingRules).filter((t) => t.minQuantity > 1)
+      : [];
+
+  // URLs
+  const queryForQuote = new URLSearchParams({ topic: 'quote', product: p.sku }).toString();
+  const queryForSample = new URLSearchParams({ topic: 'sample', product: p.sku }).toString();
+  const queryForVolume = new URLSearchParams({ sku: p.sku }).toString();
+  const queryForCustom = new URLSearchParams({ sourceSku: p.sku, sourceProduct: p.name }).toString();
   const quoteHref = `${contactPath}?${queryForQuote}`;
   const sampleHref = `${contactPath}?${queryForSample}`;
-  const volumePricingHref = `${withLocalePath('/volume-pricing', locale)}?${queryForVolumePricing}`;
+  const volumePricingHref = `${withLocalePath('/volume-pricing', locale)}?${queryForVolume}`;
   const customHref = `${withLocalePath('/custom', locale)}?${queryForCustom}`;
-  const bulkPrices =
-    product.purchaseMode === 'buy'
-      ? buildVolumePricingTiers(product.price.amount, product.price.currency, commerceConfig.volumePricingRules).filter((tier) => tier.minQuantity > 1)
-      : [];
-  const trustItems = [
-    'Warranty 18 months',
-    '30-day return support',
-    'CE / RoHS documentation support',
-    product.attachments.length ? 'CAD / STEP available' : 'CAD / STEP on request',
-  ];
-  const overviewBullets = [
-    `${product.purchaseMode === 'buy' ? 'Direct-buy ready' : 'RFQ-led'} procurement flow for ${product.name}.`,
-    topSpecs[0] ? `${topSpecs[0].label}: ${topSpecs[0].value}.` : 'Built for repeatable motion programs.',
-    product.attachments.length ? `${product.attachments.length} supporting documents are already attached for engineering review.` : 'Supporting documents can be requested from the engineering team.',
-    product.inStock ? 'Standard stock is available for fast dispatch from planned regional warehouses.' : 'Production scheduling and warehouse assignment are confirmed during quotation.',
-  ];
-  const relatedCandidates = product.relatedProducts.filter((item) => item.id !== product.id);
+
+  // Derived content
+  const trustItems = buildTrustItems(product);
+  const overviewBullets = buildOverviewBullets(product, topSpecs);
+  const documentCards = buildDocumentCards(p.attachments, quoteHref);
+  const faqItems = buildFaqItems(product, topSpecs);
+
+  // Related & compatible
+  const relatedCandidates = p.relatedProducts.filter((item) => item.id !== p.id);
   const peopleAlsoBought = homeData.mostViewedProducts
-    .filter((item) => item.id !== product.id && !relatedCandidates.some((relatedProduct) => relatedProduct.id === item.id))
+    .filter((item) => item.id !== p.id && !relatedCandidates.some((r) => r.id === item.id))
     .slice(0, 4);
-  const compatibleGroups = buildCompatibleGroups(product.compatibleGroups ?? [], [...relatedCandidates, ...peopleAlsoBought]);
-  const visibleCompatibleGroups = compatibleGroups.filter((group) => group.items.length);
-  const compatibleProductCount = visibleCompatibleGroups.reduce((sum, group) => sum + group.items.length, 0);
-  const applicationCards = homeData.featuredIndustries.slice(0, 3).map((industry, index) => {
-    const highlightedSpec = topSpecs[index] ?? topSpecs[0];
-    const specLine = highlightedSpec ? `${highlightedSpec.label.toLowerCase()} ${highlightedSpec.value}` : 'repeatable motion performance';
+  const compatibleGroups = buildCompatibleGroups(p.compatibleGroups ?? [], [...relatedCandidates, ...peopleAlsoBought]);
+  const visibleCompatibleGroups = compatibleGroups.filter((g) => g.items.length);
+  const compatibleProductCount = visibleCompatibleGroups.reduce((sum, g) => sum + g.items.length, 0);
 
-    return {
-      title: industry.title,
-      description: `${industry.description} ${product.name} fits projects that need ${specLine} plus ${product.purchaseMode === 'buy' ? 'catalog fulfillment' : 'engineering RFQ support'}.`,
-    };
+  // Image filters
+  const dimensionImages = galleryImages.filter((img) => {
+    const marker = `${img.url ?? ''} ${img.imageType ?? ''}`.toLowerCase();
+    return img.isDimension || img.imageType === 'dimension' || /dimension|diagram|size|drawing|outline|mechanical/i.test(marker);
   });
-  const documentCards: Array<{ title: string; meta: string; description: string; href: string; external?: boolean }> = product.attachments.map((attachment) => ({
-    title: attachment.name,
-    meta: attachment.mimeType.toUpperCase(),
-    description: 'Factory-managed file prepared for engineering handoff, sourcing review, or compliance checks.',
-    href: attachment.url,
-    external: true,
-  }));
+  const torqueCurveImages = galleryImages.filter((img) => {
+    const marker = `${img.url ?? ''} ${img.imageType ?? ''}`.toLowerCase();
+    return (img.imageType === 'detail' || /torque|curve|performance|graph/i.test(marker)) && !dimensionImages.some((d) => d.url === img.url);
+  });
 
-  if (!documentCards.some((item) => /datasheet/i.test(item.title))) {
-    documentCards.push({
-      title: 'Datasheet (PDF)',
-      meta: 'Request',
-      description: 'Ask the engineering team for the latest datasheet export when the file is not yet attached to the SKU.',
-      href: quoteHref,
-    });
-  }
+  // Application cards
+  const applicationCards = buildApplicationCards(product, homeData.featuredIndustries, topSpecs);
 
-  if (!documentCards.some((item) => /(step|iges|cad|dxf|dwg|3d)/i.test(item.title))) {
-    documentCards.push({
-      title: '3D / CAD package',
-      meta: 'STEP / IGES',
-      description: 'Request a CAD package for system integration, mounting checks, and enclosure validation.',
-      href: quoteHref,
-    });
-  }
-
-  if (!documentCards.some((item) => /(manual|wiring|report|certificate|cert)/i.test(item.title))) {
-    documentCards.push({
-      title: 'Wiring / certification pack',
-      meta: 'Support',
-      description: 'Manuals, wiring notes, and certificates can be bundled through the pre-sales support workflow.',
-      href: quoteHref,
-    });
-  }
-
-  const faqItems = [
-    {
-      question: `How do I validate ${product.name} quickly?`,
-      answer: topSpecs.length
-        ? `Start with ${topSpecs.slice(0, 3).map((item) => `${item.label} ${item.value}`).join(', ')} and confirm the purchase mode before finalizing the bill of materials.`
-        : `Start with the SKU, purchase mode, and attached documents, then confirm the remaining mechanical and electrical details with the engineering team.`,
-    },
-    {
-      question: `Can I order ${product.sku} directly online?`,
-      answer: product.purchaseMode === 'buy' ? 'Yes. This SKU is configured for direct checkout, quantity changes, and tier-price review from the PDP.' : 'This SKU currently follows an RFQ workflow so the engineering team can confirm spec, lead time, and commercial terms.',
-    },
-    {
-      question: 'What documents are available for this product?',
-      answer: product.attachments.length
-        ? `${product.attachments.length} document${product.attachments.length === 1 ? '' : 's'} are attached now, and additional CAD or compliance files can be requested from support.`
-        : 'Datasheets, CAD, manuals, and compliance files can be requested through the quote and contact workflow when they are not attached directly to the SKU.',
-    },
-    {
-      question: 'How is stock fulfilled across warehouses?',
-      answer: product.inStock ? 'Standard orders are planned against current stock coverage and routed to the nearest viable warehouse program.' : 'When stock is not available, the team confirms production scheduling, warehouse assignment, and ETA during the RFQ review.',
-    },
-  ];
+  // JSON-LD
   const breadcrumbJsonLd = buildBreadcrumbJsonLd(
     [
       { name: 'Home', path: '/' },
       { name: 'Products', path: '/products' },
       ...(category ? [{ name: category.name, path: `/c/${category.slug}` }] : []),
-      { name: product.name, path: `/products/${product.slug}` },
+      { name: p.name, path: `/products/${p.slug}` },
     ],
     locale,
   );
-  const productJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: product.name,
-    sku: product.sku,
-    mpn: product.sku,
-    url: productUrl,
-    description: product.seoDescription ?? product.shortDescription ?? product.description,
-    image: galleryImages.map((image) => image.url),
-    brand: {
-      '@type': 'Brand',
-      name: product.brand?.name ?? SITE_NAME,
-    },
-    category: product.categories.map((item) => item.name).join(', '),
-    // Note: aggregateRating not yet available in schema
-    // aggregateRating: product.ratingValue
-    //   ? {
-    //       '@type': 'AggregateRating',
-    //       ratingValue: product.ratingValue,
-    //       reviewCount: product.ratingCount ?? 0,
-    //       bestRating: 5,
-    //       worstRating: 1,
-    //     }
-    //   : undefined,
-    additionalProperty: specGroups.flatMap((group) => group.rows).slice(0, 24).map((row) => ({
-      '@type': 'PropertyValue',
-      name: row.label,
-      value: row.value,
-    })),
-    offers:
-      product.purchaseMode === 'buy'
-        ? {
-            '@type': 'Offer',
-            url: productUrl,
-            seller: { '@type': 'Organization', name: SITE_NAME },
-            priceCurrency: product.price.currency,
-            price: product.price.amount.toFixed(2),
-            availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
-            priceSpecification: bulkPrices.map((item) => ({
-              '@type': 'UnitPriceSpecification',
-              priceCurrency: product.price.currency,
-              price: item.unitPriceAmount.toFixed(2),
-              referenceQuantity: {
-                '@type': 'QuantitativeValue',
-                value: item.minQuantity,
-                unitCode: 'C62',
-              },
-            })),
-          }
-        : undefined,
-  };
-  const faqJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqItems.map((item) => ({
-      '@type': 'Question',
-      name: item.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: item.answer,
-      },
-    })),
-  };
-  const dimensionImages = galleryImages.filter((image) => {
-    const marker = `${image.url ?? ''} ${image.imageType ?? ''}`.toLowerCase();
-    return image.isDimension || image.imageType === 'dimension' || /dimension|diagram|size|drawing|outline|mechanical/i.test(marker);
-  });
-  const torqueCurveImages = galleryImages.filter((image) => {
-    const marker = `${image.url ?? ''} ${image.imageType ?? ''}`.toLowerCase();
-    return (image.imageType === 'detail' || /torque|curve|performance|graph/i.test(marker)) && !dimensionImages.some((dimensionImage) => dimensionImage.url === image.url);
-  });
+  const productJsonLd = buildProductJsonLd(
+    product,
+    productUrl,
+    galleryImages.map((img) => img.url),
+    specGroups,
+    bulkPrices,
+    locale,
+  );
+  const faqJsonLd = buildFaqJsonLd(faqItems);
 
   return (
     <StorefrontFrame>
@@ -485,48 +200,42 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               </>
             ) : null}
             <span>/</span>
-            <span>{product.name}</span>
+            <span>{p.name}</span>
           </nav>
 
           <header className="pdp-top-header">
             <div className="pdp-top-header-copy">
               <div className="pdp-top-header-meta">
                 {category ? (
-                  <Link href={categoryPath} className="pdp-top-eyebrow">
-                    {category.name}
-                  </Link>
+                  <Link href={categoryPath} className="pdp-top-eyebrow">{category.name}</Link>
                 ) : (
                   <span className="pdp-top-eyebrow">Catalog product</span>
                 )}
-                <span className="pdp-top-sku">SKU {product.sku}</span>
+                <span className="pdp-top-sku">SKU {p.sku}</span>
               </div>
-
-              <h1 className="pdp-top-title">{product.name}</h1>
+              <h1 className="pdp-top-title">{p.name}</h1>
             </div>
-
             <div className="pdp-top-status">
               <span className="pdp-top-badge is-accent">{procurementLabel}</span>
               <span className="pdp-top-badge">{availabilityLabel}</span>
-              <span className="pdp-top-badge is-subtle">{product.inStock ? `${Math.max(product.stockQuantity, 0)} in stock` : 'Quote review'}</span>
+              <span className="pdp-top-badge is-subtle">{p.inStock ? `${Math.max(p.stockQuantity, 0)} in stock` : 'Quote review'}</span>
+              {lifecycleBadge ? (
+                <span className={`pdp-top-badge ${lifecycleBadge.className}`}>{lifecycleBadge.label}</span>
+              ) : null}
             </div>
           </header>
 
           <div className="product-detail-grid">
             <div className="product-gallery-column">
-              <ProductGallery images={galleryImages} productName={product.name} />
-
+              <ProductGallery images={galleryImages} productName={p.name} />
               <div className="detail-share-row pdp-share-row">
                 <span className="summary-label">Share & docs</span>
                 <div className="detail-share-chips">
                   <CopyActionButton value={productUrl} idleLabel="Copy link" copiedLabel="Link copied" toastTitle="Product link copied" className="button-secondary" />
                   {datasheetAttachment ? (
-                    <a href={datasheetAttachment.url} target="_blank" rel="noreferrer" className="button-secondary">
-                      Datasheet
-                    </a>
+                    <a href={datasheetAttachment.url} target="_blank" rel="noreferrer" className="button-secondary">Datasheet</a>
                   ) : null}
-                  <Link href={quoteHref} className="button-secondary">
-                    Engineering support
-                  </Link>
+                  <Link href={quoteHref} className="button-secondary">Engineering support</Link>
                 </div>
               </div>
             </div>
@@ -534,13 +243,11 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <article className="info-card product-summary-card pdp-buybox-card">
               <div className="pdp-header-stack">
                 <div className="pdp-sku-row">
-                  <p className="product-meta">SKU {product.sku}</p>
+                  <p className="product-meta">SKU {p.sku}</p>
                   <div className="pdp-sku-actions">
-                    <CopyActionButton value={product.sku} idleLabel="Copy SKU" copiedLabel="SKU copied" toastTitle="SKU copied" className="button-secondary" />
+                    <CopyActionButton value={p.sku} idleLabel="Copy SKU" copiedLabel="SKU copied" toastTitle="SKU copied" className="button-secondary" />
                     {datasheetAttachment ? (
-                      <a href={datasheetAttachment.url} target="_blank" rel="noreferrer" className="button-secondary">
-                        View datasheet
-                      </a>
+                      <a href={datasheetAttachment.url} target="_blank" rel="noreferrer" className="button-secondary">View datasheet</a>
                     ) : null}
                   </div>
                 </div>
@@ -548,22 +255,18 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
               <div className="product-pricing-stack pdp-price-panel">
                 <p className="product-price">{priceHeadline}</p>
-                {product.compareAtPrice ? <p className="comparison-note">Reference price {product.compareAtPrice.formatted}</p> : null}
+                {p.compareAtPrice ? <p className="comparison-note">Reference price {p.compareAtPrice.formatted}</p> : null}
                 {bulkPrices.length ? (
                   <>
                     <details className="pdp-tier-pricing">
                       <summary>Tier pricing</summary>
                       <div className="detail-volume-pricing">
                         {bulkPrices.map((item) => (
-                          <span key={item.label} className="detail-volume-line">
-                            {item.rangeLabel} pcs {item.unitPriceLabel}
-                          </span>
+                          <span key={item.label} className="detail-volume-line">{item.rangeLabel} pcs {item.unitPriceLabel}</span>
                         ))}
                       </div>
                     </details>
-                    <Link href={volumePricingHref} className="detail-inline-link">
-                      View volume pricing
-                    </Link>
+                    <Link href={volumePricingHref} className="detail-inline-link">View volume pricing</Link>
                   </>
                 ) : (
                   <p className="section-description compact-copy">Pricing is finalized through the quote workflow once engineering scope and volume are confirmed.</p>
@@ -582,87 +285,97 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               <div className="pdp-stock-card">
                 <article className="summary-stat">
                   <span className="summary-label">Availability</span>
-                  <strong>{product.inStock ? `${Math.max(product.stockQuantity, 0)} units ready` : 'Quote-based allocation'}</strong>
+                  <strong>{p.inStock ? `${Math.max(p.stockQuantity, 0)} units ready` : 'Quote-based allocation'}</strong>
                 </article>
                 <article className="summary-stat">
-                  <span className="summary-label">Warehouse</span>
-                  <strong>{product.inStock ? 'CN / US / EU planning' : 'Assigned during review'}</strong>
+                  <span className="summary-label">MOQ</span>
+                  <strong>{p.moq > 1 ? `${p.moq} pcs minimum` : 'No minimum'}</strong>
                 </article>
                 <article className="summary-stat">
-                  <span className="summary-label">ETA</span>
-                  <strong>{product.inStock ? 'Ships today to 5 business days' : '3 to 15 business days'}</strong>
+                  <span className="summary-label">Lead time</span>
+                  <strong>{p.inStock ? `${p.leadTimeMin}–${p.leadTimeMax} ${p.leadTimeUnit.replace(/_/g, ' ')}` : `${p.leadTimeMin}–${p.leadTimeMax} ${p.leadTimeUnit.replace(/_/g, ' ')}`}</strong>
                 </article>
+                {p.efficiencyClass ? (
+                  <article className="summary-stat">
+                    <span className="summary-label">Efficiency</span>
+                    <strong>{p.efficiencyClass}</strong>
+                  </article>
+                ) : null}
+                {p.lifecycleStatus === 'eol' && eolDeadline ? (
+                  <article className="summary-stat">
+                    <span className="summary-label">Discontinued since</span>
+                    <strong>{eolDeadline}</strong>
+                  </article>
+                ) : null}
+                {p.lifecycleStatus === 'last_time_buy' && ltbDeadline ? (
+                  <article className="summary-stat">
+                    <span className="summary-label">Last purchase by</span>
+                    <strong>{ltbDeadline}</strong>
+                  </article>
+                ) : null}
               </div>
 
               <div className="product-action-stack pdp-action-cluster">
-                {product.purchaseMode === 'buy' ? (
-                  <AddToCartButton productId={product.id} showQuantitySelector showBuyNow />
+                {p.purchaseMode === 'buy' ? (
+                  <AddToCartButton productId={p.id} moq={p.moq} showQuantitySelector showBuyNow />
                 ) : (
                   <div className="inquiry-form-wrap">
-                    <ProductInquiryForm productId={product.id} productName={product.name} />
+                    <ProductInquiryForm productId={p.id} productName={p.name} />
                   </div>
                 )}
 
-                {product.purchaseMode === 'buy' ? (
+                {p.purchaseMode === 'buy' ? (
                   <div className="pdp-primary-cta">
-                    <Link href={quoteHref} className="button-secondary pdp-quote-button">
-                      Add to Quote
-                    </Link>
+                    <Link href={quoteHref} className="button-secondary pdp-quote-button">Add to Quote</Link>
                     <div className="pdp-support-links">
-                      <Link href={sampleHref} className="detail-inline-link">
-                        Request a production sample
-                      </Link>
-                      <Link href={customHref} className="detail-inline-link">
-                        Discuss a custom variant
-                      </Link>
-                      <Link href={contactPath} className="detail-inline-link">
-                        Talk to engineering support
-                      </Link>
+                      <Link href={sampleHref} className="detail-inline-link">Request a production sample</Link>
+                      <Link href={customHref} className="detail-inline-link">Discuss a custom variant</Link>
+                      <Link href={contactPath} className="detail-inline-link">Talk to engineering support</Link>
                     </div>
                   </div>
                 ) : (
                   <div className="pdp-support-links">
-                    <Link href={customHref} className="detail-inline-link">
-                      Discuss a custom variant
-                    </Link>
-                    <Link href={contactPath} className="detail-inline-link">
-                      Talk to engineering support
-                    </Link>
+                    <Link href={customHref} className="detail-inline-link">Discuss a custom variant</Link>
+                    <Link href={contactPath} className="detail-inline-link">Talk to engineering support</Link>
                   </div>
                 )}
 
                 <div className="pdp-utility-actions">
                   <AddToCompareButton
                     item={{
-                      id: product.id,
-                      name: product.name,
-                      slug: product.slug,
-                      sku: product.sku,
-                      priceLabel: product.purchaseMode === 'buy' ? product.price.formatted : 'Request Quote',
-                      purchaseMode: product.purchaseMode,
-                      inStock: product.inStock,
-                      shortDescription: product.shortDescription,
-                      categories: product.categories.map((item) => item.name),
+                      id: p.id,
+                      name: p.name,
+                      slug: p.slug,
+                      sku: p.sku,
+                      priceLabel: p.purchaseMode === 'buy' ? p.price.formatted : 'Request Quote',
+                      purchaseMode: p.purchaseMode,
+                      inStock: p.inStock,
+                      shortDescription: p.shortDescription,
+                      categories: p.categories.map((item) => item.name),
                     }}
                   />
-                  <AddToWishlistButton productId={product.id} />
+                  <AddToWishlistButton productId={p.id} />
                 </div>
               </div>
 
               <div className="pdp-trust-list">
                 {trustItems.map((item) => (
-                  <div key={item} className="pdp-trust-item">
-                    {item}
-                  </div>
+                  <div key={item} className="pdp-trust-item">{item}</div>
                 ))}
               </div>
+
+              {p.certifications && p.certifications.length > 0 ? (
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 4 }}>
+                  {p.certifications.map((cert) => (
+                    <span key={cert} className="detail-note-chip">{cert}</span>
+                  ))}
+                </div>
+              ) : null}
 
               <article className="pdp-custom-note">
                 <span className="summary-label">Custom program</span>
                 <strong>Need changes to shaft, winding, gearbox, or environment?</strong>
-                <Link href={customHref} className="section-link">
-                  Start custom development with this SKU
-                </Link>
+                <Link href={customHref} className="section-link">Start custom development with this SKU</Link>
               </article>
             </article>
           </div>
@@ -672,17 +385,19 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       <section className="section detail-tabs-section">
         <div className="section-inner">
           <ProductDetailTabs
-            description={product.descriptionLong || product.description}
+            description={p.descriptionLong || p.description}
             specGroups={specGroups}
             dimensionImages={dimensionImages}
             torqueCurveImages={torqueCurveImages}
-            dimensionDocumentHref={dimensionDocumentAttachment?.url}
+            dimensionDocumentHref={dimensionDocAttachment?.url}
             torqueCurveDocumentHref={torqueCurveAttachment?.url}
             datasheetUrl={datasheetAttachment?.url}
             quoteHref={quoteHref}
             customHref={customHref}
             contactPath={contactPath}
             documentCards={documentCards}
+            torqueCurveData={p.torqueCurveData}
+            configurationRules={p.configurationRules}
           />
 
           {visibleCompatibleGroups.length ? (
@@ -696,46 +411,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                   <span className="detail-panel-badge">{compatibleProductCount} matches</span>
                 </div>
               </div>
-
-              <div className="compatible-groups-container">
-                {visibleCompatibleGroups.map((group) => (
-                  <section key={`${group.title}-${group.badge}`} className="compatible-group" aria-label={group.title}>
-                    <div className="compatible-group-header">
-                      <span className="compatible-badge">{group.badge}</span>
-                      <div className="detail-panel-copy">
-                        <h3 className="compatible-group-title">{group.title}</h3>
-                        <p className="compatible-group-description">{group.description}</p>
-                      </div>
-                    </div>
-
-                    <div className="compatible-product-list">
-                      {group.items.map((item) => (
-                        <Link key={item.id} href={withLocalePath(`/products/${item.slug}`, locale)} className="compatible-product-card">
-                          <div className="compatible-product-image">
-                            {item.coverImage ? (
-                              <img src={item.coverImage.url} alt={item.coverImage.alt || item.name} loading="lazy" />
-                            ) : (
-                              <div className="compatible-product-placeholder" aria-hidden="true">No image</div>
-                            )}
-                          </div>
-
-                          <div className="compatible-product-info">
-                            <p className="product-meta">SKU {item.sku}</p>
-                            <h4 className="compatible-product-name">{item.name}</h4>
-
-                            <div className="compatible-product-footer">
-                              <span className="compatible-product-price">{item.purchaseMode === 'buy' ? item.price.formatted : 'Request Quote'}</span>
-                              <span className="compatible-product-mode">
-                                {item.purchaseMode === 'buy' ? (item.inStock ? 'In stock' : 'Lead time') : 'RFQ'}
-                              </span>
-                            </div>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </section>
-                ))}
-              </div>
+              <CompatibleGroupsSection groups={visibleCompatibleGroups} locale={locale} />
             </article>
           ) : null}
 
@@ -750,7 +426,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                   <span className="detail-panel-badge">{faqItems.length} answers</span>
                 </div>
               </div>
-
               <div className="pdp-faq-list">
                 {faqItems.map((item, index) => (
                   <details key={`${item.question}-${index}`} className="faq-item">
@@ -759,18 +434,54 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                       <span className="faq-question-text">{item.question}</span>
                       <span className="faq-toggle-marker" aria-hidden="true" />
                     </summary>
-                    <div className="faq-answer">
-                      <p>{item.answer}</p>
-                    </div>
+                    <div className="faq-answer"><p>{item.answer}</p></div>
                   </details>
                 ))}
               </div>
             </article>
-
             <RecentlyViewedProducts currentProduct={product} fallbackProducts={[...relatedCandidates, ...peopleAlsoBought]} locale={locale} />
           </div>
         </div>
       </section>
     </StorefrontFrame>
+  );
+}
+
+function CompatibleGroupsSection({ groups, locale }: { groups: DetailCompatibleGroup[]; locale: Locale }) {
+  return (
+    <div className="compatible-groups-container">
+      {groups.map((group) => (
+        <section key={`${group.title}-${group.badge}`} className="compatible-group" aria-label={group.title}>
+          <div className="compatible-group-header">
+            <span className="compatible-badge">{group.badge}</span>
+            <div className="detail-panel-copy">
+              <h3 className="compatible-group-title">{group.title}</h3>
+              <p className="compatible-group-description">{group.description}</p>
+            </div>
+          </div>
+          <div className="compatible-product-list">
+            {group.items.map((item) => (
+              <Link key={item.id} href={withLocalePath(`/products/${item.slug}`, locale)} className="compatible-product-card">
+                <div className="compatible-product-image">
+                  {item.coverImage ? (
+                    <img src={item.coverImage.url} alt={item.coverImage.alt || item.name} loading="lazy" />
+                  ) : (
+                    <div className="compatible-product-placeholder" aria-hidden="true">No image</div>
+                  )}
+                </div>
+                <div className="compatible-product-info">
+                  <p className="product-meta">SKU {item.sku}</p>
+                  <h4 className="compatible-product-name">{item.name}</h4>
+                  <div className="compatible-product-footer">
+                    <span className="compatible-product-price">{item.purchaseMode === 'buy' ? item.price.formatted : 'Request Quote'}</span>
+                    <span className="compatible-product-mode">{item.purchaseMode === 'buy' ? (item.inStock ? 'In stock' : 'Lead time') : 'RFQ'}</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
   );
 }

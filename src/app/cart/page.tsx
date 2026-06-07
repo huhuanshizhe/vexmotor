@@ -10,12 +10,16 @@ import { getHomeData } from '@/server/storefront';
 
 import { CartClient } from './cart-client';
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Cart — STEPMOTECH',
   description: 'Review line items before checkout or quote submission.',
   path: '/cart',
   noIndex: true,
-});
+    locale,
+  });
+}
 
 export default async function CartPage() {
   const cookieStore = await cookies();

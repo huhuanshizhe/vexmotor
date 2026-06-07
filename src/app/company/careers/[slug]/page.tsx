@@ -17,11 +17,12 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  const { locale } = await getServerSitePreferences();
   const { slug } = await params;
   const role = getCareerRoleBySlug(slug);
 
   if (!role) {
-    return buildMetadata({ title: 'Careers — STEPMOTECH', path: '/company/careers' });
+    return buildMetadata({ title: 'Careers — STEPMOTECH', path: '/company/careers', locale, noIndex: true });
   }
 
   return buildMetadata({
@@ -29,6 +30,7 @@ export async function generateMetadata({
     description: role.summary,
     path: `/company/careers/${role.slug}`,
     type: 'article',
+    locale,
   });
 }
 

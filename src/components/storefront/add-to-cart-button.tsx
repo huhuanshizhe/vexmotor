@@ -8,21 +8,22 @@ import { parseLocaleFromPathname, withLocalePath } from '@/lib/i18n';
 
 type AddToCartButtonProps = {
   productId: string;
+  moq?: number;
   showQuantitySelector?: boolean;
   redirectToCart?: boolean;
   showBuyNow?: boolean;
 };
 
-export function AddToCartButton({ productId, showQuantitySelector = false, redirectToCart = true, showBuyNow = false }: AddToCartButtonProps) {
+export function AddToCartButton({ productId, moq = 1, showQuantitySelector = false, redirectToCart = true, showBuyNow = false }: AddToCartButtonProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { pushToast } = useToast();
   const [message, setMessage] = useState<string | null>(null);
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(Math.max(1, moq));
   const [isPending, startTransition] = useTransition();
 
   function updateQuantity(nextQuantity: number) {
-    setQuantity(Math.max(1, nextQuantity));
+    setQuantity(Math.max(moq, nextQuantity));
   }
 
   function handleAddToCart() {

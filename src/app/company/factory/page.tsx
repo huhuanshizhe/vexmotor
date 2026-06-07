@@ -72,11 +72,15 @@ const certificationHighlights = [
   'Environmental and material-compliance references that roll into the certifications and compliance pack.',
 ] as const;
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Factory & QC — STEPMOTECH',
   description: 'Production capacity, QC flow, reliability testing, and compliance practices behind the catalog and RFQ workflows.',
   path: '/company/factory',
-});
+    locale,
+  });
+}
 
 export default async function CompanyFactoryPage() {
   const { locale } = await getServerSitePreferences();

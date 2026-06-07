@@ -11,11 +11,15 @@ import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 import { footerContactBlocks } from '@/server/storefront/site-shell';
 import { getProductList } from '@/server/storefront';
 
-export const metadata = buildMetadata({
+export async function generateMetadata() {
+  const { locale } = await getServerSitePreferences();
+  return buildMetadata({
   title: 'Distributors — STEPMOTECH',
   description: 'Distributor program overview, regional channel finder, partnership application form, and current distributor portal entry path.',
   path: '/company/distributors',
-});
+    locale,
+  });
+}
 
 export default async function CompanyDistributorsPage() {
   const [{ locale }, listing] = await Promise.all([getServerSitePreferences(), getProductList({ purchaseMode: 'buy', pageSize: 1, sort: 'featured' })]);

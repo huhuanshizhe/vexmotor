@@ -42,8 +42,41 @@ export function normalizeUnitSystem(value: string | null | undefined): UnitSyste
   return value && SUPPORTED_UNIT_SYSTEMS.includes(value as UnitSystem) ? (value as UnitSystem) : null;
 }
 
-export function getMarketDefaults(locale: Locale) {
-  return localeDefaults[locale];
+const countryToLocale: Record<string, Locale> = {
+  US: 'en', GB: 'en', CA: 'en', AU: 'en', NZ: 'en', IE: 'en',
+  DE: 'de', AT: 'de', CH: 'de',
+  FR: 'fr', BE: 'fr', LU: 'fr',
+  ES: 'es', MX: 'es', AR: 'es', CO: 'es', CL: 'es', PE: 'es',
+};
+
+const countryToCurrency: Record<string, Currency> = {
+  US: 'USD', GB: 'GBP', DE: 'EUR', FR: 'EUR', ES: 'EUR', AT: 'EUR',
+  BE: 'EUR', LU: 'EUR', IE: 'EUR', CH: 'EUR',
+  CA: 'USD', AU: 'USD', NZ: 'USD',
+  MX: 'USD', AR: 'USD', CO: 'USD', CL: 'USD', PE: 'USD',
+};
+
+export function detectLocaleFromCountry(countryCode: string | null | undefined): Locale | null {
+  if (!countryCode) return null;
+  return countryToLocale[countryCode.toUpperCase()] ?? null;
+}
+
+export function detectCurrencyFromCountry(countryCode: string | null | undefined): Currency | null {
+  if (!countryCode) return null;
+  return countryToCurrency[countryCode.toUpperCase()] ?? null;
+}
+
+export function getEffectiveCurrency(locale: Locale, countryCode?: string | null): Currency {
+  const countryCurrency = detectCurrencyFromCountry(countryCode);
+  if (countryCurrency) return countryCurrency;
+  return localeDefaults[locale].currency;
+}
+
+export function getMarketDefaults(locale: Locale, countryCode?: string | null) {
+  return {
+    ...localeDefaults[locale],
+    currency: getEffectiveCurrency(locale, countryCode),
+  };
 }
 
 export function getLocaleLabel(locale: Locale) {
