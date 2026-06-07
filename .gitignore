@@ -16,3 +16,4 @@ pnpm-debug.log*
 .tmp/
 custom-fetch-result.txt
 .env.production
+foot English doc/
