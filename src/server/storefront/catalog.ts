@@ -5,6 +5,7 @@ import {
   attachments,
   brands,
   categories,
+  contentBlocks,
   productCategories,
   productFeatures,
   productImages,
@@ -245,8 +246,26 @@ export async function getHomeData(): Promise<HomeData> {
       },
     ];
 
+    // Read homepage content blocks for admin-configurable content
+    const homepageBlocks = await db
+      .select({ blockKey: contentBlocks.blockKey, content: contentBlocks.content })
+      .from(contentBlocks)
+      .where(and(eq(contentBlocks.placement, 'homepage'), eq(contentBlocks.status, 'active')))
+      .orderBy(asc(contentBlocks.sortOrder));
+
+    const blockOverrides = Object.fromEntries(
+      homepageBlocks.map((b) => [b.blockKey, b.content as Record<string, unknown>]),
+    );
+
+    const seedBase = getSeedHomeData();
+    const heroBanners =
+      Array.isArray(blockOverrides.heroBanners) && (blockOverrides.heroBanners as Array<{ id?: unknown }>).length > 0
+        ? (blockOverrides.heroBanners as typeof seedBase.heroBanners)
+        : seedBase.heroBanners;
+
     return {
-      ...getSeedHomeData(),
+      ...seedBase,
+      heroBanners,
       featuredCategories: categoryRows
         .filter((item) => (item.productCount ?? 0) > 0)
         .sort((left, right) => (right.productCount ?? 0) - (left.productCount ?? 0))
