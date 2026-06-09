@@ -1,12 +1,12 @@
 'use client';
 
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Card, Divider, Form, Input, Modal, Popconfirm, Select, Space, Table, Tag, Typography } from 'antd';
+import { DeleteOutlined, EditOutlined, PlusOutlined, TranslationOutlined } from '@ant-design/icons';
+import { Button, Card, Divider, Form, Input, Modal, Popconfirm, Select, Space, Table, Tag, Typography, message } from 'antd';
 import { useCallback, useState, useTransition } from 'react';
 
-type ContentType = 'faq' | 'glossary' | 'support';
+type ContentType = 'faq' | 'glossary' | 'support' | 'solution';
 
-const contentTypeLabels: Record<ContentType, string> = { faq: 'FAQ', glossary: 'Glossary', support: 'Support' };
+const contentTypeLabels: Record<ContentType, string> = { faq: 'FAQ', glossary: 'Glossary', support: 'Support', solution: 'Solution' };
 
 type ContentRow = {
   id: string;
@@ -68,6 +68,35 @@ export function ContentEditorClient({
     });
   }
 
+  async function handleAiTranslate() {
+    const title = form.getFieldValue('title');
+    const summary = form.getFieldValue('summary');
+    const content = form.getFieldValue('content');
+    const targetLocale = form.getFieldValue('locale') || 'en';
+    if (targetLocale === 'en') { message.info('English is the source language, no translation needed'); return; }
+    if (!title && !summary && !content) { message.warning('No content to translate'); return; }
+
+    message.loading({ content: 'AI translating...', key: 'ai-translate' });
+    try {
+      const fields = ['title', 'summary', 'content'] as const;
+      for (const field of fields) {
+        const text = form.getFieldValue(field);
+        if (!text) continue;
+        const res = await fetch('/api/admin/ai/translate', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text, sourceLocale: 'en', targetLocale, context: contentType }),
+        });
+        if (res.ok) {
+          const data = await res.json() as { translatedText?: string };
+          if (data.translatedText) form.setFieldValue(field, data.translatedText);
+        }
+      }
+      message.success({ content: 'AI translation complete - please review', key: 'ai-translate' });
+    } catch {
+      message.error({ content: 'AI translation failed', key: 'ai-translate' });
+    }
+  }
+
   return (
     <Space orientation="vertical" size="large" style={{ width: '100%' }}>
       <Space style={{ width: '100%', justifyContent: 'space-between' }}>
@@ -126,6 +155,9 @@ export function ContentEditorClient({
           <Form.Item name="content" label="内容"><Input.TextArea rows={6} /></Form.Item>
           <Form.Item name="locale" label="语言" rules={[{ required: true }]}>
             <Select options={[{ value: 'en', label: 'English' }, { value: 'de', label: 'Deutsch' }, { value: 'fr', label: 'Français' }, { value: 'es', label: 'Español' }]} />
+          </Form.Item>
+          <Form.Item>
+            <Button icon={<TranslationOutlined />} onClick={handleAiTranslate} block>AI 翻译</Button>
           </Form.Item>
           <Form.Item name="status" label="状态">
             <Select options={[{ value: 'draft', label: 'Draft' }, { value: 'published', label: 'Published' }, { value: 'archived', label: 'Archived' }]} />

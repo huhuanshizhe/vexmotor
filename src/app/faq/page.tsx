@@ -60,6 +60,28 @@ export default async function FaqPage() {
         </div>
       </section>
 
+      {knowledgeCatalog.glossaryTerms.length ? (
+        <section className="section">
+          <div className="section-inner">
+            <div className="section-header">
+              <div>
+                <h2 className="section-title">Related Technical Terms</h2>
+                <p className="section-description">Key motion control terminology referenced in the FAQs above.</p>
+              </div>
+            </div>
+            <div className="trust-grid">
+              {knowledgeCatalog.glossaryTerms.slice(0, 8).map((term) => (
+                <article key={term.id} className="trust-card">
+                  <strong>{term.term}</strong>
+                  <p className="section-description compact-copy">{term.searchSummary}</p>
+                  <Link href={withLocalePath('/glossary', locale)} className="section-link">View in Glossary</Link>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       <section className="section">
         <div className="section-inner story-grid">
           <article className="story-card story-card-accent">

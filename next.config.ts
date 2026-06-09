@@ -3,6 +3,16 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  async redirects() {
+    return [
+      { source: '/company/distributors', destination: '/contact', permanent: true },
+      { source: '/company/offices', destination: '/contact', permanent: true },
+      { source: '/company/factory', destination: '/company/about', permanent: true },
+      { source: '/support/clearance-duty', destination: '/support/shipping', permanent: true },
+      { source: '/support/affiliate', destination: '/contact', permanent: true },
+      { source: '/support/free-shipping', destination: '/support/shipping', permanent: true },
+    ];
+  },
   images: {
     remotePatterns: [
       {

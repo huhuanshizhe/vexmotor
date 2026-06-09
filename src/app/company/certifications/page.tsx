@@ -32,6 +32,14 @@ export default async function CompanyCertificationsPage() {
     '@type': 'CollectionPage',
     name: 'Certifications & Compliance',
     description: 'Reference certification summaries and export-compliance notes for industrial buyer review.',
+    inLanguage: locale,
+    hasPart: certificationRecords.map((r) => ({
+      '@type': 'Certification',
+      name: r.title,
+      identifier: r.code,
+      issuedBy: r.issuer,
+      about: r.applicableLines.join(', '),
+    })),
   };
   const compliancePackPath = withLocalePath('/company/certifications/download-pack', locale);
   const technicalSupportPath = withLocalePath('/support/contact?topic=technical', locale);

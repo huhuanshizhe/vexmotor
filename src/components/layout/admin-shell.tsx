@@ -33,6 +33,7 @@ const items = [
   { key: '/admin/content/faq', icon: <FileTextOutlined />, label: <Link href="/admin/content/faq">FAQ管理</Link> },
   { key: '/admin/content/glossary', icon: <FileTextOutlined />, label: <Link href="/admin/content/glossary">术语管理</Link> },
   { key: '/admin/content/support-articles', icon: <FileTextOutlined />, label: <Link href="/admin/content/support-articles">帮助文章</Link> },
+  { key: '/admin/content/solutions', icon: <FileTextOutlined />, label: <Link href="/admin/content/solutions">行业方案</Link> },
   { key: '/admin/editorial', icon: <FileTextOutlined />, label: <Link href="/admin/editorial">内容策略</Link> },
 ];
 
