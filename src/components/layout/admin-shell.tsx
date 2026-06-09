@@ -29,12 +29,9 @@ const items = [
   { key: '/admin/orders', icon: <OrderedListOutlined />, label: <Link href="/admin/orders">订单管理</Link> },
   { key: '/admin/inquiries', icon: <InboxOutlined />, label: <Link href="/admin/inquiries">询盘管理</Link> },
   { key: '/admin/customers', icon: <TeamOutlined />, label: <Link href="/admin/customers">客户管理</Link> },
-  { key: '/admin/content', icon: <BarsOutlined />, label: <Link href="/admin/content">CMS页面</Link> },
+  { key: '/admin/content', icon: <BarsOutlined />, label: <Link href="/admin/content">内容区块</Link> },
   { key: '/admin/content/faq', icon: <FileTextOutlined />, label: <Link href="/admin/content/faq">FAQ管理</Link> },
-  { key: '/admin/content/glossary', icon: <FileTextOutlined />, label: <Link href="/admin/content/glossary">术语管理</Link> },
-  { key: '/admin/content/support-articles', icon: <FileTextOutlined />, label: <Link href="/admin/content/support-articles">帮助文章</Link> },
-  { key: '/admin/content/solutions', icon: <FileTextOutlined />, label: <Link href="/admin/content/solutions">行业方案</Link> },
-  { key: '/admin/editorial', icon: <FileTextOutlined />, label: <Link href="/admin/editorial">内容策略</Link> },
+  { key: '/admin/editorial', icon: <FileTextOutlined />, label: <Link href="/admin/editorial">博客管理</Link> },
 ];
 
 export function AdminShell({ children }: PropsWithChildren) {
