@@ -2,13 +2,11 @@ import { NextResponse } from 'next/server';
 
 import { getBlogCatalog, getBlogPostBySlug } from '@/server/content/blog';
 
-const topicColorMap: Record<string, { start: string; end: string }> = {
-  Stepper: { start: '#153858', end: '#d65b22' },
-  BLDC: { start: '#0f5c72', end: '#d65b22' },
-  Servo: { start: '#0d2740', end: '#4d8ecb' },
-  Drivers: { start: '#102942', end: '#f28b39' },
-  Tutorial: { start: '#204b33', end: '#d6a322' },
-  News: { start: '#472450', end: '#d65b22' },
+const categoryColorMap: Record<string, { start: string; end: string }> = {
+  'Technical Guide': { start: '#153858', end: '#d65b22' },
+  'Application Note': { start: '#0f5c72', end: '#d65b22' },
+  'Tutorial': { start: '#204b33', end: '#d6a322' },
+  'News & Updates': { start: '#472450', end: '#d65b22' },
 };
 
 function escapeXml(value: string) {
@@ -32,9 +30,9 @@ export async function GET(
     return new NextResponse('Not found', { status: 404 });
   }
 
-  const colors = topicColorMap[post.topic] ?? topicColorMap.News;
+  const colors = categoryColorMap[post.category] ?? categoryColorMap['Technical Guide']!;
   const title = escapeXml(post.title);
-  const meta = escapeXml(`${post.topic} · ${post.readMinutes} min read`);
+  const meta = escapeXml(`${post.category} · ${post.readMinutes} min read`);
   const svg = `
     <svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>

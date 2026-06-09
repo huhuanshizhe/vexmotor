@@ -2,14 +2,20 @@ import 'server-only';
 
 import {
   blogAuthors,
+  blogCategories,
+  blogCategoryFromSlug,
+  blogCategorySlug,
   blogIndustries,
   blogPageSize,
   blogPosts,
-  blogTopics,
+  blogProductTopicFromSlug,
+  blogProductTopics,
   type BlogAuthor,
+  type BlogCategory,
   type BlogIndustry,
   type BlogPost,
-  type BlogTopic,
+  type BlogProductTopic,
+  filterByProductTopic,
 } from '@/lib/blog';
 import { buildBlogPostFromEntry } from '@/lib/editorial-content';
 import { getPublishedAdminEditorialBlogEntries } from '@/server/admin/editorial-content';
@@ -17,15 +23,18 @@ import { getPublishedAdminEditorialBlogEntries } from '@/server/admin/editorial-
 export type BlogCatalog = {
   sourceMode: 'code-seeded' | 'admin-managed';
   authors: BlogAuthor[];
+  categories: BlogCategory[];
+  categorySlugs: Record<BlogCategory, string>;
   industries: BlogIndustry[];
   pageSize: number;
   posts: BlogPost[];
-  topics: BlogTopic[];
+  productTopics: BlogProductTopic[];
+  productTopicSlugs: Record<BlogProductTopic, string>;
 };
 
 export type BlogFilters = {
   query?: string;
-  topic?: string;
+  category?: string;
   industry?: string;
   author?: string;
   year?: string;
@@ -42,10 +51,18 @@ export async function getBlogCatalog(locale = 'en-US'): Promise<BlogCatalog> {
   return {
     sourceMode: adminEntries.length ? 'admin-managed' : 'code-seeded',
     authors: [...blogAuthors],
+    categories: [...blogCategories],
+    categorySlugs: { ...blogCategorySlug },
     industries: [...blogIndustries],
     pageSize: blogPageSize,
     posts: Array.from(mergedPosts.values()).sort((left, right) => Date.parse(right.publishedAt) - Date.parse(left.publishedAt)),
-    topics: [...blogTopics],
+    productTopics: [...blogProductTopics],
+    productTopicSlugs: Object.fromEntries(
+      blogProductTopics.map((topic) => {
+        const slug = Object.entries(blogProductTopicFromSlug).find(([, v]) => v === topic)?.[0];
+        return [topic, slug ?? topic.toLowerCase().replace(/[^a-z0-9]+/g, '-')];
+      }),
+    ) as Record<BlogProductTopic, string>,
   };
 }
 
@@ -72,13 +89,23 @@ export function filterBlogPosts(catalog: BlogCatalog, filters: BlogFilters) {
   return catalog.posts.filter((post) => {
     const author = getBlogAuthorById(catalog, post.authorId);
     const matchesQuery = !query || `${post.title} ${post.seoTitle ?? ''} ${post.summary} ${post.seoDescription ?? ''} ${post.lead} ${author?.name ?? ''}`.toLowerCase().includes(query);
-    const matchesTopic = !filters.topic || post.topic === filters.topic;
+    const matchesCategory = !filters.category || blogCategorySlug[post.category] === filters.category;
     const matchesIndustry = !filters.industry || post.industry === filters.industry;
     const matchesAuthor = !filters.author || post.authorId === filters.author;
     const matchesYear = !filters.year || new Date(post.publishedAt).getUTCFullYear().toString() === filters.year;
 
-    return matchesQuery && matchesTopic && matchesIndustry && matchesAuthor && matchesYear;
+    return matchesQuery && matchesCategory && matchesIndustry && matchesAuthor && matchesYear;
   });
+}
+
+export function getPostsByProductTopic(catalog: BlogCatalog, topicSlug: string) {
+  const topic = blogProductTopicFromSlug[topicSlug];
+  if (!topic) return [];
+  return filterByProductTopic(catalog.posts, topic);
+}
+
+export function getProductTopicBySlug(topicSlug: string): BlogProductTopic | undefined {
+  return blogProductTopicFromSlug[topicSlug];
 }
 
 export function paginateBlogPosts(posts: BlogPost[], page: number, pageSize = blogPageSize) {
@@ -102,4 +129,20 @@ export function getRelatedPosts(catalog: BlogCatalog, post: BlogPost, limit = 3)
     .map((slug) => getBlogPostBySlug(catalog, slug))
     .filter((item): item is BlogPost => Boolean(item))
     .slice(0, limit);
+}
+
+export function getCategoryCounts(catalog: BlogCatalog) {
+  return catalog.categories.map((category) => ({
+    category,
+    slug: blogCategorySlug[category],
+    count: catalog.posts.filter((post) => post.category === category).length,
+  }));
+}
+
+export function getProductTopicCounts(catalog: BlogCatalog) {
+  return catalog.productTopics.map((topic) => ({
+    topic,
+    slug: catalog.productTopicSlugs[topic] ?? topic.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+    count: catalog.posts.filter((post) => post.productTopics.includes(topic)).length,
+  }));
 }

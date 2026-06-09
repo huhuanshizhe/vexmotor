@@ -2,19 +2,25 @@ import Link from 'next/link';
 
 import { NewsletterSignupForm } from '@/components/storefront/newsletter-signup-form';
 import { JsonLdScript } from '@/components/seo/json-ld';
+import { blogCategorySlug } from '@/lib/blog';
 import { withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 import { SITE_URL } from '@/lib/site-config';
-import { filterBlogPosts, getBlogAuthorById, getBlogCatalog, getBlogYears, getMostReadPosts, paginateBlogPosts } from '@/server/content/blog';
+import {
+  getBlogAuthorById,
+  getBlogCatalog,
+  getCategoryCounts,
+  getMostReadPosts,
+  getProductTopicCounts,
+  paginateBlogPosts,
+  filterBlogPosts,
+} from '@/server/content/blog';
 
 type BlogPageProps = {
   searchParams: Promise<{
     q?: string;
-    topic?: string;
-    industry?: string;
-    author?: string;
-    year?: string;
+    category?: string;
     page?: string;
   }>;
 };
@@ -23,8 +29,8 @@ export async function generateMetadata() {
   const { locale } = await getServerSitePreferences();
 
   return buildMetadata({
-    title: 'Engineering Blog — STEPMOTECH',
-    description: 'Engineering notes, tutorials, product news, and motion-control field guidance from the STEPMOTECH team.',
+    title: 'Motion Control Knowledge Center — STEPMOTECH',
+    description: 'Engineering guides, application notes, tutorials, and product updates for stepper motors, BLDC, servo, and motion control systems.',
     path: '/blog',
     locale,
   });
@@ -33,27 +39,35 @@ export async function generateMetadata() {
 export default async function BlogPage({ searchParams }: BlogPageProps) {
   const [{ locale }, params] = await Promise.all([getServerSitePreferences(), searchParams]);
   const catalog = await getBlogCatalog(locale);
+
   const filters = {
     query: params.q?.trim() || undefined,
-    topic: params.topic?.trim() || undefined,
-    industry: params.industry?.trim() || undefined,
-    author: params.author?.trim() || undefined,
-    year: params.year?.trim() || undefined,
+    category: params.category?.trim() || undefined,
   };
   const filteredPosts = filterBlogPosts(catalog, filters);
   const pagination = paginateBlogPosts(filteredPosts, Number(params.page) || 1, catalog.pageSize);
-  const years = getBlogYears(catalog);
-  const mostReadPosts = getMostReadPosts(catalog);
-  const categoryCounts = catalog.topics.map((topic) => ({ topic, count: catalog.posts.filter((post) => post.topic === topic).length }));
+  const categoryCounts = getCategoryCounts(catalog);
+  const productTopicCounts = getProductTopicCounts(catalog);
+
+  // Featured post: latest published post (only show when no filter is active)
+  const isFiltered = Boolean(filters.query || filters.category);
+  const featuredPost = !isFiltered && catalog.posts.length > 0 ? catalog.posts[0] : null;
+  const displayPosts = featuredPost
+    ? pagination.items.filter((post) => post.slug !== featuredPost.slug)
+    : pagination.items;
+
+  const mostReadPosts = getMostReadPosts(catalog, 5);
+
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: 'Home', path: '/' },
     { name: 'Blog', path: '/blog' },
   ], locale);
+
   const blogJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
-    name: 'STEPMOTECH Engineering Blog',
-    description: 'Engineering blog posts covering motion-control selection, tuning, documentation, and release updates.',
+    name: 'STEPMOTECH Knowledge Center',
+    description: 'Technical guides, application notes, and tutorials for motion control engineering.',
     url: `${SITE_URL}${withLocalePath('/blog', locale)}`,
     inLanguage: locale,
     publisher: {
@@ -66,29 +80,23 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
       headline: post.title,
       description: post.seoDescription ?? post.summary,
       inLanguage: post.locale,
-      articleSection: [post.topic, post.industry],
-      keywords: [post.topic, post.industry].join(', '),
+      articleSection: post.category,
+      keywords: [post.category, ...post.productTopics, post.industry].join(', '),
       url: `${SITE_URL}${withLocalePath(`/blog/${post.slug}`, locale)}`,
       datePublished: post.publishedAt,
     })),
   };
 
-  function buildBlogHref(overrides: { q?: string | null; topic?: string | null; industry?: string | null; author?: string | null; year?: string | null; page?: string | null }) {
+  function buildBlogHref(overrides: { q?: string | null; category?: string | null; page?: string | null }) {
     const query = new URLSearchParams();
     const values = {
       q: overrides.q !== undefined ? overrides.q : params.q,
-      topic: overrides.topic !== undefined ? overrides.topic : params.topic,
-      industry: overrides.industry !== undefined ? overrides.industry : params.industry,
-      author: overrides.author !== undefined ? overrides.author : params.author,
-      year: overrides.year !== undefined ? overrides.year : params.year,
+      category: overrides.category !== undefined ? overrides.category : params.category,
       page: overrides.page !== undefined ? overrides.page : params.page,
     };
 
     if (values.q) query.set('q', values.q);
-    if (values.topic) query.set('topic', values.topic);
-    if (values.industry) query.set('industry', values.industry);
-    if (values.author) query.set('author', values.author);
-    if (values.year) query.set('year', values.year);
+    if (values.category) query.set('category', values.category);
     if (values.page && values.page !== '1') query.set('page', values.page);
 
     const href = withLocalePath('/blog', locale);
@@ -101,111 +109,101 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
       <JsonLdScript id="blog-index-breadcrumb-jsonld" data={breadcrumbJsonLd} />
       <JsonLdScript id="blog-index-jsonld" data={blogJsonLd} />
 
-      <section className="hero-section blog-hero-section">
-        <div className="hero-copy">
-          <span className="eyebrow">Engineering journal</span>
-          <h1>Engineering Blog</h1>
-          <p>Field notes, tutorials, tuning checklists, and release updates for motion-control teams that need documentation to stay close to real program work.</p>
+      {/* ── Hero ── */}
+      <section className="blog-hero">
+        <div className="section-inner">
+          <span className="blog-hero-eyebrow">Knowledge Center</span>
+          <h1 className="blog-hero-title">Motion Control Engineering Resources</h1>
+          <p className="blog-hero-desc">Technical guides, application notes, and field-proven tutorials from the STEPMOTECH engineering team.</p>
           <form action={withLocalePath('/blog', locale)} method="get" className="blog-hero-search">
-            <input type="search" name="q" defaultValue={params.q ?? ''} className="newsletter-input" placeholder="Search articles, topics, or authors" aria-label="Search blog articles" />
-            {params.topic ? <input type="hidden" name="topic" value={params.topic} /> : null}
-            {params.industry ? <input type="hidden" name="industry" value={params.industry} /> : null}
-            {params.author ? <input type="hidden" name="author" value={params.author} /> : null}
-            {params.year ? <input type="hidden" name="year" value={params.year} /> : null}
-            <button type="submit" className="button-primary">Search</button>
+            <input
+              type="search"
+              name="q"
+              defaultValue={params.q ?? ''}
+              className="blog-search-input"
+              placeholder="Search articles by keyword..."
+              aria-label="Search articles"
+            />
+            {params.category ? <input type="hidden" name="category" value={params.category} /> : null}
+            <button type="submit" className="blog-search-btn">Search</button>
           </form>
         </div>
       </section>
 
+      {/* ── Category tabs ── */}
+      <nav className="blog-category-tabs">
+        <div className="section-inner blog-tabs-inner">
+          <Link
+            href={buildBlogHref({ category: null, page: '1' })}
+            className={`blog-tab${!params.category ? ' is-active' : ''}`}
+          >
+            All
+          </Link>
+          {categoryCounts.map(({ category, slug, count }) => (
+            <Link
+              key={slug}
+              href={buildBlogHref({ category: slug, page: '1' })}
+              className={`blog-tab${params.category === slug ? ' is-active' : ''}`}
+            >
+              {category}
+              <span className="blog-tab-count">{count}</span>
+            </Link>
+          ))}
+        </div>
+      </nav>
+
+      {/* ── Main content ── */}
       <section className="section">
-        <div className="section-inner blog-index-shell">
-          <div className="blog-index-main">
-            <article className="info-card blog-filter-card">
-              <div className="section-header trade-card-header">
-                <div>
-                  <div className="card-kicker">Filters</div>
-                  <h2 className="cart-section-title">Refine by topic, market, author, and year</h2>
+        <div className="section-inner blog-layout">
+          <div className="blog-main">
+            {/* Featured post */}
+            {featuredPost ? (
+              <article className="blog-featured-card">
+                <a href={withLocalePath(`/blog/${featuredPost.slug}`, locale)} className="blog-featured-cover-wrap">
+                  <img src={withLocalePath(`/blog/cover/${featuredPost.slug}`, locale)} alt={featuredPost.coverAlt} className="blog-featured-cover" />
+                </a>
+                <div className="blog-featured-body">
+                  <div className="blog-card-meta-row">
+                    <span className="blog-category-chip">{featuredPost.category}</span>
+                    <span className="blog-meta-sep">·</span>
+                    <span className="blog-meta-text">{featuredPost.readMinutes} min read</span>
+                    <span className="blog-meta-sep">·</span>
+                    <span className="blog-meta-text">{new Date(featuredPost.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                  </div>
+                  <h2 className="blog-featured-title">
+                    <Link href={withLocalePath(`/blog/${featuredPost.slug}`, locale)}>{featuredPost.title}</Link>
+                  </h2>
+                  <p className="blog-featured-summary">{featuredPost.summary}</p>
+                  <div className="blog-featured-footer">
+                    <span className="blog-author-name">{getBlogAuthorById(catalog, featuredPost.authorId)?.name}</span>
+                    <span className="blog-meta-sep">·</span>
+                    <span className="blog-meta-text">{featuredPost.industry}</span>
+                  </div>
                 </div>
-                <Link href={withLocalePath('/blog', locale)} className="section-link">Clear filters</Link>
-              </div>
+              </article>
+            ) : null}
 
-              <div className="blog-topic-chip-row">
-                {catalog.topics.map((topic) => {
-                  const active = params.topic === topic;
-                  return (
-                    <Link
-                      key={topic}
-                      href={buildBlogHref({ topic: active ? null : topic, page: '1' })}
-                      className={`blog-topic-chip${active ? ' is-active' : ''}`}
-                    >
-                      {topic}
-                    </Link>
-                  );
-                })}
-              </div>
-
-              <form action={withLocalePath('/blog', locale)} method="get" className="blog-filter-form">
-                <input type="hidden" name="q" value={params.q ?? ''} />
-                <label>
-                  Industry
-                  <select name="industry" defaultValue={params.industry ?? ''}>
-                    <option value="">All industries</option>
-                    {catalog.industries.map((industry) => (
-                      <option key={industry} value={industry}>{industry}</option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  Author
-                  <select name="author" defaultValue={params.author ?? ''}>
-                    <option value="">All authors</option>
-                    {catalog.authors.map((author) => (
-                      <option key={author.id} value={author.id}>{author.name}</option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  Year
-                  <select name="year" defaultValue={params.year ?? ''}>
-                    <option value="">All years</option>
-                    {years.map((year) => (
-                      <option key={year} value={year}>{year}</option>
-                    ))}
-                  </select>
-                </label>
-                {params.topic ? <input type="hidden" name="topic" value={params.topic} /> : null}
-                <button type="submit" className="button-secondary">Apply filters</button>
-              </form>
-            </article>
-
-            <div className="blog-filter-meta">
-              <p className="section-description">{filteredPosts.length} articles matched. Filters persist in the URL, and RSS stays available at <a href="/blog/rss.xml" className="section-link">/blog/rss.xml</a>.</p>
-            </div>
-
+            {/* Article grid */}
             <div className="blog-card-grid">
-              {pagination.items.map((post) => {
+              {displayPosts.map((post) => {
                 const author = getBlogAuthorById(catalog, post.authorId);
                 return (
-                  <article key={post.slug} className="blog-index-card">
-                    <a href={withLocalePath(`/blog/${post.slug}`, locale)} className="blog-card-cover-link">
+                  <article key={post.slug} className="blog-card">
+                    <a href={withLocalePath(`/blog/${post.slug}`, locale)} className="blog-card-cover-wrap">
                       <img src={withLocalePath(`/blog/cover/${post.slug}`, locale)} alt={post.coverAlt} className="blog-card-cover" />
                     </a>
                     <div className="blog-card-body">
                       <div className="blog-card-meta-row">
-                        <span className="resource-chip">{post.topic}</span>
-                        <span className="product-meta">{post.readMinutes} min read</span>
-                        <span className="product-meta">{new Date(post.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                        <span className="blog-category-chip">{post.category}</span>
+                        <span className="blog-meta-text">{post.readMinutes} min</span>
                       </div>
-                      <h2>
+                      <h3 className="blog-card-title">
                         <Link href={withLocalePath(`/blog/${post.slug}`, locale)}>{post.title}</Link>
-                      </h2>
-                      <p className="section-description">{post.summary}</p>
+                      </h3>
+                      <p className="blog-card-summary">{post.summary}</p>
                       <div className="blog-card-footer">
-                        <div>
-                          <strong>{author?.name}</strong>
-                          <div className="product-meta">{post.industry}</div>
-                        </div>
-                        <Link href={withLocalePath(`/blog/${post.slug}`, locale)} className="section-link">Read article</Link>
+                        <span className="blog-author-name">{author?.name}</span>
+                        <span className="blog-meta-text">{new Date(post.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                       </div>
                     </div>
                   </article>
@@ -213,50 +211,84 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
               })}
             </div>
 
-            <div className="blog-pagination-row">
-              {Array.from({ length: pagination.totalPages }, (_, index) => {
-                const pageNumber = String(index + 1);
-                const isActive = pagination.page === index + 1;
-                return (
-                  <Link key={pageNumber} href={buildBlogHref({ page: pageNumber })} className={`blog-topic-chip${isActive ? ' is-active' : ''}`} aria-current={isActive ? 'page' : undefined}>
-                    {pageNumber}
-                  </Link>
-                );
-              })}
-            </div>
+            {displayPosts.length === 0 ? (
+              <div className="blog-empty-state">
+                <p>No articles match your current filter.</p>
+                <Link href={withLocalePath('/blog', locale)} className="blog-clear-link">Clear filters</Link>
+              </div>
+            ) : null}
+
+            {/* Pagination */}
+            {pagination.totalPages > 1 ? (
+              <div className="blog-pagination">
+                {Array.from({ length: pagination.totalPages }, (_, index) => {
+                  const pageNumber = String(index + 1);
+                  const isActive = pagination.page === index + 1;
+                  return (
+                    <Link
+                      key={pageNumber}
+                      href={buildBlogHref({ page: pageNumber })}
+                      className={`blog-page-btn${isActive ? ' is-active' : ''}`}
+                      aria-current={isActive ? 'page' : undefined}
+                    >
+                      {pageNumber}
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : null}
           </div>
 
-          <aside className="blog-index-rail">
-            <article className="info-card blog-rail-card">
-              <div className="card-kicker">Subscribe</div>
-              <h2 className="cart-section-title">Get new engineering notes</h2>
-              <p className="section-description">The newsletter API already powers the footer flow, so the same subscription path is reused here.</p>
-              <NewsletterSignupForm placeholder="Enter your work email" buttonLabel="Subscribe" />
-            </article>
+          {/* ── Sidebar ── */}
+          <aside className="blog-sidebar">
+            {/* Subscribe */}
+            <div className="blog-sidebar-card">
+              <h3 className="blog-sidebar-heading">Stay Updated</h3>
+              <p className="blog-sidebar-text">Get new engineering articles and product updates delivered to your inbox.</p>
+              <NewsletterSignupForm placeholder="Work email" buttonLabel="Subscribe" />
+            </div>
 
-            <article className="info-card blog-rail-card">
-              <div className="card-kicker">Most read</div>
-              <div className="blog-rail-list">
-                {mostReadPosts.map((post) => (
-                  <Link key={post.slug} href={withLocalePath(`/blog/${post.slug}`, locale)} className="blog-rail-link">
-                    <strong>{post.title}</strong>
-                    <span>{post.viewCount.toLocaleString()} reads</span>
+            {/* Most read */}
+            <div className="blog-sidebar-card">
+              <h3 className="blog-sidebar-heading">Most Read</h3>
+              <div className="blog-sidebar-list">
+                {mostReadPosts.map((post, index) => (
+                  <Link key={post.slug} href={withLocalePath(`/blog/${post.slug}`, locale)} className="blog-sidebar-link">
+                    <span className="blog-sidebar-rank">{index + 1}</span>
+                    <span className="blog-sidebar-link-text">
+                      <strong>{post.title}</strong>
+                      <span className="blog-meta-text">{post.viewCount.toLocaleString()} reads</span>
+                    </span>
                   </Link>
                 ))}
               </div>
-            </article>
+            </div>
 
-            <article className="info-card blog-rail-card">
-              <div className="card-kicker">Categories</div>
-              <div className="blog-rail-list">
-                {categoryCounts.map((entry) => (
-                  <Link key={entry.topic} href={buildBlogHref({ topic: entry.topic, page: '1' })} className="blog-rail-link">
-                    <strong>{entry.topic}</strong>
-                    <span>{entry.count} articles</span>
+            {/* Categories */}
+            <div className="blog-sidebar-card">
+              <h3 className="blog-sidebar-heading">Categories</h3>
+              <div className="blog-sidebar-list">
+                {categoryCounts.map(({ category, slug, count }) => (
+                  <Link key={slug} href={buildBlogHref({ category: slug, page: '1' })} className="blog-sidebar-link">
+                    <strong>{category}</strong>
+                    <span className="blog-meta-text">{count} articles</span>
                   </Link>
                 ))}
               </div>
-            </article>
+            </div>
+
+            {/* Product Topics */}
+            <div className="blog-sidebar-card">
+              <h3 className="blog-sidebar-heading">By Product</h3>
+              <div className="blog-sidebar-list">
+                {productTopicCounts.map(({ topic, slug, count }) => (
+                  <Link key={slug} href={withLocalePath(`/blog/t/${slug}`, locale)} className="blog-sidebar-link">
+                    <strong>{topic}</strong>
+                    <span className="blog-meta-text">{count} articles</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
           </aside>
         </div>
       </section>

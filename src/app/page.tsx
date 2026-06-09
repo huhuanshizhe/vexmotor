@@ -341,7 +341,7 @@ export default async function HomePage() {
           <div className="home-resource-grid">
             {latestArticles.map((article) => (
               <article key={article.slug} className="home-resource-card">
-                <span className="card-kicker">{article.topic}</span>
+                <span className="card-kicker">{article.category}</span>
                 <h3>
                   <Link href={withLocalePath(`/blog/${article.slug}`, locale)}>{article.title}</Link>
                 </h3>

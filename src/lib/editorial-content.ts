@@ -1,4 +1,4 @@
-import type { BlogIndustry, BlogPost, BlogSection, BlogTopic } from '@/lib/blog';
+import type { BlogCategory, BlogIndustry, BlogPost, BlogProductTopic, BlogSection } from '@/lib/blog';
 import type { PressRelease } from '@/lib/press';
 import type { EditorialContentType } from '@/lib/editorial-automation';
 
@@ -10,7 +10,8 @@ type EditorialGenericPayload = Record<string, unknown>;
 
 export type EditorialBlogEntryPayload = {
   lead: string;
-  topic: BlogTopic;
+  category: BlogCategory;
+  productTopics: BlogProductTopic[];
   industry: BlogIndustry;
   authorId: string;
   readMinutes: number;
@@ -100,7 +101,8 @@ export function buildBlogPostFromEntry(entry: AdminEditorialBlogEntry): BlogPost
     seoTitle: entry.seoTitle,
     seoDescription: entry.seoDescription,
     lead: entry.payload.lead,
-    topic: entry.payload.topic,
+    category: entry.payload.category,
+    productTopics: [...entry.payload.productTopics],
     industry: entry.payload.industry,
     authorId: entry.payload.authorId,
     locale: entry.locale,

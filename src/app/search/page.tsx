@@ -103,8 +103,8 @@ export default async function SearchPage({
       title: post.title,
       description: post.summary,
       href: withLocalePath(`/blog/${post.slug}`, preferences.locale),
-      meta: `Blog · ${post.topic}`,
-      haystack: `${post.title} ${post.summary} ${post.lead} ${post.topic} ${post.industry}`.toLowerCase(),
+      meta: `Blog · ${post.category}`,
+      haystack: `${post.title} ${post.summary} ${post.lead} ${post.category} ${post.productTopics.join(' ')} ${post.industry}`.toLowerCase(),
     })),
     ...applicationCaseStudies.map((caseStudy) => ({
       id: `application-${caseStudy.slug}`,

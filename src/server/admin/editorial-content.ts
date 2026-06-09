@@ -5,7 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { asc, desc, eq } from 'drizzle-orm';
 import { z } from 'zod';
 
-import { type BlogPost, blogIndustries, blogPosts, blogTopics } from '@/lib/blog';
+import { type BlogPost, blogCategories, blogIndustries, blogPosts, blogProductTopics } from '@/lib/blog';
 import {
   type AdminEditorialPressEntry,
   editorialEntryStatuses,
@@ -57,7 +57,8 @@ export const editorialPressPayloadSchema = z.object({
 
 export const editorialBlogPayloadSchema = z.object({
   lead: z.string().min(1),
-  topic: z.enum(blogTopics),
+  category: z.enum(blogCategories),
+  productTopics: z.array(z.enum(blogProductTopics)).min(1),
   industry: z.enum(blogIndustries),
   authorId: z.string().min(1),
   readMinutes: z.coerce.number().int().min(1).max(120),
@@ -214,7 +215,8 @@ function createBlogEntryInputFromSeed(post: BlogPost): BlogEntryCreateInput {
     publishedAt: parseSeedPublishedAt(post.publishedAt),
     payload: {
       lead: post.lead,
-      topic: post.topic,
+      category: post.category,
+      productTopics: [...post.productTopics],
       industry: post.industry,
       authorId: post.authorId,
       readMinutes: post.readMinutes,
@@ -268,7 +270,8 @@ function createPressEntryInputFromSeed(release: PressRelease): PressEntryCreateI
 function normalizeBlogPayload(payload: EditorialBlogEntryPayload): EditorialBlogEntryPayload {
   return {
     lead: payload.lead.trim(),
-    topic: payload.topic,
+    category: payload.category,
+    productTopics: [...payload.productTopics],
     industry: payload.industry,
     authorId: payload.authorId.trim(),
     readMinutes: payload.readMinutes,

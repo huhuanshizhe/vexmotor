@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 
 import { AddToCartButton } from '@/components/storefront/add-to-cart-button';
 import { JsonLdScript } from '@/components/seo/json-ld';
+import { blogProductTopicSlug } from '@/lib/blog';
 import { type Locale, withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
@@ -28,7 +29,7 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
   if (!post) {
     return buildMetadata({
       title: 'Engineering Blog — STEPMOTECH',
-      description: 'Engineering notes and tutorials.',
+      description: 'Motion control engineering articles.',
       path: '/blog',
       locale,
       noIndex: true,
@@ -78,17 +79,38 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   }
 
   const author = getBlogAuthorById(catalog, post.authorId);
-  const productSlugs = Array.from(new Set(post.relatedProductSlugs.concat(post.sections.flatMap((section) => section.blocks.filter((block) => block.type === 'product').map((block) => block.productSlug)))));
-  const products = await Promise.all(productSlugs.map((productSlug) => getProductBySlug(productSlug)));
+
+  // Collect product slugs from sections (only from inline 'product' block types, not the old fixed section)
+  const inlineProductSlugs = post.sections
+    .flatMap((section) => section.blocks.filter((block) => block.type === 'product').map((block) => (block as { type: 'product'; productSlug: string }).productSlug));
+  const allProductSlugs = Array.from(new Set(post.relatedProductSlugs.concat(inlineProductSlugs)));
+  const products = await Promise.all(allProductSlugs.map((productSlug) => getProductBySlug(productSlug)));
   const productMap = new Map(products.filter((item): item is StorefrontProductDetail => Boolean(item)).map((product) => [product.slug, product]));
+
   const relatedPosts = getRelatedPosts(catalog, post);
   const relatedProducts = post.relatedProductSlugs.map((productSlug) => productMap.get(productSlug)).filter((product): product is StorefrontProductDetail => Boolean(product));
+
   const articleImage = `${SITE_URL}/blog/cover/${post.slug}`;
   const articleUrl = `${SITE_URL}${withLocalePath(`/blog/${post.slug}`, locale)}`;
   const blogUrl = `${SITE_URL}${withLocalePath('/blog', locale)}`;
-  const articleKeywords = Array.from(new Set([post.topic, post.industry, ...relatedProducts.map((product) => product.name)])).slice(0, 8);
+
+  // Build breadcrumb: Home > Blog > [Primary Product Topic] > Article Title
+  const primaryTopicSlug = post.productTopics.length > 0
+    ? blogProductTopicSlug[post.productTopics[0]]
+    : null;
+
+  const breadcrumbItems = [
+    { name: 'Home', path: '/' },
+    { name: 'Blog', path: '/blog' },
+    ...(primaryTopicSlug ? [{ name: post.productTopics[0], path: `/blog/t/${primaryTopicSlug}` }] : []),
+    { name: post.title, path: `/blog/${post.slug}` },
+  ];
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd(breadcrumbItems, locale);
+
+  const articleKeywords = Array.from(new Set([post.category, ...post.productTopics, post.industry, ...relatedProducts.map((product) => product.name)])).slice(0, 10);
   const articleAbout = [
-    { '@type': 'Thing', name: post.topic },
+    { '@type': 'Thing', name: post.category },
+    ...post.productTopics.map((topic) => ({ '@type': 'Thing', name: topic })),
     { '@type': 'Thing', name: post.industry },
     ...relatedProducts.map((product) => ({
       '@type': 'Product',
@@ -97,11 +119,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       url: `${SITE_URL}${withLocalePath(`/products/${product.slug}`, locale)}`,
     })),
   ];
-  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
-    { name: 'Home', path: '/' },
-    { name: 'Blog', path: '/blog' },
-    { name: post.title, path: `/blog/${post.slug}` },
-  ], locale);
+
   const articleJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -112,20 +130,22 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     inLanguage: post.locale,
     datePublished: post.publishedAt,
     dateModified: post.updatedAt,
-    articleSection: [post.topic, post.industry],
+    articleSection: [post.category, ...post.productTopics],
     keywords: articleKeywords.join(', '),
     author: {
       '@type': 'Person',
       name: author?.name ?? 'STEPMOTECH',
+      jobTitle: author?.role ?? undefined,
     },
     publisher: {
       '@type': 'Organization',
       name: 'STEPMOTECH',
       url: SITE_URL,
+      slogan: 'Factory Direct Motion Components',
     },
     isPartOf: {
       '@type': 'Blog',
-      name: 'STEPMOTECH Engineering Blog',
+      name: 'STEPMOTECH Knowledge Center',
       url: blogUrl,
     },
     about: articleAbout,
@@ -134,30 +154,45 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <>
-      <JsonLdScript id={`blog-post-${post.slug}-breadcrumb-jsonld`} data={breadcrumbJsonLd} />
-      <JsonLdScript id={`blog-post-${post.slug}-article-jsonld`} data={articleJsonLd} />
+      <JsonLdScript id={`blog-post-${post.slug}-breadcrumb`} data={breadcrumbJsonLd} />
+      <JsonLdScript id={`blog-post-${post.slug}-article`} data={articleJsonLd} />
 
-      <section className="hero-section blog-post-hero">
+      {/* ── Hero ── */}
+      <section className="blog-post-hero">
         <div className="blog-post-cover-wrap">
           <img src={withLocalePath(`/blog/cover/${post.slug}`, locale)} alt={post.coverAlt} className="blog-post-cover" />
         </div>
-        <div className="hero-copy">
+        <div className="section-inner blog-post-hero-inner">
           <div className="blog-post-meta-row">
-            <span className="resource-chip">{post.topic}</span>
-            <span className="product-meta">{post.readMinutes} min read</span>
-            <span className="product-meta">{new Date(post.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-            <span className="product-meta">{author?.name}</span>
+            <span className="blog-category-chip">{post.category}</span>
+            {post.productTopics.map((topic) => (
+              <Link
+                key={topic}
+                href={withLocalePath(`/blog/t/${blogProductTopicSlug[topic]}`, locale)}
+                className="blog-topic-link"
+              >
+                {topic}
+              </Link>
+            ))}
           </div>
-          <h1>{post.title}</h1>
-          <p>{post.lead}</p>
+          <h1 className="blog-post-title">{post.title}</h1>
+          <p className="blog-post-lead">{post.lead}</p>
+          <div className="blog-post-byline">
+            <span className="blog-author-name">{author?.name}</span>
+            <span className="blog-meta-sep">·</span>
+            <span className="blog-meta-text">{author?.role}</span>
+            <span className="blog-meta-sep">·</span>
+            <span className="blog-meta-text">{post.readMinutes} min read</span>
+            <span className="blog-meta-sep">·</span>
+            <span className="blog-meta-text">{new Date(post.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+          </div>
         </div>
       </section>
 
+      {/* ── Article body ── */}
       <section className="section">
         <div className="section-inner blog-post-layout">
           <article className="blog-post-main">
-            <div className="blog-post-lead">{post.summary}</div>
-
             {post.sections.map((section) => (
               <section key={section.id} id={section.id} className="blog-article-section">
                 <h2>{section.title}</h2>
@@ -185,7 +220,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   if (block.type === 'table') {
                     return (
                       <div key={`${section.id}-${index}`} className="blog-table-wrap">
-                        <p className="product-meta">{block.caption}</p>
+                        <p className="blog-table-caption">{block.caption}</p>
                         <table className="blog-article-table">
                           <thead>
                             <tr>
@@ -204,70 +239,77 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     );
                   }
 
-                  const product = productMap.get(block.productSlug);
-                  return product ? (
-                    <BlogProductCard key={`${section.id}-${index}`} product={product} locale={locale} eyebrow={block.eyebrow} body={block.body} />
-                  ) : null;
+                  // Inline product block — render only if the product exists
+                  if (block.type === 'product') {
+                    const product = productMap.get(block.productSlug);
+                    return product ? (
+                      <BlogProductCard key={`${section.id}-${index}`} product={product} locale={locale} eyebrow={block.eyebrow} body={block.body} />
+                    ) : null;
+                  }
+
+                  return null;
                 })}
               </section>
             ))}
 
+            {/* ── Related products (natural, at the end) ── */}
             {relatedProducts.length ? (
-              <section className="blog-article-section">
-                <div className="section-header trade-card-header">
-                  <div>
-                    <div className="card-kicker">Related products</div>
-                    <h2 className="cart-section-title">Hardware referenced in this article</h2>
-                  </div>
+              <section className="blog-article-section blog-related-section">
+                <div className="blog-related-header">
+                  <h2>Hardware Referenced in This Article</h2>
+                  <p className="blog-meta-text">Products mentioned or recommended in the article body.</p>
                 </div>
                 <div className="blog-related-product-grid">
                   {relatedProducts.map((product) => (
-                    <BlogProductCard key={product.id} product={product} locale={locale} eyebrow="Related product" body={product.shortDescription ?? 'Catalog hardware referenced in the article body.'} />
+                    <BlogProductCard
+                      key={product.id}
+                      product={product}
+                      locale={locale}
+                      eyebrow="Related product"
+                      body={product.shortDescription ?? 'Catalog hardware referenced in this article.'}
+                    />
                   ))}
                 </div>
               </section>
             ) : null}
 
+            {/* ── Author card (E-E-A-T) ── */}
             {author ? (
-              <section className="info-card blog-author-card">
-                <div className="card-kicker">Author</div>
-                <h2 className="cart-section-title">{author.name}</h2>
-                <p className="product-meta">{author.role}</p>
-                <p className="section-description">{author.bio}</p>
+              <section className="blog-author-card">
+                <div className="blog-author-info">
+                  <div className="blog-author-avatar">{author.name.split(' ').map((n) => n[0]).join('')}</div>
+                  <div>
+                    <p className="blog-author-name-lg">{author.name}</p>
+                    <p className="blog-author-role">{author.role} — STEPMOTECH</p>
+                  </div>
+                </div>
+                <p className="blog-author-bio">{author.bio}</p>
               </section>
             ) : null}
 
+            {/* ── Related posts ── */}
             {relatedPosts.length ? (
-              <section className="blog-article-section">
-                <div className="section-header trade-card-header">
-                  <div>
-                    <div className="card-kicker">Related posts</div>
-                    <h2 className="cart-section-title">Continue reading</h2>
-                  </div>
-                </div>
+              <section className="blog-article-section blog-related-section">
+                <h2>Continue Reading</h2>
                 <div className="blog-card-grid blog-related-post-grid">
                   {relatedPosts.map((relatedPost) => {
                     const relatedAuthor = getBlogAuthorById(catalog, relatedPost.authorId);
                     return (
-                      <article key={relatedPost.slug} className="blog-index-card">
-                        <a href={withLocalePath(`/blog/${relatedPost.slug}`, locale)} className="blog-card-cover-link">
+                      <article key={relatedPost.slug} className="blog-card">
+                        <a href={withLocalePath(`/blog/${relatedPost.slug}`, locale)} className="blog-card-cover-wrap">
                           <img src={withLocalePath(`/blog/cover/${relatedPost.slug}`, locale)} alt={relatedPost.coverAlt} className="blog-card-cover" />
                         </a>
                         <div className="blog-card-body">
                           <div className="blog-card-meta-row">
-                            <span className="resource-chip">{relatedPost.topic}</span>
-                            <span className="product-meta">{relatedPost.readMinutes} min read</span>
+                            <span className="blog-category-chip">{relatedPost.category}</span>
+                            <span className="blog-meta-text">{relatedPost.readMinutes} min</span>
                           </div>
-                          <h3>
+                          <h3 className="blog-card-title">
                             <Link href={withLocalePath(`/blog/${relatedPost.slug}`, locale)}>{relatedPost.title}</Link>
                           </h3>
-                          <p className="section-description compact-copy">{relatedPost.summary}</p>
                           <div className="blog-card-footer">
-                            <div>
-                              <strong>{relatedAuthor?.name}</strong>
-                              <div className="product-meta">{relatedPost.industry}</div>
-                            </div>
-                            <Link href={withLocalePath(`/blog/${relatedPost.slug}`, locale)} className="section-link">Read</Link>
+                            <span className="blog-author-name">{relatedAuthor?.name}</span>
+                            <Link href={withLocalePath(`/blog/${relatedPost.slug}`, locale)} className="blog-read-link">Read →</Link>
                           </div>
                         </div>
                       </article>
@@ -277,28 +319,29 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               </section>
             ) : null}
 
-            <section className="info-card blog-cta-card">
+            {/* ── CTA ── */}
+            <section className="blog-cta-card">
               <div>
-                <div className="card-kicker">Next step</div>
-                <h2 className="cart-section-title">Subscribe or talk to an engineer</h2>
-                <p className="section-description">Use the newsletter flow for future articles, or route the current project into the structured contact path when you need sizing or integration help.</p>
+                <h2>Need Help with Your Motion Control Project?</h2>
+                <p className="blog-cta-text">Talk to our engineering team about sizing, integration, or technical requirements. Or subscribe for future articles.</p>
               </div>
-              <div className="trade-empty-actions">
-                <Link href={withLocalePath('/blog', locale)} className="button-secondary">Subscribe</Link>
-                <Link href={withLocalePath('/contact', locale)} className="button-primary">Talk to engineer</Link>
+              <div className="blog-cta-actions">
+                <Link href={withLocalePath('/contact', locale)} className="button-primary">Talk to an Engineer</Link>
+                <Link href={withLocalePath('/blog', locale)} className="button-secondary">Browse Articles</Link>
               </div>
             </section>
           </article>
 
+          {/* ── Table of contents ── */}
           <aside className="blog-post-toc">
-            <article className="info-card blog-toc-card">
-              <div className="card-kicker">On this page</div>
+            <div className="blog-toc-card">
+              <h4 className="blog-toc-heading">On This Page</h4>
               <nav className="blog-toc-list" aria-label="Table of contents">
                 {post.sections.map((section) => (
                   <a key={section.id} href={`#${section.id}`} className="blog-toc-link">{section.title}</a>
                 ))}
               </nav>
-            </article>
+            </div>
           </aside>
         </div>
       </section>

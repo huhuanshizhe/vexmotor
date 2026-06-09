@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 
 import { formatAdminDate } from '@/lib/admin-display';
-import { blogAuthors, blogIndustries, blogTopics } from '@/lib/blog';
+import { blogAuthors, blogCategories, blogIndustries, blogProductTopics } from '@/lib/blog';
 import {
   defaultEditorialBlogSectionsTemplate,
   type AdminEditorialBlogEntry,
@@ -155,7 +155,8 @@ type BlogEntryFormValues = {
   seoDescription: string;
   publishedAt: string;
   lead: string;
-  topic: (typeof blogTopics)[number];
+  category: (typeof blogCategories)[number];
+  productTopics: (typeof blogProductTopics)[number][];
   industry: (typeof blogIndustries)[number];
   authorId: string;
   readMinutes: number;
@@ -342,8 +343,12 @@ export function AdminEditorialClient({
     () => editorialCadenceValues.map((value) => ({ value, label: cadenceLabels[value] })),
     [],
   );
-  const blogTopicOptions = useMemo(
-    () => blogTopics.map((value) => ({ value, label: value })),
+  const blogCategoryOptions = useMemo(
+    () => blogCategories.map((value) => ({ value, label: value })),
+    [],
+  );
+  const blogProductTopicOptions = useMemo(
+    () => blogProductTopics.map((value) => ({ value, label: value })),
     [],
   );
   const blogIndustryOptions = useMemo(
@@ -503,7 +508,8 @@ export function AdminEditorialClient({
       seoDescription: entry?.seoDescription ?? '',
       publishedAt: toLocalDateTimeValue(entry?.publishedAt),
       lead: entry?.payload.lead ?? '',
-      topic: entry?.payload.topic ?? blogTopics[0],
+      category: entry?.payload.category ?? blogCategories[0],
+      productTopics: entry?.payload.productTopics?.length ? entry.payload.productTopics : [blogProductTopics[0]],
       industry: entry?.payload.industry ?? blogIndustries[0],
       authorId: entry?.payload.authorId ?? blogAuthors[0]?.id ?? '',
       readMinutes: entry?.payload.readMinutes ?? 6,
@@ -654,7 +660,8 @@ export function AdminEditorialClient({
             publishedAt: values.publishedAt ? new Date(values.publishedAt).toISOString() : null,
             payload: {
               lead: values.lead.trim(),
-              topic: values.topic,
+              category: values.category,
+              productTopics: values.productTopics,
               industry: values.industry,
               authorId: values.authorId,
               readMinutes: Number(values.readMinutes),
@@ -1164,7 +1171,7 @@ export function AdminEditorialClient({
                       {
                         title: '主题 / 行业',
                         key: 'topicIndustry',
-                        render: (_, row: AdminEditorialBlogEntry) => `${row.payload.topic} / ${row.payload.industry}`,
+                        render: (_, row: AdminEditorialBlogEntry) => `${row.payload.category} / ${row.payload.industry}`,
                       },
                       {
                         title: '作者',
@@ -1557,7 +1564,8 @@ export function AdminEditorialClient({
           initialValues={{
             locale: 'en-US',
             status: 'draft',
-            topic: blogTopics[0],
+            category: blogCategories[0],
+            productTopics: [blogProductTopics[0]],
             industry: blogIndustries[0],
             authorId: blogAuthors[0]?.id,
             readMinutes: 6,
@@ -1587,8 +1595,13 @@ export function AdminEditorialClient({
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label="主题" name="topic" rules={[{ required: true, message: '请选择主题' }]}>
-                <Select options={blogTopicOptions} />
+              <Form.Item label="内容分类" name="category" rules={[{ required: true, message: '请选择内容分类' }]}>
+                <Select options={blogCategoryOptions} />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="产品主题" name="productTopics" rules={[{ required: true, message: '请选择产品主题' }]}>
+                <Select mode="multiple" options={blogProductTopicOptions} />
               </Form.Item>
             </Col>
             <Col span={8}>
