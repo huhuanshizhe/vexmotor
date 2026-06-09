@@ -15,6 +15,52 @@ type HeaderUtilityStripProps = {
   preferences: SitePreferences;
 };
 
+/* ── Icon components for utility links ── */
+
+function CartIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="9" cy="21" r="1" />
+      <circle cx="20" cy="21" r="1" />
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+    </svg>
+  );
+}
+
+function CompareIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 3v18h18" />
+      <rect x="7" y="10" width="3" height="8" rx="0.5" />
+      <rect x="14" y="6" width="3" height="12" rx="0.5" />
+    </svg>
+  );
+}
+
+function WishlistIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  );
+}
+
+function LoginIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  );
+}
+
+const UTILITY_ICONS: Record<string, (props: { className?: string }) => React.JSX.Element> = {
+  cart: CartIcon,
+  Compare: CompareIcon,
+  Wishlist: WishlistIcon,
+  Login: LoginIcon,
+};
+
 export function HeaderUtilityStrip({ links, initialCartCount, preferences }: HeaderUtilityStripProps) {
   const [compareCount, setCompareCount] = useState(0);
   const [locale, setLocale] = useState(preferences.locale);
@@ -81,7 +127,6 @@ export function HeaderUtilityStrip({ links, initialCartCount, preferences }: Hea
   return (
     <div className="header-utility-strip">
       <div className="header-market-group" aria-label="Site preferences">
-        {/* Language Switcher Component */}
         <LanguageSwitcher />
 
         <label className="header-language-chip">
@@ -102,33 +147,35 @@ export function HeaderUtilityStrip({ links, initialCartCount, preferences }: Hea
         </label>
       </div>
 
-      {links.map((item) => {
-        const className = ['header-utility-link', item.variant === 'pill' ? 'header-utility-pill' : '', item.variant === 'pill-secondary' ? 'header-utility-pill header-utility-pill-secondary' : '']
-          .filter(Boolean)
-          .join(' ');
+      <div className="header-icon-links">
+        {links.map((item) => {
+          const IconComponent = UTILITY_ICONS[item.label];
+          const count = item.label === 'cart' ? initialCartCount : item.label === 'Compare' ? compareCount : null;
 
-        const count = item.label === 'cart' ? initialCartCount : item.label === 'Compare' ? compareCount : null;
-        const content = (
-          <>
-            <span>{item.label}</span>
-            {count !== null ? <span className="header-utility-count">{count}</span> : null}
-          </>
-        );
-
-        if (item.external) {
-          return (
-            <a key={`${item.label}-${item.href}`} href={item.href} className={className} target="_blank" rel="noreferrer">
-              {content}
-            </a>
+          const linkContent = (
+            <span className="header-icon-link-inner">
+              {IconComponent ? <IconComponent className="header-icon-svg" /> : <span>{item.label}</span>}
+              {count !== null && count > 0 ? <span className="header-utility-count">{count}</span> : null}
+            </span>
           );
-        }
 
-        return (
-          <Link key={`${item.label}-${item.href}`} href={item.href.startsWith('/') ? withLocalePath(item.href, locale) : item.href} className={className}>
-            {content}
-          </Link>
-        );
-      })}
+          const className = 'header-icon-link';
+
+          if (item.external) {
+            return (
+              <a key={`${item.label}-${item.href}`} href={item.href} className={className} target="_blank" rel="noreferrer" title={item.label}>
+                {linkContent}
+              </a>
+            );
+          }
+
+          return (
+            <Link key={`${item.label}-${item.href}`} href={item.href.startsWith('/') ? withLocalePath(item.href, locale) : item.href} className={className} title={item.label}>
+              {linkContent}
+            </Link>
+          );
+        })}
+      </div>
     </div>
   );
 }

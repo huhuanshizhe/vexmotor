@@ -83,9 +83,7 @@ export async function StorefrontFrame({ title, description, eyebrow, actions, ch
       <header className="storefront-header">
         <div className="storefront-header-main">
           <Link href={withLocalePath('/', preferences.locale)} className="brand-mark">
-            <Image src="/brand/stepmotech-logo-legacy.jpg" alt="StepMotech" width={300} height={37} className="brand-logo-image" priority />
-            <span className="brand-title brand-title-fallback">StepMotech</span>
-            <span className="brand-subtitle">Factory Direct Motion Components</span>
+            <Image src="/brand/stepmotech-logo-legacy.jpg" alt="StepMotech" width={180} height={24} className="brand-logo-image" priority />
           </Link>
 
           <form action={withLocalePath('/search', preferences.locale)} className="header-search-form">

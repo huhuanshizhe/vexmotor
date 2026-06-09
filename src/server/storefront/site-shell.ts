@@ -73,14 +73,13 @@ export const storefrontNavigationBase: Omit<NavigationData, 'categories'> = {
     { label: 'Compare', href: '/compare' },
     { label: 'Wishlist', href: '/account/wishlist' },
     { label: 'Login', href: '/login' },
-    { label: 'Register', href: '/register', variant: 'pill-secondary' },
   ],
   mainLinks: [
     { label: 'Home', href: '/' },
     { label: 'Products', href: '/products', children: productLinks },
     { label: 'Blog', href: '/blog' },
     { label: 'FAQ', href: '/faq' },
-    { label: 'About us', href: '/company/about' },
+    { label: 'About', href: '/company/about' },
     { label: 'Contact', href: '/contact' },
   ],
 };
