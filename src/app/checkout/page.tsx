@@ -37,11 +37,7 @@ export default async function CheckoutPage() {
 
   if (!cart || !cart.items.length) {
     return (
-      <StorefrontFrame
-        eyebrow="Checkout"
-        title="Your cart needs at least one direct-buy item."
-        description="Inquiry-mode products route into RFQ instead of checkout, so only direct-buy items can proceed here."
-      >
+      <StorefrontFrame>
         <section className="section">
           <div className="section-inner">
             <article className="info-card">
@@ -57,16 +53,12 @@ export default async function CheckoutPage() {
 
   if (userId && !addresses.length) {
     return (
-      <StorefrontFrame
-        eyebrow="Checkout"
-        title="Add a saved address before placing the order."
-        description="Checkout writes shipping and billing snapshots from the member address book."
-      >
+      <StorefrontFrame>
         <section className="section">
           <div className="section-inner">
             <article className="info-card">
               <h2 style={{ marginTop: 0 }}>Add an address first</h2>
-              <p className="section-description">Checkout now uses your saved address book for shipping and billing snapshots.</p>
+              <p className="section-description">Checkout uses your saved address book for shipping and billing.</p>
               <Link href={withLocalePath('/account/addresses', preferences.locale)} className="button-primary">Manage Addresses</Link>
             </article>
           </div>
@@ -76,15 +68,7 @@ export default async function CheckoutPage() {
   }
 
   return (
-    <StorefrontFrame
-      eyebrow="Checkout"
-      title={userId ? 'Confirm buyer details, logistics preference, and order references before submission.' : 'Enter delivery details and submit a guest wholesale order.'}
-      description={
-        userId
-          ? 'This checkout is shaped around small wholesale behavior: saved addresses, delivery choice, payment path, PO references, and a real order write-back into PostgreSQL.'
-          : 'Guest checkout keeps the small wholesale flow moving even before account creation: manual address entry, logistics selection, buyer references, and an order confirmation page you can review immediately.'
-      }
-    >
+    <StorefrontFrame>
       <section className="section">
         <div className="section-inner">
           <CheckoutClient cart={cart} addresses={addresses} guestMode={!userId} commerceConfig={commerceConfig} />

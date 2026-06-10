@@ -33,11 +33,7 @@ export default async function CartPage() {
   ]);
 
   return (
-    <StorefrontFrame
-      eyebrow="Cart"
-      title="Build a small-batch wholesale order before moving to secure checkout."
-      description="The cart now mirrors a practical independent B2B flow with quantity control, coupon handling, threshold freight logic, and a direct path into account-backed checkout."
-    >
+    <StorefrontFrame>
       <section className="section">
         <div className="section-inner">
           <CartClient
