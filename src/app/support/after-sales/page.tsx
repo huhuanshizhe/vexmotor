@@ -89,9 +89,9 @@ export default async function AfterSalesPage() {
     },
     {
       title: 'Service email',
-      value: emailBlock?.lines[0] ?? 'susy@stepmotech.com',
+      value: emailBlock?.lines[0] ?? 'support@stepmotech.online',
       note: 'Best for RMA evidence, spare-part lists, and documents that should stay attached to the case.',
-      href: 'mailto:susy@stepmotech.com?subject=After-sales%20support',
+      href: 'mailto:support@stepmotech.online?subject=After-sales%20support',
     },
     {
       title: 'Engineering review request',

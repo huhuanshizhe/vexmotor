@@ -20,7 +20,7 @@ export async function GET() {
     },
     {
       name: pressCatalog.mediaKitContents[3],
-      content: ['Press Contact', '', 'Email: susy@stepmotech.com', 'Support path: /support/contact?topic=press'].join('\n'),
+      content: ['Press Contact', '', 'Email: support@stepmotech.online', 'Support path: /support/contact?topic=press'].join('\n'),
     },
   ]);
 

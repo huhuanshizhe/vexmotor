@@ -68,7 +68,7 @@ export default async function SupportContactPage({
     name: `STEPMOTECH ${block.title}`,
     address: block.lines[0],
     telephone: phoneBlock?.lines[1]?.replace('Global Support: ', '') ?? '+1-518-722-7315',
-    email: emailBlock?.lines[0] ?? 'susy@stepmotech.com',
+    email: emailBlock?.lines[0] ?? 'support@stepmotech.online',
   }));
 
   return (

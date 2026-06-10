@@ -19,7 +19,7 @@ export async function generateMetadata() {
 
 export default async function CompanyCareersPage() {
   const { locale } = await getServerSitePreferences();
-  const applyEmailPath = 'mailto:susy@stepmotech.com?subject=Career%20Application%20-%20STEPMOTECH';
+  const applyEmailPath = 'mailto:support@stepmotech.online?subject=Career%20Application%20-%20STEPMOTECH';
   const breadcrumbJsonLd = buildBreadcrumbJsonLd(
     [
       { name: 'Home', path: '/' },

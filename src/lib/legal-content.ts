@@ -28,8 +28,8 @@ export type LegalPage = {
 };
 
 export const legalContact = {
-  legalEmail: 'legal@stepmotech.com',
-  dpoEmail: 'dpo@stepmotech.com',
+  legalEmail: 'support@stepmotech.online',
+  dpoEmail: 'support@stepmotech.online',
   dpoName: 'Data Protection Officer, STEPMOTECH Compliance Office',
   postal: 'STEPMOTECH Compliance Office, Unit 5, Industrial Motion Park, Shenzhen, China',
 };

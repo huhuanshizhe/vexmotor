@@ -30,7 +30,7 @@ export default async function CompanyOfficesPage() {
   const emailBlock = footerContactBlocks.find((block) => block.title === 'Email');
   const emergencySupport = phoneBlock?.lines[1] ?? 'Global Support: +1-518-722-7315';
   const whatsappSupport = phoneBlock?.lines[0] ?? 'WhatsApp: +86-19952400441';
-  const supportEmail = emailBlock?.lines[0] ?? 'susy@stepmotech.com';
+  const supportEmail = emailBlock?.lines[0] ?? 'support@stepmotech.online';
 
   const breadcrumbJsonLd = buildBreadcrumbJsonLd(
     [

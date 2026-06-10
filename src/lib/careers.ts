@@ -71,7 +71,7 @@ export const careerRoles: CareerRole[] = [
       'Comfort working across SKU-heavy catalogs, technical sales context, and export-aware commercial workflows.',
     ],
     compensation: 'Base salary + performance incentive aligned to regional channel goals.',
-    applyEmail: 'susy@stepmotech.com',
+    applyEmail: 'support@stepmotech.online',
   },
   {
     slug: 'motion-application-engineer',
@@ -93,7 +93,7 @@ export const careerRoles: CareerRole[] = [
       'Comfort turning repeated support patterns into clearer tools, documents, and qualification flows.',
     ],
     compensation: 'Competitive salary with role-based bonus tied to execution and support quality.',
-    applyEmail: 'susy@stepmotech.com',
+    applyEmail: 'support@stepmotech.online',
   },
   {
     slug: 'supply-chain-planner',
@@ -115,7 +115,7 @@ export const careerRoles: CareerRole[] = [
       'Clear communication when capacity or material constraints affect customer commitments.',
     ],
     compensation: 'Salary package based on planning scope and execution responsibility.',
-    applyEmail: 'susy@stepmotech.com',
+    applyEmail: 'support@stepmotech.online',
   },
 ];
 

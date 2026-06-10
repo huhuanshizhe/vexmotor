@@ -30,7 +30,7 @@ async function getResendClient() {
 }
 
 function getFromAddress(): string {
-  return process.env.EMAIL_FROM ?? 'STEPMOTECH <noreply@stepmotech.com>';
+  return process.env.EMAIL_FROM ?? 'STEPMOTECH <support@stepmotech.online>';
 }
 
 export async function sendEmail(input: SendEmailInput): Promise<SendResult> {

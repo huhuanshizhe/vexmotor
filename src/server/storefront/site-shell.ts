@@ -115,8 +115,8 @@ export const footerContactBlocks: FooterContactBlock[] = [
   },
   {
     title: 'Email',
-    lines: ['susy@stepmotech.com'],
-    href: 'mailto:susy@stepmotech.com',
+    lines: ['support@stepmotech.online'],
+    href: 'mailto:support@stepmotech.online',
   },
   {
     title: 'Operate Center',
@@ -310,7 +310,7 @@ export const supportPages: SupportPage[] = [
         paragraphs: [
           'Cookies are used to remember cart contents, maintain session preferences, and analyze traffic or performance.',
           'StepMotech does not sell, rent, or trade personal information, but may share it with payment processors, logistics providers, and authorities when legally required.',
-          'Customers may request access, correction, deletion, portability, or restriction of their data by contacting service@stepmotech.com.',
+          'Customers may request access, correction, deletion, portability, or restriction of their data by contacting support@stepmotech.online.',
         ],
       },
       {
