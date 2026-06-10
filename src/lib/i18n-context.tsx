@@ -77,14 +77,15 @@ export function I18nProvider({
 
   const setLocale = useCallback((newLocale: Locale) => {
     setLocaleState(newLocale);
-    // Save to cookie for persistence
     document.cookie = `site_locale=${newLocale}; Path=/; Max-Age=31536000; SameSite=Lax`;
-    // Soft navigation to apply locale without full page reload
     const newPath = withLocalePath(pathname, newLocale);
     if (newPath !== pathname) {
+      // router.push triggers navigation + middleware rewrite + RSC fetch
       router.push(newPath);
+    } else {
+      // Same path, just refresh to pick up new locale cookie
+      router.refresh();
     }
-    router.refresh();
   }, [router, pathname]);
 
   return (

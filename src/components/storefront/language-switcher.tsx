@@ -38,14 +38,9 @@ export function LanguageSwitcher() {
   }, []);
 
   const handleLocaleChange = (newLocale: Locale) => {
-    setLocale(newLocale);
     setIsOpen(false);
-    
-    // Update URL with new locale prefix
-    const newPath = withLocalePath(pathname, newLocale);
-    if (newPath !== pathname) {
-      window.history.pushState({}, '', newPath);
-    }
+    // setLocale() handles cookie, router.push, and router.refresh
+    setLocale(newLocale);
   };
 
   const currentLocale = AVAILABLE_LOCALES.find(l => l.code === locale);

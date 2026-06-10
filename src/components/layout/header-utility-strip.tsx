@@ -5,7 +5,7 @@ import { useEffect, useState, useTransition } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { COMPARE_ITEMS_UPDATED_EVENT, readCompareItems } from '@/lib/compare-items';
-import { CURRENCY_COOKIE_NAME, LOCALE_COOKIE_NAME, PREFERENCE_COOKIE_MAX_AGE, type SitePreferences, getMarketDefaults, withLocalePath, parseLocaleFromPathname } from '@/lib/i18n';
+import { CURRENCY_COOKIE_NAME, LOCALE_COOKIE_NAME, PREFERENCE_COOKIE_MAX_AGE, type SitePreferences, withLocalePath, parseLocaleFromPathname } from '@/lib/i18n';
 import { LanguageSwitcher } from '@/components/storefront/language-switcher';
 import { CART_UPDATED_EVENT } from '@/components/storefront/add-to-cart-button';
 import type { StorefrontUtilityLink } from '@/server/storefront';
@@ -105,7 +105,6 @@ export function HeaderUtilityStrip({ links, initialCartCount, preferences }: Hea
   };
 
   const applyLocale = (nextLocale: SitePreferences['locale']) => {
-    const defaults = getMarketDefaults(nextLocale);
     const strippedPath = parseLocaleFromPathname(pathname).pathname;
     const queryString = searchParams.toString();
     const nextPath = `${withLocalePath(strippedPath, nextLocale)}${queryString ? `?${queryString}` : ''}`;
@@ -113,10 +112,12 @@ export function HeaderUtilityStrip({ links, initialCartCount, preferences }: Hea
     setLocale(nextLocale);
     writePreferenceCookie(LOCALE_COOKIE_NAME, nextLocale);
 
-    startTransition(() => {
+    const currentPath = `${withLocalePath(strippedPath, locale)}${queryString ? `?${queryString}` : ''}`;
+    if (nextPath !== currentPath) {
       router.push(nextPath);
+    } else {
       router.refresh();
-    });
+    }
   };
 
   const applyCurrency = (nextCurrency: SitePreferences['currency']) => {
