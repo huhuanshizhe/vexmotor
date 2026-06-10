@@ -5,8 +5,7 @@ import { NewsletterSignupForm } from '@/components/storefront/newsletter-signup-
 import { JsonLdScript } from '@/components/seo/json-ld';
 import { blogProductTopicFromSlug, type BlogProductTopic } from '@/lib/blog';
 import { withLocalePath } from '@/lib/i18n';
-import { getServerSitePreferences } from '@/lib/i18n-server';
-import { getTranslations } from '@/lib/i18n-context';
+import { getServerSitePreferences, getServerTranslations } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 import { SITE_URL } from '@/lib/site-config';
 import { getBlogAuthorById, getBlogCatalog, getPostsByProductTopic, paginateBlogPosts } from '@/server/content/blog';
@@ -48,7 +47,7 @@ export async function generateMetadata({ params }: TopicPageProps) {
 
 export default async function BlogTopicPage({ params, searchParams }: TopicPageProps) {
   const [{ topic: topicSlug }, { page: pageParam }, { locale }] = await Promise.all([params, searchParams, getServerSitePreferences()]);
-  const { t } = getTranslations(locale);
+  const { t } = getServerTranslations(locale);
   const topic = blogProductTopicFromSlug[topicSlug];
 
   if (!topic) {

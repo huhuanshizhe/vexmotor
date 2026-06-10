@@ -5,8 +5,7 @@ import { NewsletterSignupForm } from '@/components/storefront/newsletter-signup-
 import { JsonLdScript } from '@/components/seo/json-ld';
 import { blogCategorySlug } from '@/lib/blog';
 import { withLocalePath } from '@/lib/i18n';
-import { getServerSitePreferences } from '@/lib/i18n-server';
-import { getTranslations } from '@/lib/i18n-context';
+import { getServerSitePreferences, getServerTranslations } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 import { SITE_URL } from '@/lib/site-config';
 import {
@@ -40,7 +39,7 @@ export async function generateMetadata() {
 
 export default async function BlogPage({ searchParams }: BlogPageProps) {
   const [{ locale }, params] = await Promise.all([getServerSitePreferences(), searchParams]);
-  const { t } = getTranslations(locale);
+  const { t } = getServerTranslations(locale);
   const catalog = await getBlogCatalog(locale);
 
   const filters = {

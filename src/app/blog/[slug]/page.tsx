@@ -6,8 +6,7 @@ import { AddToCartButton } from '@/components/storefront/add-to-cart-button';
 import { JsonLdScript } from '@/components/seo/json-ld';
 import { blogProductTopicSlug } from '@/lib/blog';
 import { type Locale, withLocalePath } from '@/lib/i18n';
-import { getServerSitePreferences } from '@/lib/i18n-server';
-import { getTranslations } from '@/lib/i18n-context';
+import { getServerSitePreferences, getServerTranslations } from '@/lib/i18n-server';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 import { SITE_URL } from '@/lib/site-config';
 import { getBlogAuthorById, getBlogCatalog, getBlogPostBySlug, getRelatedPosts } from '@/server/content/blog';
@@ -73,7 +72,7 @@ function BlogProductCard({ product, locale, eyebrow, body }: { product: Storefro
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const [{ locale }, { slug }] = await Promise.all([getServerSitePreferences(), params]);
-  const { t } = getTranslations(locale);
+  const { t } = getServerTranslations(locale);
   const catalog = await getBlogCatalog(locale);
   const post = getBlogPostBySlug(catalog, slug);
 

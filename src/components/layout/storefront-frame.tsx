@@ -10,8 +10,7 @@ import { StorefrontNav } from '@/components/layout/storefront-nav';
 import type { Locale } from '@/lib/i18n';
 import type { SitePreferences } from '@/lib/i18n';
 import { withLocalePath } from '@/lib/i18n';
-import { getServerSitePreferences } from '@/lib/i18n-server';
-import { getTranslations } from '@/lib/i18n-context';
+import { getServerSitePreferences, getServerTranslations } from '@/lib/i18n-server';
 import { notificationBarConfig, NOTIFICATION_BAR_COOKIE_NAME } from '@/lib/site-config';
 import { getHomeData, getNavigationData } from '@/server/storefront';
 import { getCurrentUserId } from '@/server/auth/session';
@@ -62,7 +61,7 @@ export async function StorefrontFrame({ title, description, eyebrow, actions, ch
   const userId = await getCurrentUserId().catch(() => null);
   const anonymousToken = cookieStore.get('cart_token')?.value ?? null;
   const preferences = await getServerSitePreferences().catch(() => fallbackSitePreferences);
-  const { t } = getTranslations(preferences.locale);
+  const { t } = getServerTranslations(preferences.locale);
   const [homeData, navigation, activeCart] = await Promise.all([
     getHomeData(),
     getNavigationData().catch(() => ({ ...storefrontNavigationBase, categories: [] })),
