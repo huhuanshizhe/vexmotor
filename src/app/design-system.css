@@ -990,6 +990,19 @@ body {
   cursor: pointer;
 }
 
+.ui-toast-action {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--brand-500);
+  text-decoration: none;
+}
+
+.ui-toast-action:hover {
+  text-decoration: underline;
+}
+
 @keyframes ui-skeleton-wave {
   from {
     background-position: 200% 0;

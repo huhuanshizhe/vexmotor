@@ -13,6 +13,8 @@ export type ToastMessage = {
   description?: string;
   tone?: ToastTone;
   persistent?: boolean;
+  actionLabel?: string;
+  actionHref?: string;
 };
 
 type ToastContextValue = {
@@ -27,12 +29,15 @@ const noopToastContext: ToastContextValue = {
 
 const ToastContext = createContext<ToastContextValue>(noopToastContext);
 
-function ToastCard({ id, title, description, tone = 'default', persistent = false, onDismiss }: ToastMessage & { onDismiss: (id: string) => void }) {
+function ToastCard({ id, title, description, tone = 'default', persistent = false, actionLabel, actionHref, onDismiss }: ToastMessage & { onDismiss: (id: string) => void }) {
   return (
     <article className={cn('ui-toast', `is-${tone}`)} role={tone === 'error' ? 'alert' : 'status'}>
       <div className="ui-toast-copy">
         <strong>{title}</strong>
         {description ? <p>{description}</p> : null}
+        {actionLabel && actionHref ? (
+          <a href={actionHref} className="ui-toast-action">{actionLabel} →</a>
+        ) : null}
       </div>
       <button type="button" className="ui-toast-dismiss" onClick={() => onDismiss(id)} aria-label="Dismiss toast">
         {persistent ? 'Dismiss' : 'Close'}

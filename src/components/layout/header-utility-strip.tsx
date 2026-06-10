@@ -5,8 +5,9 @@ import { useEffect, useState, useTransition } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { COMPARE_ITEMS_UPDATED_EVENT, readCompareItems } from '@/lib/compare-items';
-import { CURRENCY_COOKIE_NAME, LOCALE_COOKIE_NAME, PREFERENCE_COOKIE_MAX_AGE, type SitePreferences, UNIT_SYSTEM_COOKIE_NAME, getMarketDefaults, withLocalePath, parseLocaleFromPathname } from '@/lib/i18n';
+import { CURRENCY_COOKIE_NAME, LOCALE_COOKIE_NAME, PREFERENCE_COOKIE_MAX_AGE, type SitePreferences, getMarketDefaults, withLocalePath, parseLocaleFromPathname } from '@/lib/i18n';
 import { LanguageSwitcher } from '@/components/storefront/language-switcher';
+import { CART_UPDATED_EVENT } from '@/components/storefront/add-to-cart-button';
 import type { StorefrontUtilityLink } from '@/server/storefront';
 
 type HeaderUtilityStripProps = {
@@ -63,9 +64,9 @@ const UTILITY_ICONS: Record<string, (props: { className?: string }) => React.JSX
 
 export function HeaderUtilityStrip({ links, initialCartCount, preferences }: HeaderUtilityStripProps) {
   const [compareCount, setCompareCount] = useState(0);
+  const [cartCount, setCartCount] = useState(initialCartCount);
   const [locale, setLocale] = useState(preferences.locale);
   const [currency, setCurrency] = useState(preferences.currency);
-  const [unitSystem, setUnitSystem] = useState(preferences.unitSystem);
   const [isPending, startTransition] = useTransition();
   const pathname = usePathname();
   const router = useRouter();
@@ -76,13 +77,26 @@ export function HeaderUtilityStrip({ links, initialCartCount, preferences }: Hea
       setCompareCount(readCompareItems().length);
     };
 
+    const syncCartCount = () => {
+      fetch('/api/front/cart')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((detail) => {
+          if (detail && typeof detail.itemCount === 'number') {
+            setCartCount(detail.itemCount);
+          }
+        })
+        .catch(() => {});
+    };
+
     syncCompareCount();
     window.addEventListener('storage', syncCompareCount);
     window.addEventListener(COMPARE_ITEMS_UPDATED_EVENT, syncCompareCount);
+    window.addEventListener(CART_UPDATED_EVENT, syncCartCount);
 
     return () => {
       window.removeEventListener('storage', syncCompareCount);
       window.removeEventListener(COMPARE_ITEMS_UPDATED_EVENT, syncCompareCount);
+      window.removeEventListener(CART_UPDATED_EVENT, syncCartCount);
     };
   }, []);
 
@@ -98,7 +112,6 @@ export function HeaderUtilityStrip({ links, initialCartCount, preferences }: Hea
 
     setLocale(nextLocale);
     writePreferenceCookie(LOCALE_COOKIE_NAME, nextLocale);
-    writePreferenceCookie(UNIT_SYSTEM_COOKIE_NAME, defaults.unitSystem);
 
     startTransition(() => {
       router.push(nextPath);
@@ -109,15 +122,6 @@ export function HeaderUtilityStrip({ links, initialCartCount, preferences }: Hea
   const applyCurrency = (nextCurrency: SitePreferences['currency']) => {
     setCurrency(nextCurrency);
     writePreferenceCookie(CURRENCY_COOKIE_NAME, nextCurrency);
-
-    startTransition(() => {
-      router.refresh();
-    });
-  };
-
-  const applyUnitSystem = (nextUnitSystem: SitePreferences['unitSystem']) => {
-    setUnitSystem(nextUnitSystem);
-    writePreferenceCookie(UNIT_SYSTEM_COOKIE_NAME, nextUnitSystem);
 
     startTransition(() => {
       router.refresh();
@@ -137,20 +141,12 @@ export function HeaderUtilityStrip({ links, initialCartCount, preferences }: Hea
             <option value="GBP">GBP</option>
           </select>
         </label>
-
-        <label className="header-language-chip">
-          <span className="sr-only">Units</span>
-          <select className="header-market-select" value={unitSystem} onChange={(event) => applyUnitSystem(event.target.value as SitePreferences['unitSystem'])} disabled={isPending}>
-            <option value="imperial">Imperial</option>
-            <option value="metric">Metric</option>
-          </select>
-        </label>
       </div>
 
       <div className="header-icon-links">
         {links.map((item) => {
           const IconComponent = UTILITY_ICONS[item.label];
-          const count = item.label === 'cart' ? initialCartCount : item.label === 'Compare' ? compareCount : null;
+          const count = item.label === 'cart' ? cartCount : item.label === 'Compare' ? compareCount : null;
 
           const linkContent = (
             <span className="header-icon-link-inner">

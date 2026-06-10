@@ -14,7 +14,14 @@ type AddToCartButtonProps = {
   showBuyNow?: boolean;
 };
 
-export function AddToCartButton({ productId, moq = 1, showQuantitySelector = false, redirectToCart = true, showBuyNow = false }: AddToCartButtonProps) {
+/** Dispatched after a successful add-to-cart so header cart count can update. */
+export const CART_UPDATED_EVENT = 'vexmotor:cart-updated';
+
+function notifyCartUpdated() {
+  window.dispatchEvent(new CustomEvent(CART_UPDATED_EVENT));
+}
+
+export function AddToCartButton({ productId, moq = 1, showQuantitySelector = false, redirectToCart = false, showBuyNow = false }: AddToCartButtonProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { pushToast } = useToast();
@@ -40,6 +47,7 @@ export function AddToCartButton({ productId, moq = 1, showQuantitySelector = fal
         return;
       }
 
+      notifyCartUpdated();
       const locale = parseLocaleFromPathname(pathname).locale;
 
       if (redirectToCart) {
@@ -47,12 +55,12 @@ export function AddToCartButton({ productId, moq = 1, showQuantitySelector = fal
       } else {
         pushToast({
           title: 'Added to cart',
-          description: `Quantity ${quantity} is now in your cart.`,
+          description: `${quantity} item${quantity > 1 ? 's' : ''} added to your cart.`,
           tone: 'success',
+          actionLabel: 'View Cart',
+          actionHref: withLocalePath('/cart', locale),
         });
       }
-
-      router.refresh();
     });
   }
 
@@ -70,9 +78,9 @@ export function AddToCartButton({ productId, moq = 1, showQuantitySelector = fal
         return;
       }
 
+      notifyCartUpdated();
       const locale = parseLocaleFromPathname(pathname).locale;
       router.push(withLocalePath('/checkout', locale));
-      router.refresh();
     });
   }
 
