@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+import { StorefrontFrame } from '@/components/layout/storefront-frame';
 import { AddToCartButton } from '@/components/storefront/add-to-cart-button';
 import { JsonLdScript } from '@/components/seo/json-ld';
 import { blogProductTopicSlug } from '@/lib/blog';
@@ -153,7 +154,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   };
 
   return (
-    <>
+    <StorefrontFrame>
       <JsonLdScript id={`blog-post-${post.slug}-breadcrumb`} data={breadcrumbJsonLd} />
       <JsonLdScript id={`blog-post-${post.slug}-article`} data={articleJsonLd} />
 
@@ -345,6 +346,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </aside>
         </div>
       </section>
-    </>
+    </StorefrontFrame>
   );
 }

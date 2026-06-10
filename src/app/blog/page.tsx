@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { StorefrontFrame } from '@/components/layout/storefront-frame';
 import { NewsletterSignupForm } from '@/components/storefront/newsletter-signup-form';
 import { JsonLdScript } from '@/components/seo/json-ld';
 import { blogCategorySlug } from '@/lib/blog';
@@ -105,7 +106,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   }
 
   return (
-    <>
+    <StorefrontFrame>
       <JsonLdScript id="blog-index-breadcrumb-jsonld" data={breadcrumbJsonLd} />
       <JsonLdScript id="blog-index-jsonld" data={blogJsonLd} />
 
@@ -292,6 +293,6 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           </aside>
         </div>
       </section>
-    </>
+    </StorefrontFrame>
   );
 }

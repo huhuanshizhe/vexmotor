@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { StorefrontFrame } from '@/components/layout/storefront-frame';
 import { NewsletterSignupForm } from '@/components/storefront/newsletter-signup-form';
 import { JsonLdScript } from '@/components/seo/json-ld';
 import { blogProductTopicFromSlug, type BlogProductTopic } from '@/lib/blog';
@@ -100,7 +101,7 @@ export default async function BlogTopicPage({ params, searchParams }: TopicPageP
   }
 
   return (
-    <>
+    <StorefrontFrame>
       <JsonLdScript id={`blog-topic-${topicSlug}-breadcrumb`} data={breadcrumbJsonLd} />
       <JsonLdScript id={`blog-topic-${topicSlug}-collection`} data={collectionJsonLd} />
 
@@ -198,6 +199,6 @@ export default async function BlogTopicPage({ params, searchParams }: TopicPageP
           </aside>
         </div>
       </section>
-    </>
+    </StorefrontFrame>
   );
 }
