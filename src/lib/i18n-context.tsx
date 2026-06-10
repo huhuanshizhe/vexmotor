@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { type Locale, DEFAULT_LOCALE, withLocalePath } from '@/lib/i18n';
+import { type Locale, DEFAULT_LOCALE, withLocalePath, parseLocaleFromPathname } from '@/lib/i18n';
 
 // Import translations
 import enTranslations from '@/locales/en.json';
@@ -78,12 +78,12 @@ export function I18nProvider({
   const setLocale = useCallback((newLocale: Locale) => {
     setLocaleState(newLocale);
     document.cookie = `site_locale=${newLocale}; Path=/; Max-Age=31536000; SameSite=Lax`;
-    const newPath = withLocalePath(pathname, newLocale);
+    // Strip existing locale prefix before adding the new one
+    const strippedPath = parseLocaleFromPathname(pathname).pathname;
+    const newPath = withLocalePath(strippedPath, newLocale);
     if (newPath !== pathname) {
-      // router.push triggers navigation + middleware rewrite + RSC fetch
       router.push(newPath);
     } else {
-      // Same path, just refresh to pick up new locale cookie
       router.refresh();
     }
   }, [router, pathname]);
