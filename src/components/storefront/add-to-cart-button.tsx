@@ -5,6 +5,7 @@ import { useState, useTransition } from 'react';
 
 import { useToast } from '@C/toast';
 import { parseLocaleFromPathname, withLocalePath } from '@/lib/i18n';
+import { useTranslation } from '@/lib/i18n-context';
 
 type AddToCartButtonProps = {
   productId: string;
@@ -25,6 +26,7 @@ export function AddToCartButton({ productId, moq = 1, showQuantitySelector = fal
   const router = useRouter();
   const pathname = usePathname();
   const { pushToast } = useToast();
+  const { t } = useTranslation();
   const [message, setMessage] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(Math.max(1, moq));
   const [isPending, startTransition] = useTransition();
@@ -43,7 +45,7 @@ export function AddToCartButton({ productId, moq = 1, showQuantitySelector = fal
       });
 
       if (!response.ok) {
-        setMessage('This product could not be added to the cart.');
+        setMessage(t('common.error'));
         return;
       }
 
@@ -54,10 +56,10 @@ export function AddToCartButton({ productId, moq = 1, showQuantitySelector = fal
         router.push(withLocalePath('/cart', locale));
       } else {
         pushToast({
-          title: 'Added to cart',
-          description: `${quantity} item${quantity > 1 ? 's' : ''} added to your cart.`,
+          title: t('product.addToCart'),
+          description: `${quantity} ${quantity > 1 ? 'items' : 'item'} added.`,
           tone: 'success',
-          actionLabel: 'View Cart',
+          actionLabel: t('header.cart'),
           actionHref: withLocalePath('/cart', locale),
         });
       }
@@ -74,7 +76,7 @@ export function AddToCartButton({ productId, moq = 1, showQuantitySelector = fal
       });
 
       if (!response.ok) {
-        setMessage('Unable to add this product to cart.');
+        setMessage(t('common.error'));
         return;
       }
 
@@ -111,12 +113,12 @@ export function AddToCartButton({ productId, moq = 1, showQuantitySelector = fal
           </label>
 
           <button type="button" className="button-primary quantity-cart-button" onClick={handleAddToCart} disabled={isPending}>
-            {isPending ? 'Adding...' : 'Add to Cart'}
+            {isPending ? t('common.loading') : t('product.addToCart')}
           </button>
         </div>
       ) : (
         <button type="button" className="button-primary" onClick={handleAddToCart} disabled={isPending}>
-          {isPending ? 'Adding...' : 'Add to Cart'}
+          {isPending ? t('common.loading') : t('product.addToCart')}
         </button>
       )}
 
@@ -124,7 +126,7 @@ export function AddToCartButton({ productId, moq = 1, showQuantitySelector = fal
 
       {showBuyNow ? (
         <button type="button" className="button-secondary buy-now-button" onClick={handleBuyNow} disabled={isPending}>
-          {isPending ? 'Redirecting...' : 'Buy Now'}
+          {isPending ? t('common.loading') : t('product.buyNow')}
         </button>
       ) : null}
     </div>

@@ -7,6 +7,7 @@ import { useEffect, useState, useTransition } from 'react';
 import { calculateOrderPricing, type CommerceConfig } from '@/lib/commerce-config';
 import type { Locale } from '@/lib/i18n';
 import { withLocalePath } from '@/lib/i18n';
+import { useTranslation } from '@/lib/i18n-context';
 import { buildShippingOptions, getShippingCountryOptions } from '@/lib/shipping';
 import { getNextVolumeTier } from '@/lib/volume-pricing';
 
@@ -94,6 +95,7 @@ type CartClientProps = {
 };
 
 export function CartClient({ initialCart, locale, hasAccountContext, crossSellProducts, emptyStateCategories, commerceConfig }: CartClientProps) {
+  const { t } = useTranslation();
 
   function formatMoney(amount: number, currency = 'USD') {
     return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount);
@@ -209,8 +211,8 @@ export function CartClient({ initialCart, locale, hasAccountContext, crossSellPr
         <article className="info-card trade-empty-card">
           <div className="section-header trade-card-header">
             <div>
-              <h2 className="cart-section-title">Cart (0 items)</h2>
-              <p className="section-description">The cart is empty. Start with the selector path, browse high-volume catalog families, or route bundle demand into RFQ.</p>
+              <h2 className="cart-section-title">{t('cart.emptyTitle')}</h2>
+              <p className="section-description">{t('cart.emptyDescription')}</p>
             </div>
             <span className="product-badge">Ready for direct buy or RFQ</span>
           </div>
@@ -243,8 +245,8 @@ export function CartClient({ initialCart, locale, hasAccountContext, crossSellPr
             <article className="info-card cart-items-card">
               <div className="section-header trade-card-header">
                 <div>
-                  <h2 className="cart-section-title">Cart ({cart.itemCount} items)</h2>
-                  <p className="section-description">Review quantities, estimate freight and tax, then choose whether this demand should proceed to checkout, sample, or RFQ.</p>
+                  <h2 className="cart-section-title">{t('cart.title')} ({cart.itemCount})</h2>
+                  <p className="section-description">{t('cart.estimatedShipping')}</p>
                 </div>
                 <span className="product-badge">Direct-buy flow</span>
               </div>
@@ -502,10 +504,10 @@ export function CartClient({ initialCart, locale, hasAccountContext, crossSellPr
 
           <aside className="trade-side-stack">
             <article className="info-card cart-summary-card">
-              <h2 className="cart-section-title">Order Summary</h2>
+              <h2 className="cart-section-title">{t('checkout.orderSummary')}</h2>
               <div className="cart-summary-list">
                 <div className="cart-summary-row">
-                  <span className="section-description">Subtotal</span>
+                  <span className="section-description">{t('cart.subtotal')}</span>
                   <strong>{cart.subtotal.formatted}</strong>
                 </div>
                 {cart.volumeDiscount && cart.volumeDiscount.amount > 0 ? (
@@ -521,15 +523,15 @@ export function CartClient({ initialCart, locale, hasAccountContext, crossSellPr
                   </div>
                 ) : null}
                 <div className="cart-summary-row">
-                  <span className="section-description">Shipping est.</span>
+                  <span className="section-description">{t('cart.shipping')}</span>
                   <strong>{selectedShippingOption ? (selectedShippingOption.price === 0 ? 'Free' : formatMoney(selectedShippingOption.price, cart.shipping.currency)) : cart.shipping.formatted}</strong>
                 </div>
                 <div className="cart-summary-row">
-                  <span className="section-description">Tax est.</span>
+                  <span className="section-description">{t('cart.tax')}</span>
                   <strong>{formatMoney(estimatedTax, cart.tax.currency)}</strong>
                 </div>
                 <div className="cart-summary-row is-total">
-                  <span>Total est.</span>
+                  <span>{t('cart.total')}</span>
                   <strong>{formatMoney(estimatedTotal, cart.total.currency)}</strong>
                 </div>
               </div>
@@ -537,13 +539,13 @@ export function CartClient({ initialCart, locale, hasAccountContext, crossSellPr
               <p className="section-description compact-copy">Freight and tax stay explicitly marked as estimates until the checkout address, carrier, and currency are finalized.</p>
 
               <Link href={checkoutPath} className="button-primary">
-                Proceed to Checkout
+                {t('cart.proceedToCheckout')}
               </Link>
               <Link href={quotePath} className="button-secondary product-back-link">
                 Convert Cart to RFQ
               </Link>
               <Link href={productsPath} className="nav-link">
-                Continue shopping
+                {t('cart.continueShopping')}
               </Link>
               <Link href={contactPath} className="nav-link">
                 Need quote support?

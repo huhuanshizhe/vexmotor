@@ -11,6 +11,7 @@ import type { Locale } from '@/lib/i18n';
 import type { SitePreferences } from '@/lib/i18n';
 import { withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
+import { getTranslations } from '@/lib/i18n-context';
 import { notificationBarConfig, NOTIFICATION_BAR_COOKIE_NAME } from '@/lib/site-config';
 import { getHomeData, getNavigationData } from '@/server/storefront';
 import { getCurrentUserId } from '@/server/auth/session';
@@ -61,6 +62,7 @@ export async function StorefrontFrame({ title, description, eyebrow, actions, ch
   const userId = await getCurrentUserId().catch(() => null);
   const anonymousToken = cookieStore.get('cart_token')?.value ?? null;
   const preferences = await getServerSitePreferences().catch(() => fallbackSitePreferences);
+  const { t } = getTranslations(preferences.locale);
   const [homeData, navigation, activeCart] = await Promise.all([
     getHomeData(),
     getNavigationData().catch(() => ({ ...storefrontNavigationBase, categories: [] })),
@@ -75,8 +77,8 @@ export async function StorefrontFrame({ title, description, eyebrow, actions, ch
 
       <div className="storefront-topbar">
         <div className="storefront-topbar-inner">
-          <span>Self-owned brand | Factory direct supply | Global delivery support</span>
-          <span>Technical service for stepper motors, drivers, and motion components</span>
+          <span>{t('topbar.trustLine1')}</span>
+          <span>{t('topbar.trustLine2')}</span>
         </div>
       </div>
 
@@ -87,9 +89,9 @@ export async function StorefrontFrame({ title, description, eyebrow, actions, ch
           </Link>
 
           <form action={withLocalePath('/search', preferences.locale)} className="header-search-form">
-            <input name="keyword" className="header-search-input" placeholder="Search Product Here..." aria-label="Search products" />
+            <input name="keyword" className="header-search-input" placeholder={t('common.searchPlaceholder')} aria-label={t('common.searchButton')} />
             <button type="submit" className="header-search-button">
-              Search
+              {t('common.searchButton')}
             </button>
           </form>
 
@@ -165,7 +167,7 @@ export async function StorefrontFrame({ title, description, eyebrow, actions, ch
 
               {/* Column 4: Featured Products */}
               <div className="pro-footer-col">
-                <h4 className="pro-footer-heading">Featured Products</h4>
+                <h4 className="pro-footer-heading">{t('footer.featuredProducts')}</h4>
                 <div className="pro-footer-products">
                   {homeData.mostViewedProducts.slice(0, 3).map((product) => (
                     <Link key={product.id} href={withLocalePath(`/products/${product.slug}`, preferences.locale)} className="pro-footer-product">
@@ -187,7 +189,7 @@ export async function StorefrontFrame({ title, description, eyebrow, actions, ch
 
               {/* Column 5: Contact Info */}
               <div className="pro-footer-col pro-footer-col-contact">
-                <h4 className="pro-footer-heading">Contact Us</h4>
+                <h4 className="pro-footer-heading">{t('footer.contactUs')}</h4>
                 <div className="pro-footer-contact">
                   {homeData.footerContact.map((item) => (
                     <div key={item.title} className="pro-footer-contact-item">

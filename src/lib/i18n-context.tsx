@@ -7,7 +7,6 @@ import { type Locale, DEFAULT_LOCALE, withLocalePath } from '@/lib/i18n';
 // Import translations
 import enTranslations from '@/locales/en.json';
 import deTranslations from '@/locales/de.json';
-import frTranslations from '@/locales/fr.json';
 import esTranslations from '@/locales/es.json';
 
 // Translation type
@@ -19,7 +18,6 @@ type TranslationObject = Record<string, any>;
 const translations: Record<Locale, TranslationObject> = {
   en: enTranslations,
   de: deTranslations,
-  fr: frTranslations,
   es: esTranslations,
 };
 
@@ -128,6 +126,5 @@ export function getTranslations(locale: Locale = DEFAULT_LOCALE) {
 export const AVAILABLE_LOCALES: { code: Locale; label: string; flag: string }[] = [
   { code: 'en', label: 'English', flag: '🇺🇸' },
   { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
-  { code: 'fr', label: 'Français', flag: '🇫🇷' },
   { code: 'es', label: 'Español', flag: '🇪🇸' },
 ];

@@ -26,10 +26,9 @@ export default function TranslationAdmin() {
   const loadTranslations = async () => {
     try {
       // Load all locale files
-      const [en, de, fr, es] = await Promise.all([
+      const [en, de, es] = await Promise.all([
         import('@/locales/en.json'),
         import('@/locales/de.json'),
-        import('@/locales/fr.json'),
         import('@/locales/es.json'),
       ]);
 
@@ -39,7 +38,6 @@ export default function TranslationAdmin() {
         values: {
           en: getNestedValue(en.default, key) || '',
           de: getNestedValue(de.default, key) || '',
-          fr: getNestedValue(fr.default, key) || '',
           es: getNestedValue(es.default, key) || '',
         },
       }));

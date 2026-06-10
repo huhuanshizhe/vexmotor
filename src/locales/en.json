@@ -25,12 +25,13 @@
     "locale": "en"
   },
   "navigation": {
+    "home": "Home",
     "products": "Products",
     "solutions": "Solutions",
     "resources": "Resources",
     "support": "Support",
     "company": "Company",
-    "about": "About Us",
+    "about": "About",
     "contact": "Contact",
     "blog": "Blog",
     "faq": "FAQ",
@@ -149,7 +150,9 @@
     "privacyPolicy": "Privacy Policy",
     "termsOfService": "Terms of Service",
     "cookiePolicy": "Cookie Policy",
-    "copyright": "© {year} STEPMOTECH. All rights reserved."
+    "copyright": "© {year} STEPMOTECH. All rights reserved.",
+    "featuredProducts": "Featured Products",
+    "subscribe": "Subscribe"
   },
   "filter": {
     "filters": "Filters",
@@ -215,5 +218,48 @@
     "compatiblePlanning": "Compatible planning",
     "compatibleDescription": "Compatible and recommended products already paired with this SKU.",
     "matches": "{count} matches"
+  },
+  "topbar": {
+    "trustLine1": "Self-owned brand | Factory direct supply | Global delivery support",
+    "trustLine2": "Technical service for stepper motors, drivers, and motion components"
+  },
+  "categories": {
+    "stepperMotor": "Stepper Motor",
+    "powerSupply": "Power Supply",
+    "stepperMotorDriver": "Stepper Motor Driver",
+    "closedLoopStepperMotor": "Closed Loop Stepper Motor",
+    "brushlessSpindleMotor": "Brushless Spindle Motor",
+    "brushlessDCMotor": "Brushless DC Motor",
+    "integratedStepperMotor": "Integrated Stepper Motor"
+  },
+  "blog": {
+    "knowledgeCenter": "Knowledge Center",
+    "heroTitle": "Motion Control Engineering Resources",
+    "heroDesc": "Technical guides, application notes, and field-proven tutorials from the STEPMOTECH engineering team.",
+    "allArticles": "All",
+    "mostRead": "Most Read",
+    "categories": "Categories",
+    "byProduct": "By Product",
+    "subscribe": "Stay Updated",
+    "subscribeDesc": "Get new engineering articles and product updates delivered to your inbox.",
+    "readMore": "Read more",
+    "minRead": "min read",
+    "articles": "articles",
+    "article": "article",
+    "continueReading": "Continue Reading",
+    "onThisPage": "On This Page",
+    "hardwareReferenced": "Hardware Referenced in This Article",
+    "relatedProduct": "Related product",
+    "needHelp": "Need Help with Your Motion Control Project?",
+    "needHelpDesc": "Talk to our engineering team about sizing, integration, or technical requirements.",
+    "talkToEngineer": "Talk to an Engineer",
+    "browseArticles": "Browse Articles",
+    "noArticles": "No articles match your current filter.",
+    "clearFilters": "Clear filters",
+    "noArticlesTopic": "No articles in this topic yet.",
+    "browseAll": "Browse all articles",
+    "otherTopics": "Other Topics",
+    "reads": "reads",
+    "author": "Author"
   }
 }

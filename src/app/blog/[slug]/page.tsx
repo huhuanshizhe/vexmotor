@@ -7,6 +7,7 @@ import { JsonLdScript } from '@/components/seo/json-ld';
 import { blogProductTopicSlug } from '@/lib/blog';
 import { type Locale, withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
+import { getTranslations } from '@/lib/i18n-context';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 import { SITE_URL } from '@/lib/site-config';
 import { getBlogAuthorById, getBlogCatalog, getBlogPostBySlug, getRelatedPosts } from '@/server/content/blog';
@@ -72,6 +73,7 @@ function BlogProductCard({ product, locale, eyebrow, body }: { product: Storefro
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const [{ locale }, { slug }] = await Promise.all([getServerSitePreferences(), params]);
+  const { t } = getTranslations(locale);
   const catalog = await getBlogCatalog(locale);
   const post = getBlogPostBySlug(catalog, slug);
 
@@ -257,7 +259,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {relatedProducts.length ? (
               <section className="blog-article-section blog-related-section">
                 <div className="blog-related-header">
-                  <h2>Hardware Referenced in This Article</h2>
+                  <h2>{t('blog.hardwareReferenced')}</h2>
                   <p className="blog-meta-text">Products mentioned or recommended in the article body.</p>
                 </div>
                 <div className="blog-related-product-grid">
@@ -291,7 +293,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {/* ── Related posts ── */}
             {relatedPosts.length ? (
               <section className="blog-article-section blog-related-section">
-                <h2>Continue Reading</h2>
+                <h2>{t('blog.continueReading')}</h2>
                 <div className="blog-card-grid blog-related-post-grid">
                   {relatedPosts.map((relatedPost) => {
                     const relatedAuthor = getBlogAuthorById(catalog, relatedPost.authorId);
@@ -323,12 +325,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {/* ── CTA ── */}
             <section className="blog-cta-card">
               <div>
-                <h2>Need Help with Your Motion Control Project?</h2>
+                <h2>{t('blog.needHelp')}</h2>
                 <p className="blog-cta-text">Talk to our engineering team about sizing, integration, or technical requirements. Or subscribe for future articles.</p>
               </div>
               <div className="blog-cta-actions">
-                <Link href={withLocalePath('/contact', locale)} className="button-primary">Talk to an Engineer</Link>
-                <Link href={withLocalePath('/blog', locale)} className="button-secondary">Browse Articles</Link>
+                <Link href={withLocalePath('/contact', locale)} className="button-primary">{t('blog.talkToEngineer')}</Link>
+                <Link href={withLocalePath('/blog', locale)} className="button-secondary">{t('blog.browseArticles')}</Link>
               </div>
             </section>
           </article>
@@ -336,7 +338,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           {/* ── Table of contents ── */}
           <aside className="blog-post-toc">
             <div className="blog-toc-card">
-              <h4 className="blog-toc-heading">On This Page</h4>
+              <h4 className="blog-toc-heading">{t('blog.onThisPage')}</h4>
               <nav className="blog-toc-list" aria-label="Table of contents">
                 {post.sections.map((section) => (
                   <a key={section.id} href={`#${section.id}`} className="blog-toc-link">{section.title}</a>

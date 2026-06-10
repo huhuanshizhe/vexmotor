@@ -6,7 +6,32 @@ import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent, type R
 
 import type { Locale } from '@/lib/i18n';
 import { withLocalePath } from '@/lib/i18n';
+import { useTranslation } from '@/lib/i18n-context';
 import type { StorefrontLink } from '@/server/storefront/types';
+
+/** Maps hardcoded English nav labels to translation keys */
+const NAV_LABEL_KEYS: Record<string, string> = {
+  'Home': 'navigation.home',
+  'Products': 'navigation.products',
+  'Blog': 'navigation.blog',
+  'FAQ': 'navigation.faq',
+  'About': 'navigation.about',
+  'Contact': 'navigation.contact',
+  'Stepper Motor': 'categories.stepperMotor',
+  'Power Supply': 'categories.powerSupply',
+  'Stepper Motor Driver': 'categories.stepperMotorDriver',
+  'Closed Loop Stepper Motor': 'categories.closedLoopStepperMotor',
+  'Brushless Spindle Motor': 'categories.brushlessSpindleMotor',
+  'Brushless DC Motor': 'categories.brushlessDCMotor',
+  'Integrated Stepper Motor': 'categories.integratedStepperMotor',
+};
+
+function translateLabel(label: string, t: (key: string) => string): string {
+  const key = NAV_LABEL_KEYS[label];
+  if (!key) return label;
+  const result = t(key);
+  return result === key ? label : result;
+}
 
 type StorefrontNavProps = {
   items: StorefrontLink[];
@@ -62,6 +87,7 @@ function NavLink({ href, className, children, locale, external, onClick, onFocus
 }
 
 export function StorefrontNav({ items, locale }: StorefrontNavProps) {
+  const { t } = useTranslation();
   const [openLabel, setOpenLabel] = useState<string | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
   const pathname = usePathname();
@@ -118,7 +144,7 @@ export function StorefrontNav({ items, locale }: StorefrontNavProps) {
         }
 
         if (!hasChildren) {
-          return <NavLink key={item.label} href={item.href} className="storefront-nav-link nav-link-inverse" external={item.external} locale={locale}>{item.label}</NavLink>;
+          return <NavLink key={item.label} href={item.href} className="storefront-nav-link nav-link-inverse" external={item.external} locale={locale}>{translateLabel(item.label, t)}</NavLink>;
         }
 
         return (
@@ -138,7 +164,7 @@ export function StorefrontNav({ items, locale }: StorefrontNavProps) {
               ariaExpanded={isOpen}
               ariaHaspopup
             >
-              {item.label}
+              {translateLabel(item.label, t)}
             </NavLink>
 
             {hasNestedChildren ? (
@@ -153,7 +179,7 @@ export function StorefrontNav({ items, locale }: StorefrontNavProps) {
                       onClick={() => setOpenLabel(null)}
                       onFocus={() => setOpenLabel(item.label)}
                     >
-                      {child.label}
+                      {translateLabel(child.label, t)}
                     </NavLink>
 
                     {child.children?.length ? (
@@ -168,7 +194,7 @@ export function StorefrontNav({ items, locale }: StorefrontNavProps) {
                             onClick={() => setOpenLabel(null)}
                             onFocus={() => setOpenLabel(item.label)}
                           >
-                            {grandchild.label}
+                            {translateLabel(grandchild.label, t)}
                           </NavLink>
                         ))}
                       </div>
@@ -188,7 +214,7 @@ export function StorefrontNav({ items, locale }: StorefrontNavProps) {
                     onClick={() => setOpenLabel(null)}
                     onFocus={() => setOpenLabel(item.label)}
                   >
-                    {child.label}
+                    {translateLabel(child.label, t)}
                   </NavLink>
                 ))}
               </div>

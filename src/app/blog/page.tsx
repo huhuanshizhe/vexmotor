@@ -6,6 +6,7 @@ import { JsonLdScript } from '@/components/seo/json-ld';
 import { blogCategorySlug } from '@/lib/blog';
 import { withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
+import { getTranslations } from '@/lib/i18n-context';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 import { SITE_URL } from '@/lib/site-config';
 import {
@@ -39,6 +40,7 @@ export async function generateMetadata() {
 
 export default async function BlogPage({ searchParams }: BlogPageProps) {
   const [{ locale }, params] = await Promise.all([getServerSitePreferences(), searchParams]);
+  const { t } = getTranslations(locale);
   const catalog = await getBlogCatalog(locale);
 
   const filters = {
@@ -113,8 +115,8 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
       {/* ── Hero ── */}
       <section className="blog-hero">
         <div className="section-inner">
-          <span className="blog-hero-eyebrow">Knowledge Center</span>
-          <h1 className="blog-hero-title">Motion Control Engineering Resources</h1>
+          <span className="blog-hero-eyebrow">{t('blog.knowledgeCenter')}</span>
+          <h1 className="blog-hero-title">{t('blog.heroTitle')}</h1>
           <p className="blog-hero-desc">Technical guides, application notes, and field-proven tutorials from the STEPMOTECH engineering team.</p>
           <form action={withLocalePath('/blog', locale)} method="get" className="blog-hero-search">
             <input
@@ -138,7 +140,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             href={buildBlogHref({ category: null, page: '1' })}
             className={`blog-tab${!params.category ? ' is-active' : ''}`}
           >
-            All
+            {t('blog.allArticles')}
           </Link>
           {categoryCounts.map(({ category, slug, count }) => (
             <Link
@@ -167,7 +169,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                   <div className="blog-card-meta-row">
                     <span className="blog-category-chip">{featuredPost.category}</span>
                     <span className="blog-meta-sep">·</span>
-                    <span className="blog-meta-text">{featuredPost.readMinutes} min read</span>
+                    <span className="blog-meta-text">{featuredPost.readMinutes} {t('blog.minRead')}</span>
                     <span className="blog-meta-sep">·</span>
                     <span className="blog-meta-text">{new Date(featuredPost.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
                   </div>
@@ -214,7 +216,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
             {displayPosts.length === 0 ? (
               <div className="blog-empty-state">
-                <p>No articles match your current filter.</p>
+                <p>{t('blog.noArticles')}</p>
                 <Link href={withLocalePath('/blog', locale)} className="blog-clear-link">Clear filters</Link>
               </div>
             ) : null}
@@ -244,14 +246,14 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           <aside className="blog-sidebar">
             {/* Subscribe */}
             <div className="blog-sidebar-card">
-              <h3 className="blog-sidebar-heading">Stay Updated</h3>
-              <p className="blog-sidebar-text">Get new engineering articles and product updates delivered to your inbox.</p>
+              <h3 className="blog-sidebar-heading">{t('blog.subscribe')}</h3>
+              <p className="blog-sidebar-text">{t('blog.subscribeDesc')}</p>
               <NewsletterSignupForm placeholder="Work email" buttonLabel="Subscribe" />
             </div>
 
             {/* Most read */}
             <div className="blog-sidebar-card">
-              <h3 className="blog-sidebar-heading">Most Read</h3>
+              <h3 className="blog-sidebar-heading">{t('blog.mostRead')}</h3>
               <div className="blog-sidebar-list">
                 {mostReadPosts.map((post, index) => (
                   <Link key={post.slug} href={withLocalePath(`/blog/${post.slug}`, locale)} className="blog-sidebar-link">
@@ -267,12 +269,12 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
             {/* Categories */}
             <div className="blog-sidebar-card">
-              <h3 className="blog-sidebar-heading">Categories</h3>
+              <h3 className="blog-sidebar-heading">{t('blog.categories')}</h3>
               <div className="blog-sidebar-list">
                 {categoryCounts.map(({ category, slug, count }) => (
                   <Link key={slug} href={buildBlogHref({ category: slug, page: '1' })} className="blog-sidebar-link">
                     <strong>{category}</strong>
-                    <span className="blog-meta-text">{count} articles</span>
+                    <span className="blog-meta-text">{count} {t('blog.articles')}</span>
                   </Link>
                 ))}
               </div>
@@ -280,12 +282,12 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
             {/* Product Topics */}
             <div className="blog-sidebar-card">
-              <h3 className="blog-sidebar-heading">By Product</h3>
+              <h3 className="blog-sidebar-heading">{t('blog.byProduct')}</h3>
               <div className="blog-sidebar-list">
                 {productTopicCounts.map(({ topic, slug, count }) => (
                   <Link key={slug} href={withLocalePath(`/blog/t/${slug}`, locale)} className="blog-sidebar-link">
                     <strong>{topic}</strong>
-                    <span className="blog-meta-text">{count} articles</span>
+                    <span className="blog-meta-text">{count} {t('blog.articles')}</span>
                   </Link>
                 ))}
               </div>

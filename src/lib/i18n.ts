@@ -1,4 +1,4 @@
-export const SUPPORTED_LOCALES = ['en', 'de', 'fr', 'es'] as const;
+export const SUPPORTED_LOCALES = ['en', 'de', 'es'] as const;
 export const SUPPORTED_CURRENCIES = ['USD', 'EUR', 'GBP'] as const;
 export const SUPPORTED_UNIT_SYSTEMS = ['imperial', 'metric'] as const;
 
@@ -16,8 +16,7 @@ export const LOCALE_REQUEST_HEADER = 'x-vex-locale';
 const localeDefaults: Record<Locale, { currency: Currency; unitSystem: UnitSystem; label: string }> = {
   en: { currency: 'USD', unitSystem: 'imperial', label: 'English' },
   de: { currency: 'EUR', unitSystem: 'metric', label: 'Deutsch' },
-  fr: { currency: 'EUR', unitSystem: 'metric', label: 'Francais' },
-  es: { currency: 'EUR', unitSystem: 'metric', label: 'Espanol' },
+  es: { currency: 'EUR', unitSystem: 'metric', label: 'Español' },
 };
 
 export type SitePreferences = {
@@ -45,7 +44,6 @@ export function normalizeUnitSystem(value: string | null | undefined): UnitSyste
 const countryToLocale: Record<string, Locale> = {
   US: 'en', GB: 'en', CA: 'en', AU: 'en', NZ: 'en', IE: 'en',
   DE: 'de', AT: 'de', CH: 'de',
-  FR: 'fr', BE: 'fr', LU: 'fr',
   ES: 'es', MX: 'es', AR: 'es', CO: 'es', CL: 'es', PE: 'es',
 };
 

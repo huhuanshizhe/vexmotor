@@ -25,6 +25,7 @@
     "locale": "es"
   },
   "navigation": {
+    "home": "Inicio",
     "products": "Productos",
     "solutions": "Soluciones",
     "resources": "Recursos",
@@ -149,7 +150,9 @@
     "privacyPolicy": "Política de Privacidad",
     "termsOfService": "Términos de Servicio",
     "cookiePolicy": "Política de Cookies",
-    "copyright": "© {year} STEPMOTECH. Todos los derechos reservados."
+    "copyright": "© {year} STEPMOTECH. Todos los derechos reservados.",
+    "featuredProducts": "Productos Destacados",
+    "subscribe": "Suscribirse"
   },
   "filter": {
     "filters": "Filtros",
@@ -215,5 +218,48 @@
     "compatiblePlanning": "Planificación compatible",
     "compatibleDescription": "Productos compatibles y recomendados ya emparejados con este SKU.",
     "matches": "{count} coincidencias"
+  },
+  "topbar": {
+    "trustLine1": "Marca propia | Suministro directo de fábrica | Envío global",
+    "trustLine2": "Servicio técnico para motores paso a paso, controladores y componentes de movimiento"
+  },
+  "categories": {
+    "stepperMotor": "Motor Paso a Paso",
+    "powerSupply": "Fuente de Alimentación",
+    "stepperMotorDriver": "Controlador de Motor Paso a Paso",
+    "closedLoopStepperMotor": "Motor Paso a Paso Closed Loop",
+    "brushlessSpindleMotor": "Motor de Husillo Sin Escobillas",
+    "brushlessDCMotor": "Motor DC Sin Escobillas",
+    "integratedStepperMotor": "Motor Paso a Paso Integrado"
+  },
+  "blog": {
+    "knowledgeCenter": "Centro de Conocimiento",
+    "heroTitle": "Recursos de Ingeniería en Control de Movimiento",
+    "heroDesc": "Guías técnicas, notas de aplicación y tutoriales comprobados del equipo de ingeniería de STEPMOTECH.",
+    "allArticles": "Todos",
+    "mostRead": "Más Leídos",
+    "categories": "Categorías",
+    "byProduct": "Por Producto",
+    "subscribe": "Manténgase Actualizado",
+    "subscribeDesc": "Reciba nuevos artículos de ingeniería y actualizaciones de productos en su bandeja de entrada.",
+    "readMore": "Leer más",
+    "minRead": "min de lectura",
+    "articles": "artículos",
+    "article": "artículo",
+    "continueReading": "Continuar Leyendo",
+    "onThisPage": "En Esta Página",
+    "hardwareReferenced": "Hardware Mencionado en Este Artículo",
+    "relatedProduct": "Producto Relacionado",
+    "needHelp": "¿Necesita Ayuda con su Proyecto de Control de Movimiento?",
+    "needHelpDesc": "Hable con nuestro equipo de ingeniería sobre dimensionamiento, integración o requisitos técnicos.",
+    "talkToEngineer": "Hablar con un Ingeniero",
+    "browseArticles": "Explorar Artículos",
+    "noArticles": "Ningún artículo coincide con su filtro actual.",
+    "clearFilters": "Limpiar filtros",
+    "noArticlesTopic": "Aún no hay artículos en este tema.",
+    "browseAll": "Explorar todos los artículos",
+    "otherTopics": "Otros Temas",
+    "reads": "lecturas",
+    "author": "Autor"
   }
 }

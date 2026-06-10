@@ -6,6 +6,7 @@ import { JsonLdScript } from '@/components/seo/json-ld';
 import { blogProductTopicFromSlug, type BlogProductTopic } from '@/lib/blog';
 import { withLocalePath } from '@/lib/i18n';
 import { getServerSitePreferences } from '@/lib/i18n-server';
+import { getTranslations } from '@/lib/i18n-context';
 import { buildBreadcrumbJsonLd, buildMetadata } from '@/lib/seo';
 import { SITE_URL } from '@/lib/site-config';
 import { getBlogAuthorById, getBlogCatalog, getPostsByProductTopic, paginateBlogPosts } from '@/server/content/blog';
@@ -47,6 +48,7 @@ export async function generateMetadata({ params }: TopicPageProps) {
 
 export default async function BlogTopicPage({ params, searchParams }: TopicPageProps) {
   const [{ topic: topicSlug }, { page: pageParam }, { locale }] = await Promise.all([params, searchParams, getServerSitePreferences()]);
+  const { t } = getTranslations(locale);
   const topic = blogProductTopicFromSlug[topicSlug];
 
   if (!topic) {
@@ -109,11 +111,11 @@ export default async function BlogTopicPage({ params, searchParams }: TopicPageP
       <section className="blog-topic-hero">
         <div className="section-inner">
           <div className="blog-topic-breadcrumb">
-            <Link href={withLocalePath('/blog', locale)} className="blog-topic-back">← All Articles</Link>
+            <Link href={withLocalePath('/blog', locale)} className="blog-topic-back">← {t('blog.browseArticles')}</Link>
           </div>
           <h1 className="blog-topic-title">{topic} Articles</h1>
           <p className="blog-topic-desc">{description}</p>
-          <span className="blog-topic-count">{topicPosts.length} {topicPosts.length === 1 ? 'article' : 'articles'}</span>
+          <span className="blog-topic-count">{topicPosts.length} {topicPosts.length === 1 ? t('blog.article') : t('blog.articles')}</span>
         </div>
       </section>
 
@@ -150,8 +152,8 @@ export default async function BlogTopicPage({ params, searchParams }: TopicPageP
 
             {pagination.items.length === 0 ? (
               <div className="blog-empty-state">
-                <p>No articles in this topic yet.</p>
-                <Link href={withLocalePath('/blog', locale)} className="blog-clear-link">Browse all articles</Link>
+                <p>{t('blog.noArticlesTopic')}</p>
+                <Link href={withLocalePath('/blog', locale)} className="blog-clear-link">{t('blog.browseAll')}</Link>
               </div>
             ) : null}
 
@@ -178,20 +180,20 @@ export default async function BlogTopicPage({ params, searchParams }: TopicPageP
           {/* ── Sidebar ── */}
           <aside className="blog-sidebar">
             <div className="blog-sidebar-card">
-              <h3 className="blog-sidebar-heading">Subscribe</h3>
+              <h3 className="blog-sidebar-heading">{t('blog.subscribe')}</h3>
               <p className="blog-sidebar-text">Get new {topic.toLowerCase()} articles in your inbox.</p>
               <NewsletterSignupForm placeholder="Work email" buttonLabel="Subscribe" />
             </div>
 
             <div className="blog-sidebar-card">
-              <h3 className="blog-sidebar-heading">Other Topics</h3>
+              <h3 className="blog-sidebar-heading">{t('blog.otherTopics')}</h3>
               <div className="blog-sidebar-list">
                 {Object.entries(blogProductTopicFromSlug)
-                  .filter(([, t]) => t !== topic)
-                  .map(([slug, t]) => (
+                  .filter(([, topicValue]) => topicValue !== topic)
+                  .map(([slug, topicValue]) => (
                     <Link key={slug} href={withLocalePath(`/blog/${slug}`, locale)} className="blog-sidebar-link">
-                      <strong>{t}</strong>
-                      <span className="blog-meta-text">{catalog.posts.filter((p) => p.productTopics.includes(t)).length} articles</span>
+                      <strong>{topicValue}</strong>
+                      <span className="blog-meta-text">{catalog.posts.filter((p) => p.productTopics.includes(topicValue)).length} {t('blog.articles')}</span>
                     </Link>
                   ))}
               </div>

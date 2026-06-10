@@ -25,6 +25,7 @@
     "locale": "de"
   },
   "navigation": {
+    "home": "Startseite",
     "products": "Produkte",
     "solutions": "Lösungen",
     "resources": "Ressourcen",
@@ -149,7 +150,9 @@
     "privacyPolicy": "Datenschutzrichtlinie",
     "termsOfService": "Nutzungsbedingungen",
     "cookiePolicy": "Cookie-Richtlinie",
-    "copyright": "© {year} STEPMOTECH. Alle Rechte vorbehalten."
+    "copyright": "© {year} STEPMOTECH. Alle Rechte vorbehalten.",
+    "featuredProducts": "Empfohlene Produkte",
+    "subscribe": "Abonnieren"
   },
   "filter": {
     "filters": "Filter",
@@ -215,5 +218,48 @@
     "compatiblePlanning": "Kompatibilitätsplanung",
     "compatibleDescription": "Kompatible und empfohlene Produkte, bereits dieser Artikelnummer zugeordnet.",
     "matches": "{count} Treffer"
+  },
+  "topbar": {
+    "trustLine1": "Eigene Marke | Direkt ab Werk | Weltweiter Versand",
+    "trustLine2": "Technischer Service für Schrittmotoren, Treiber und Bewegungskomponenten"
+  },
+  "categories": {
+    "stepperMotor": "Schrittmotor",
+    "powerSupply": "Netzteil",
+    "stepperMotorDriver": "Schrittmotor-Treiber",
+    "closedLoopStepperMotor": "Closed-Loop Schrittmotor",
+    "brushlessSpindleMotor": "Bürstenloser Spindelmotor",
+    "brushlessDCMotor": "Bürstenloser DC-Motor",
+    "integratedStepperMotor": "Integrierter Schrittmotor"
+  },
+  "blog": {
+    "knowledgeCenter": "Wissenscenter",
+    "heroTitle": "Ingenieurressourcen für Bewegungssteuerung",
+    "heroDesc": "Technische Leitfäden, Anwendungsberichte und bewährte Tutorials vom STEPMOTECH-Engineering-Team.",
+    "allArticles": "Alle",
+    "mostRead": "Meistgelesen",
+    "categories": "Kategorien",
+    "byProduct": "Nach Produkt",
+    "subscribe": "Auf dem Laufenden bleiben",
+    "subscribeDesc": "Erhalten Sie neue Engineering-Artikel und Produktupdates direkt in Ihr Postfach.",
+    "readMore": "Weiterlesen",
+    "minRead": "Min. Lesezeit",
+    "articles": "Artikel",
+    "article": "Artikel",
+    "continueReading": "Weiter lesen",
+    "onThisPage": "Auf dieser Seite",
+    "hardwareReferenced": "In diesem Artikel erwähnte Hardware",
+    "relatedProduct": "Verwandtes Produkt",
+    "needHelp": "Brauchen Sie Hilfe bei Ihrem Bewegungssteuerungsprojekt?",
+    "needHelpDesc": "Sprechen Sie mit unserem Engineering-Team über Auslegung, Integration oder technische Anforderungen.",
+    "talkToEngineer": "Mit Ingenieur sprechen",
+    "browseArticles": "Artikel durchsuchen",
+    "noArticles": "Keine Artikel entsprechen Ihrem aktuellen Filter.",
+    "clearFilters": "Filter löschen",
+    "noArticlesTopic": "Noch keine Artikel in diesem Thema.",
+    "browseAll": "Alle Artikel durchsuchen",
+    "otherTopics": "Andere Themen",
+    "reads": "Lesevorgänge",
+    "author": "Autor"
   }
 }

@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState, useTransition } from 'react';
 
 import { calculateOrderPricing, getShippingCountryOptions, type CommerceConfig } from '@/lib/commerce-config';
+import { useTranslation } from '@/lib/i18n-context';
 
 type Money = {
   currency: string;
@@ -115,6 +116,7 @@ export function CheckoutClient({
   guestMode?: boolean;
   commerceConfig: CommerceConfig;
 }) {
+  const { t } = useTranslation();
   const router = useRouter();
   const defaultAddressId = useMemo(() => addresses.find((item) => item.isDefault)?.id ?? addresses[0]?.id ?? '', [addresses]);
   const selectedShippingAddress = useMemo(() => addresses.find((item) => item.id === defaultAddressId) ?? addresses[0] ?? null, [addresses, defaultAddressId]);
@@ -411,7 +413,7 @@ export function CheckoutClient({
           <div id="checkout-address" />
           <div className="section-header trade-card-header">
             <div>
-              <h2 className="cart-section-title">Shipping address</h2>
+              <h2 className="cart-section-title">{t('checkout.shippingAddress')}</h2>
               <p className="section-description">
                 {guestMode
                   ? 'Enter the delivery contact and destination for this guest wholesale order.'
@@ -658,7 +660,7 @@ export function CheckoutClient({
           <div id="checkout-payment" />
           <div className="section-header trade-card-header">
             <div>
-              <h2 className="cart-section-title">Payment method</h2>
+              <h2 className="cart-section-title">{t('checkout.paymentMethod')}</h2>
               <p className="section-description">Keep the payment path aligned with buyer approval rules and order value.</p>
             </div>
           </div>
@@ -734,11 +736,11 @@ export function CheckoutClient({
           {cart.coupon?.isApplied ? <div className="cart-coupon-status is-applied"><strong>{cart.coupon.code}</strong><span>{cart.coupon.description}</span></div> : null}
 
           <div className="cart-summary-list">
-            <div className="cart-summary-row"><span className="section-description">Subtotal</span><strong>{cart.subtotal.formatted}</strong></div>
+            <div className="cart-summary-row"><span className="section-description">{t('cart.subtotal')}</span><strong>{cart.subtotal.formatted}</strong></div>
             {cart.discount.amount > 0 ? <div className="cart-summary-row"><span className="section-description">Discount</span><strong>-{cart.discount.formatted}</strong></div> : null}
             <div className="cart-summary-row"><span className="section-description">Shipping</span><strong>{selectedShippingOption ? (selectedShippingOption.price === 0 ? 'Free' : formatMoney(selectedShippingOption.price, cart.shipping.currency)) : cart.shipping.formatted}</strong></div>
             <div className="cart-summary-row"><span className="section-description">Tax</span><strong>{formatMoney(checkoutPricing.taxAmount, cart.tax.currency)}</strong></div>
-            <div className="cart-summary-row is-total"><span>Total</span><strong>{formatMoney(checkoutPricing.totalAmount, cart.total.currency)}</strong></div>
+            <div className="cart-summary-row is-total"><span>{t('cart.total')}</span><strong>{formatMoney(checkoutPricing.totalAmount, cart.total.currency)}</strong></div>
           </div>
 
           <div className="checkout-summary-note">
@@ -758,7 +760,7 @@ export function CheckoutClient({
           </div>
 
           <button type="button" className="button-primary" onClick={placeOrder} disabled={isPending || !canPlaceOrder}>
-            {isPending ? 'Submitting...' : `Place order ${formatMoney(checkoutPricing.totalAmount, cart.total.currency)}`}
+            {isPending ? t('common.loading') : `${t('checkout.placeOrder')} ${formatMoney(checkoutPricing.totalAmount, cart.total.currency)}`}
           </button>
           {message ? <p className="form-feedback form-feedback-error">{message}</p> : null}
 

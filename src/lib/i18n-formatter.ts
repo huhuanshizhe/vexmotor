@@ -6,7 +6,6 @@
 import { type Locale, DEFAULT_LOCALE } from '@/lib/i18n';
 import enTranslations from '@/locales/en.json';
 import deTranslations from '@/locales/de.json';
-import frTranslations from '@/locales/fr.json';
 import esTranslations from '@/locales/es.json';
 
 type TranslationObject = Record<string, any>;
@@ -15,7 +14,6 @@ type TranslationParams = Record<string, string | number | boolean>;
 const translations: Record<Locale, TranslationObject> = {
   en: enTranslations,
   de: deTranslations,
-  fr: frTranslations,
   es: esTranslations,
 };
 
@@ -36,11 +34,6 @@ const pluralRules: Record<Locale, (count: number) => 'zero' | 'one' | 'two' | 'f
     return 'other';
   },
   de: (count) => {
-    if (count === 0) return 'zero';
-    if (count === 1) return 'one';
-    return 'other';
-  },
-  fr: (count) => {
     if (count === 0) return 'zero';
     if (count === 1) return 'one';
     return 'other';

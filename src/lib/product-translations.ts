@@ -109,7 +109,7 @@ export async function getProductTranslations(
 export function clearProductTranslationCache(productId?: string) {
   if (productId) {
     // Clear specific product
-    for (const locale of ['en', 'de', 'fr', 'es']) {
+    for (const locale of ['en', 'de', 'es']) {
       productTranslationCache.delete(`${productId}_${locale}`);
     }
   } else {
@@ -123,7 +123,7 @@ export function clearProductTranslationCache(productId?: string) {
  */
 export async function preloadProductTranslations(
   productIds: string[],
-  locales: Locale[] = ['en', 'de', 'fr', 'es']
+  locales: Locale[] = ['en', 'de', 'es']
 ) {
   const promises = locales.flatMap((locale) =>
     productIds.map((id) => getProductTranslation(id, locale))

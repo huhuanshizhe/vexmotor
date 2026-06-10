@@ -119,7 +119,7 @@ export async function getBlogTranslations(
  */
 export function clearBlogTranslationCache(postId?: string) {
   if (postId) {
-    for (const locale of ['en', 'de', 'fr', 'es']) {
+    for (const locale of ['en', 'de', 'es']) {
       blogTranslationCache.delete(`${postId}_${locale}`);
     }
   } else {
@@ -132,7 +132,7 @@ export function clearBlogTranslationCache(postId?: string) {
  */
 export async function preloadBlogTranslations(
   postIds: string[],
-  locales: Locale[] = ['en', 'de', 'fr', 'es']
+  locales: Locale[] = ['en', 'de', 'es']
 ) {
   const promises = locales.flatMap((locale) =>
     postIds.map((id) => getBlogTranslation(id, locale))
