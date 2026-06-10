@@ -340,19 +340,10 @@ export function CartClient({ initialCart, locale, hasAccountContext, crossSellPr
                         </button>
                       </div>
 
-                      <button type="button" className="button-secondary cart-action-button" onClick={() => removeItem(item.id)} disabled={isPending}>
+                      <button type="button" className="cart-remove-button" onClick={() => removeItem(item.id)} disabled={isPending}>
                         Remove
                       </button>
-                      <Link href={`${samplePath}?sku=${encodeURIComponent(item.product.sku)}`} className="nav-link">
-                        Move to Sample
-                      </Link>
-                      <Link href={`${quotePath}?addSku=${encodeURIComponent(item.product.sku)}`} className="nav-link">
-                        Move to Quote
-                      </Link>
-                      <Link href={`${volumePricingPath}?sku=${encodeURIComponent(item.product.sku)}`} className="nav-link">
-                        View volume pricing
-                      </Link>
-                      <Link href={withLocalePath(`/products/${item.product.slug}`, locale)} className="nav-link">
+                      <Link href={withLocalePath(`/products/${item.product.slug}`, locale)} className="cart-view-product-link">
                         View product
                       </Link>
                     </div>
@@ -479,6 +470,37 @@ export function CartClient({ initialCart, locale, hasAccountContext, crossSellPr
                 </article>
               </div>
             </article>
+
+            {crossSellProducts.length ? (
+              <article className="info-card cart-cross-sell-card">
+                <h3 className="cart-section-title">{t('product.compatibleProducts')}</h3>
+                <div className="cart-cross-sell-list">
+                  {crossSellProducts.map((item) => (
+                    <div key={item.id} className="detail-related-card cart-cross-sell-item">
+                      <Link href={withLocalePath(`/products/${item.slug}`, locale)} className="cart-cross-sell-image-wrap">
+                        {item.coverImage ? (
+                          <Image src={item.coverImage.url} alt={item.coverImage.alt || item.name} fill sizes="100px" unoptimized className="cart-item-image" />
+                        ) : (
+                          <span className="cart-item-image-fallback">{item.sku.slice(0, 3)}</span>
+                        )}
+                      </Link>
+                      <Link href={withLocalePath(`/products/${item.slug}`, locale)}>
+                        <strong>{item.name}</strong>
+                      </Link>
+                      <span className="product-meta">SKU {item.sku}</span>
+                      <span className="card-kicker">{item.purchaseMode === 'buy' ? item.price.formatted : t('product.requestQuote')}</span>
+                      {item.purchaseMode === 'buy' ? (
+                        <AddToCartButton productId={item.id} redirectToCart={false} />
+                      ) : (
+                        <Link href={withLocalePath(`/products/${item.slug}`, locale)} className="button-secondary">
+                          {t('product.requestQuote')}
+                        </Link>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </article>
+            ) : null}
           </div>
 
           <aside className="trade-side-stack">
@@ -529,37 +551,6 @@ export function CartClient({ initialCart, locale, hasAccountContext, crossSellPr
               </Link>
               {message ? <p className="section-description">{message}</p> : null}
             </article>
-
-            {crossSellProducts.length ? (
-              <article className="info-card cart-cross-sell-card">
-                <h3 className="cart-section-title">{t('product.compatibleProducts')}</h3>
-                <div className="cart-cross-sell-list">
-                  {crossSellProducts.map((item) => (
-                    <div key={item.id} className="detail-related-card cart-cross-sell-item">
-                      <Link href={withLocalePath(`/products/${item.slug}`, locale)} className="cart-cross-sell-image-wrap">
-                        {item.coverImage ? (
-                          <Image src={item.coverImage.url} alt={item.coverImage.alt || item.name} fill sizes="100px" unoptimized className="cart-item-image" />
-                        ) : (
-                          <span className="cart-item-image-fallback">{item.sku.slice(0, 3)}</span>
-                        )}
-                      </Link>
-                      <Link href={withLocalePath(`/products/${item.slug}`, locale)}>
-                        <strong>{item.name}</strong>
-                      </Link>
-                      <span className="product-meta">SKU {item.sku}</span>
-                      <span className="card-kicker">{item.purchaseMode === 'buy' ? item.price.formatted : t('product.requestQuote')}</span>
-                      {item.purchaseMode === 'buy' ? (
-                        <AddToCartButton productId={item.id} redirectToCart={false} />
-                      ) : (
-                        <Link href={withLocalePath(`/products/${item.slug}`, locale)} className="button-secondary">
-                          {t('product.requestQuote')}
-                        </Link>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </article>
-            ) : null}
           </aside>
         </div>
       )}
