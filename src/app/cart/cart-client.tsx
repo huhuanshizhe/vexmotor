@@ -246,30 +246,23 @@ export function CartClient({ initialCart, locale, hasAccountContext, crossSellPr
               <div className="section-header trade-card-header">
                 <div>
                   <h2 className="cart-section-title">{t('cart.title')} ({cart.itemCount})</h2>
-                  <p className="section-description">{t('cart.estimatedShipping')}</p>
                 </div>
-                <span className="product-badge">Direct-buy flow</span>
               </div>
 
-              <div className="trade-progress-card">
-                <div className="trade-progress-copy">
-                  <strong>
-                    {freeShippingThresholdAmount > 0
-                      ? remainingForFreeShippingAmount > 0
-                        ? `Add ${formatMoney(remainingForFreeShippingAmount, cart.subtotal.currency)} more for free shipping`
-                        : 'Free shipping threshold unlocked'
-                      : 'Selected lane uses explicit freight pricing'}
-                  </strong>
-                  <span className="section-description">
-                    {freeShippingThresholdAmount > 0
-                      ? `The ${selectedShippingOption?.carrier ?? 'primary'} lane turns free once merchandise subtotal reaches ${formatMoney(freeShippingThresholdAmount, cart.subtotal.currency)}.`
-                      : 'The selected shipping lane keeps a fixed freight charge and does not use an automatic free-shipping threshold.'}
-                  </span>
+              {freeShippingThresholdAmount > 0 ? (
+                <div className="trade-progress-card">
+                  <div className="trade-progress-copy">
+                    <strong>
+                      {remainingForFreeShippingAmount > 0
+                        ? `${formatMoney(remainingForFreeShippingAmount, cart.subtotal.currency)} to free shipping`
+                        : 'Free shipping unlocked'}
+                    </strong>
+                  </div>
+                  <div className="trade-progress-bar" aria-hidden="true">
+                    <span className="trade-progress-fill" style={{ width: `${freeShippingProgress}%` }} />
+                  </div>
                 </div>
-                <div className="trade-progress-bar" aria-hidden="true">
-                  <span className="trade-progress-fill" style={{ width: `${freeShippingProgress}%` }} />
-                </div>
-              </div>
+              ) : null}
 
               {cart.items.map((item) => {
                 const nextTier = getNextVolumeTier(item.product.price.amount, item.product.price.currency, item.quantity, commerceConfig.volumePricingRules);
@@ -373,12 +366,7 @@ export function CartClient({ initialCart, locale, hasAccountContext, crossSellPr
             </article>
 
             <article className="info-card cart-coupon-card">
-              <div className="trade-card-header trade-card-header-inline">
-                <div>
-                  <h3 className="cart-section-title">Coupon & prep tools</h3>
-                  <p className="section-description">Small-batch buyers often combine stocked items with campaign codes before handing off to internal approval.</p>
-                </div>
-              </div>
+              <h3 className="cart-section-title">Coupon</h3>
 
               <details className="cart-detail-toggle" open>
                 <summary>Promo code</summary>
@@ -436,12 +424,7 @@ export function CartClient({ initialCart, locale, hasAccountContext, crossSellPr
             </article>
 
             <article className="info-card cart-estimator-card">
-              <div className="section-header trade-card-header">
-                <div>
-                  <h3 className="cart-section-title">Shipping estimator</h3>
-                  <p className="section-description">Estimate delivery lanes before checkout. Rates below are directional until address and carrier are confirmed.</p>
-                </div>
-              </div>
+              <h3 className="cart-section-title">{t('cart.shipping')}</h3>
 
               <div className="cart-reference-grid">
                 <label className="form-field">
@@ -478,12 +461,7 @@ export function CartClient({ initialCart, locale, hasAccountContext, crossSellPr
             </article>
 
             <article className="info-card cart-estimator-card">
-              <div className="section-header trade-card-header">
-                <div>
-                  <h3 className="cart-section-title">Tax estimator</h3>
-                  <p className="section-description">Estimated VAT / sales tax is shown separately so buyers can compare landed cost without mistaking it for a final invoice.</p>
-                </div>
-              </div>
+              <h3 className="cart-section-title">{t('cart.tax')}</h3>
 
               <div className="cart-tax-grid">
                 <article className="summary-stat">
@@ -536,8 +514,6 @@ export function CartClient({ initialCart, locale, hasAccountContext, crossSellPr
                 </div>
               </div>
 
-              <p className="section-description compact-copy">Freight and tax stay explicitly marked as estimates until the checkout address, carrier, and currency are finalized.</p>
-
               <Link href={checkoutPath} className="button-primary">
                 {t('cart.proceedToCheckout')}
               </Link>
@@ -553,54 +529,20 @@ export function CartClient({ initialCart, locale, hasAccountContext, crossSellPr
               {message ? <p className="section-description">{message}</p> : null}
             </article>
 
-            <article className="info-card trade-support-card">
-              <h3 className="cart-section-title">Why this flow fits small wholesale</h3>
-              <div className="support-list">
-                <div className="support-item">
-                  <span className="support-bullet" />
-                  <span>Direct-buy SKUs stay fast for replenishment, prototyping, and maintenance orders.</span>
-                </div>
-                <div className="support-item">
-                  <span className="support-bullet" />
-                  <span>Coupon, note, and shipping choices help buyers move from sample order to repeated procurement.</span>
-                </div>
-                <div className="support-item">
-                  <span className="support-bullet" />
-                  <span>Non-catalog or OEM items can still route into the contact and RFQ flow without breaking checkout.</span>
-                </div>
-              </div>
-            </article>
-
             {crossSellProducts.length ? (
               <article className="info-card cart-cross-sell-card">
-                <div className="section-header trade-card-header">
-                  <div>
-                    <h3 className="cart-section-title">Cross-sell accessories</h3>
-                    <p className="section-description">Three nearby products to help buyers complete wiring, control, and cabinet-fit decisions before checkout.</p>
-                  </div>
-                </div>
-
+                <h3 className="cart-section-title">{t('product.compatibleProducts')}</h3>
                 <div className="cart-cross-sell-list">
                   {crossSellProducts.map((item) => (
                     <Link key={item.id} href={withLocalePath(`/products/${item.slug}`, locale)} className="detail-related-card cart-cross-sell-item">
-                      <span className="product-badge">{item.purchaseMode === 'buy' ? 'Cross-sell' : 'Project match'}</span>
                       <strong>{item.name}</strong>
                       <span className="product-meta">SKU {item.sku}</span>
-                      <p className="section-description compact-copy">{item.shortDescription ?? 'Useful adjacent component for control, power, or integration review.'}</p>
-                      <span className="card-kicker">{item.purchaseMode === 'buy' ? item.price.formatted : 'Request Quote'}</span>
+                      <span className="card-kicker">{item.purchaseMode === 'buy' ? item.price.formatted : t('product.requestQuote')}</span>
                     </Link>
                   ))}
                 </div>
               </article>
             ) : null}
-
-            <article className="info-card cart-search-help-card">
-              <h3 className="cart-section-title">Need a missing SKU?</h3>
-              <p className="section-description">Search by drawing term, datasheet keyword, or model family if the exact accessory is not already in the cart.</p>
-              <Link href={`${searchPath}?keyword=driver`} className="section-link">
-                Search matched accessories
-              </Link>
-            </article>
           </aside>
         </div>
       )}
