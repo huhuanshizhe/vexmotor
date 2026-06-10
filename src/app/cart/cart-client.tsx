@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState, useTransition } from 'react';
 
+import { AddToCartButton } from '@/components/storefront/add-to-cart-button';
 import { calculateOrderPricing, type CommerceConfig } from '@/lib/commerce-config';
 import type { Locale } from '@/lib/i18n';
 import { withLocalePath } from '@/lib/i18n';
@@ -534,11 +535,27 @@ export function CartClient({ initialCart, locale, hasAccountContext, crossSellPr
                 <h3 className="cart-section-title">{t('product.compatibleProducts')}</h3>
                 <div className="cart-cross-sell-list">
                   {crossSellProducts.map((item) => (
-                    <Link key={item.id} href={withLocalePath(`/products/${item.slug}`, locale)} className="detail-related-card cart-cross-sell-item">
-                      <strong>{item.name}</strong>
+                    <div key={item.id} className="detail-related-card cart-cross-sell-item">
+                      <Link href={withLocalePath(`/products/${item.slug}`, locale)} className="cart-cross-sell-image-wrap">
+                        {item.coverImage ? (
+                          <Image src={item.coverImage.url} alt={item.coverImage.alt || item.name} fill sizes="100px" unoptimized className="cart-item-image" />
+                        ) : (
+                          <span className="cart-item-image-fallback">{item.sku.slice(0, 3)}</span>
+                        )}
+                      </Link>
+                      <Link href={withLocalePath(`/products/${item.slug}`, locale)}>
+                        <strong>{item.name}</strong>
+                      </Link>
                       <span className="product-meta">SKU {item.sku}</span>
                       <span className="card-kicker">{item.purchaseMode === 'buy' ? item.price.formatted : t('product.requestQuote')}</span>
-                    </Link>
+                      {item.purchaseMode === 'buy' ? (
+                        <AddToCartButton productId={item.id} redirectToCart={false} />
+                      ) : (
+                        <Link href={withLocalePath(`/products/${item.slug}`, locale)} className="button-secondary">
+                          {t('product.requestQuote')}
+                        </Link>
+                      )}
+                    </div>
                   ))}
                 </div>
               </article>

@@ -4018,8 +4018,11 @@ main {
 
 .cart-item-media {
   position: relative;
+  width: 120px;
   min-height: 120px;
-  border-radius: 18px;
+  aspect-ratio: 1;
+  flex-shrink: 0;
+  border-radius: 14px;
   overflow: hidden;
   background: linear-gradient(180deg, #f3f7fb 0%, #ffffff 100%);
   border: 1px solid rgba(16, 41, 66, 0.08);
@@ -4566,6 +4569,8 @@ main {
 .checkout-summary-card {
   position: sticky;
   top: 108px;
+  z-index: 10;
+  background: #fff;
   align-content: start;
 }
 
@@ -4648,6 +4653,16 @@ main {
 
 .cart-cross-sell-item {
   min-width: 0;
+}
+
+.cart-cross-sell-image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #f3f7fb 0%, #ffffff 100%);
+  border: 1px solid rgba(16, 41, 66, 0.08);
 }
 
 .quote-layout-grid {
